@@ -1,0 +1,29 @@
+<nav class="col-md-3 sidebar">
+    <h6 class="sidebar-header mt-4 mb-1 px-3">
+        <span>Mes groupes</span>
+        <a class="" href="/app/groupes/add">+</a>
+    </h6>
+    <ul class="scrollable">
+        {{ MARK this "groupesItems" }}
+    </ul>
+</nav>
+<script>
+    doc.update({});
+
+    // création du template à partir des données du serveur
+    var groupeItem = null;
+
+    let r = await fetch("/template/app.sidebar.groupeItem.html");
+    let html = await r.text();
+
+    groupeItem = new uTemplate.parser(html);
+
+    let groupesItems = doc.ctx.markedElement["groupesItems"];
+
+    for (let i = 0; i < 10; i++) {
+        let e = groupeItem.parse({});
+        groupesItems.appendChild(e);
+    }
+
+
+</script>

@@ -1,0 +1,20 @@
+<div class="app">
+    <!-- Groupes -->
+    {{ INCLUDE this.currentNode "/template/app.sidebar.html" }}
+
+    <div class="main col-md-9">
+        <!-- fenetre centrale -->
+        <div class="">
+            {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
+            <!---->
+            {{ INCLUDE this.currentNode "/template/app.preview.html" }}
+        </div>
+
+        <!-- fenetre chatbox -->
+        {{ INCLUDE this.currentNode "/template/app.chatbox.html" }}
+    </div>
+</div>
+
+<script>
+    doc.update({});
+</script>

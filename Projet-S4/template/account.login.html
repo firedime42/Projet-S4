@@ -1,0 +1,23 @@
+<div class="form-signin text-center">
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    <p class="error" data-visible="{{ loginerror }}"> Votre mot de passe ou votre identifiant est incorrecte </p>
+    <input name="email" type="email" class="form-control" placeholder="Email address" required="" autofocus="">
+    <input name="password" type="password" class="form-control" placeholder="Password" required="">
+    <button name="submit" class="btn btn-lg btn-primary">{{ MARK this "button" }}Sign in</button>
+    <!--<p class="mt-5 mb-3 text-muted">© 2021-2022</p>-->
+</div>
+<script>
+    let loginData = {
+        loginerror: false, // erreur de connexion : false => pas d'erreur, true => erreur
+    };
+
+    // update default data
+    doc.update(loginData);
+
+    // update new data
+    Dom.addListener(doc.ctx.markedElement.button, "click", async function () {
+        console.log("you will be loggedIn");
+        let newMainUser = new MainUser();
+        newMainUser.login("test", "test");
+    });
+</script>
