@@ -1,0 +1,21 @@
+@import url(config.css);
+
+nav {
+    background-color: var(--nav-background-color);
+    color: var(--nav-text-color);
+    border-bottom: var(--nav-border);
+
+
+    a[href] {
+        color: var(--nav-text-color);
+        text-decoration: none;
+    }
+    
+    a[href]:hover {
+        color: var(--nav-link-hover-color);
+    }
+
+    .navbar-account {
+        display: inline-block;
+    }
+}

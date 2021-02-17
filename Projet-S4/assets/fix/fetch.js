@@ -1,0 +1,1 @@
+/* s'occuper du cas où fetch n'est pas supporté */

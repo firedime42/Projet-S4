@@ -1,0 +1,31 @@
+@import url(config.css);
+
+.app {
+
+    // display fetch to contain columns
+    display: flex;
+    flex-wrap: wrap;
+
+    // height max
+    height: 100%;
+
+    .sidebar {
+        background-color: var(--sidebar-background-color);
+        border-right: var(--sidebar-border);
+        color: var(--sidebar-text-color);
+
+        padding-left: 10px;
+        padding-right: 10px;
+
+        .sidebar-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(var(--sidebar-text-color), .8);
+        }
+
+        ul {
+            max-height: 100px;
+            overflow: auto;
+        }
+    }
+}

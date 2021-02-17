@@ -1,0 +1,29 @@
+@import url(config.css);
+.app {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  height: 100%;
+}
+
+.app .sidebar {
+  background-color: var(--sidebar-background-color);
+  border-right: var(--sidebar-border);
+  color: var(--sidebar-text-color);
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.app .sidebar .sidebar-header {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: rgba(var(--sidebar-text-color), 0.8);
+}
+
+.app .sidebar ul {
+  max-height: 100px;
+  overflow: auto;
+}
+/*# sourceMappingURL=app.css.map */
