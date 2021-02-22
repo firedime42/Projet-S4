@@ -46,4 +46,16 @@
   margin-left: -25px;
   margin-top: 5px;
 }
+
+.groupe .groupe-add .search_result {
+  width: 100%;
+  -ms-flex-wrap: warp;
+      flex-wrap: warp;
+  overflow-wrap: warp;
+}
+
+.groupe .groupe-add .search_result .card {
+  display: inline-block;
+  width: 200px;
+}
 /*# sourceMappingURL=groupe.css.map */

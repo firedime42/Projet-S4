@@ -53,5 +53,17 @@
                 }
             }
         }
+
+        .search_result {
+            width: 100%;
+            flex-wrap: warp;
+            overflow-wrap: warp;
+
+            .card {
+                display: inline-block;
+                width: 200px;
+
+            }
+        }
     }
 }
