@@ -10,10 +10,6 @@ fetch("/assets/js/ErrCodes.json").then(async function (r) {
     user.retrieveSession();
 });
 
-fetch("/assets/js/CACHECODES.json").then(async function (r) {
-    //CACHECODES = await r.json();
-});
-
 
 let pages = new uTemplate.template(Dom.id("pages")); // on créer un template des pages
 let mainMenu = new uTemplate.template(Dom.id("mainmenu"));

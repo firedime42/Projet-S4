@@ -37,6 +37,7 @@
     <script src="/assets/js/models/listenable.js"></script>
     <script src="/assets/js/models/user.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
+    <script src="/assets/js/models/search.js"></script>
 
     <!-- feuille de style -->
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css"></link>

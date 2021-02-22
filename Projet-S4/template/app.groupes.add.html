@@ -17,7 +17,7 @@
 </div>
 <script>
     doc.update({ 
-        search: (URLrooter.parseURL('/app/groupes/search/$value') || { value: '' }).value
+        search: decodeURI((URLrooter.parseURL('/app/groupes/search/$value') || { value: '' }).value)
     });
 
     let search_input = Dom.find("input", doc.ctx.markedElement.search_box)[0];
@@ -29,16 +29,24 @@
     let html = await r.text();
 
     let groupeItem = new uTemplate.parser(html);
+    let search = new Search("/core/controller/groupe.php");
 
-    for (let i = 0; i < 10; i++) {
-        Dom.append(groups_container, groupeItem.parse({
-            id: i,
-            nom: "groupe "+i,
-            descr: "Lorem ipsum dolor sit amet"
-        }));
-    }
+    search.addListener("append", function (search, data) {
+        Dom.append(groups_container, groupeItem.parse(data));
+    });
+
+    search.addListener("newSearch", function (search) {
+        Dom.html(groups_container, "");
+    });
+
 
     Dom.addListener(search_button, 'click', function () {
         setURL('/app/groupes/search/'+encodeURI(search_input.value));
+        search.search(search_input.value);
+    });
+
+    URLrooter.addListener('/app/groupes/search/$query', function ({ query }) {
+        search.search(decodeURI(query));
+        doc.update({ search : decodeURI(query) });
     });
 </script>
