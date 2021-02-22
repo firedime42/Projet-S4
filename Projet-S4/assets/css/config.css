@@ -17,6 +17,10 @@ body[data-theme="light"] {
     --nav-border: 0px solid #1e2530;
     --nav-text-color: #fff;
     --nav-link-hover-color: #ffffffb3;
+    
+    --dropdown-text-color:#1e2530;
+    --dropdown-link-hover-color:#1e2530b3;
+    --dropdown-background-color:#fff;
 
     /* paramètre side bar dans l'application */
     --sidebar-background-color: rgb(232, 232, 233);

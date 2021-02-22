@@ -19,6 +19,19 @@ nav.navbar .navbar-account {
   display: inline-block;
 }
 
+nav.navbar .dropdown-menu {
+  background-color: var(--dropdown-background-color);
+}
+
+nav.navbar .dropdown-menu a[href] {
+  color: var(--dropdown-text-color);
+  text-decoration: none;
+}
+
+nav.navbar .dropdown-menu a[href]:hover {
+  color: var(--dropdown-link-hover-color);
+}
+
 nav.navbar .profil {
   min-width: 150px;
   padding: .3rem 1rem;

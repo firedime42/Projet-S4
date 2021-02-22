@@ -20,6 +20,19 @@ nav.navbar {
         display: inline-block;
     }
 
+
+    .dropdown-menu {
+        background-color: var(--dropdown-background-color);
+
+        a[href] {
+            color: var(--dropdown-text-color);
+            text-decoration: none;
+        }
+        
+        a[href]:hover {
+            color: var(--dropdown-link-hover-color);
+        }
+    }
     
     .profil {
         min-width: 150px;
