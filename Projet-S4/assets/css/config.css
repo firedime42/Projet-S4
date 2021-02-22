@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 html {
     --site-font-family: Roboto, 'Segoe UI', Tahoma, sans-serif;
 
@@ -22,4 +23,34 @@ body[data-theme="light"] {
     --sidebar-background-color: rgb(232, 232, 233);
     --sidebar-text-color: #4e4e4e;
     --sidebar-header-color: #8e8e8e;
+=======
+html {
+    --site-font-family: Roboto, 'Segoe UI', Tahoma, sans-serif;
+
+}
+
+
+
+/* theme */
+
+body[data-theme="light"] {
+    /* paramètre generale */
+    --site-background-color: rgb(248, 249, 250);
+    --site-text-color: #6e6e6e;
+    
+    /* paramètre nav */
+    --nav-background-color: #1e2530;
+    --nav-border: 0px solid #1e2530;
+    --nav-text-color: #fff;
+    --nav-link-hover-color: #ffffffb3;
+
+    /* paramètre side bar dans l'application */
+    --sidebar-background-color: rgb(232, 232, 233);
+    --sidebar-text-color: #4e4e4e;
+    --sidebar-header-color: #8e8e8e;
+
+    /* paramètre acceuil dans l'application */
+    --app-home-background: url(/assets/img/eezy_03.svg);
+    --groupeadd-header-background: url(/assets/img/eezy_79.svg);
+>>>>>>> Stashed changes
 }

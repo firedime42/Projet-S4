@@ -19,6 +19,13 @@
   padding-bottom: 40px;
 }
 
+<<<<<<< Updated upstream
+=======
+.form-signin input {
+  margin-bottom: 10px;
+}
+
+>>>>>>> Stashed changes
 .form-signin .checkbox {
   font-weight: 400;
 }
@@ -39,4 +46,12 @@
 .form-signin .btn {
   width: 100%;
 }
+<<<<<<< Updated upstream
+=======
+
+.form-signin .error {
+  color: var(--bs-red);
+  font-weight: 200;
+}
+>>>>>>> Stashed changes
 /*# sourceMappingURL=account.css.map */

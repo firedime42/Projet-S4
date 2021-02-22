@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <nav class="col-md-3 sidebar">
     <h6 class="sidebar-header mt-4 mb-1 px-3">
         <span>Mes groupes</span>
@@ -26,4 +27,99 @@
     }
 
 
+=======
+<nav class="sidebar">
+    <div class="scrollable">
+        <a href="/app/groupes/add" class="btn btn-primary">Ajouter un groupe</a>
+        <h6 class="sidebar-header mt-4 mb-1 px-3">
+            <span>Invitations</span>
+        </h6>
+        <ul>
+            {{ MARK this "groupsInvited" }}
+        </ul>
+        <h6 class="sidebar-header mt-4 mb-1 px-3">
+            <span>Mes demandes</span>
+        </h6>
+        <ul>
+            {{ MARK this "groupsAsked" }}
+        </ul>
+        <h6 class="sidebar-header mt-4 mb-1 px-3">
+            <span>Mes groupes</span>
+        </h6>
+        <ul>
+            {{ MARK this "groups" }}
+        </ul>
+    </div>
+</nav>
+<script>
+    doc.update({});
+
+    // création du template à partir des données du serveur
+    var groupeItem = null;
+
+    let r = await fetch("/template/app.sidebar.groupeItem.html");
+    let html = await r.text();
+
+    groupeItem = new uTemplate.parser(html);
+
+    let listGroup = new ListGroupe();
+
+    let htmllist = {};
+    htmllist["membre"] = doc.ctx.markedElement.groups;
+    htmllist["candidat"] = doc.ctx.markedElement.groupsAsked;
+    htmllist["invite"] = doc.ctx.markedElement.groupsInvitations;
+
+    function _toggleSelected({ id }) {
+        let selected = Dom.find(`[data-gid="${id}"] .groupItem`, doc.getElements()[0]); // selectionner celui qui a l'identifiant id
+        let other = Dom.find(`[data-gid]:not([data-gid="${id}"]) .groupItem`, doc.getElements()[0]); // selectionner ceux qui ne l'ont pas
+
+        for (let i = 0, nb_groupes = other.length; i < nb_groupes; i++)
+            other[i].setAttribute("data-selected", "false");
+        
+        selected[0].setAttribute("data-selected", "true");
+    }
+
+
+    listGroup.addListener("append", function (l, groupe) {
+        let container = htmllist[groupe.status];
+        let element = groupeItem.parse(groupe);
+
+        Dom.append(container, element);
+    });
+
+    listGroup.addListener("remove", function (l, groupe) {
+        let container = htmllist[groupe.status];
+        let element = Dom.find(`[data-gid="${groupe.id}"]`, container)[0];
+        if (Dom.isElement(element)) element.remove();
+    });
+
+    listGroup.addListener("change", function (l, prev, groupe) {
+        let container = htmllist[groupe.status];
+        let element = groupeItem.parse(groupe);
+        let oldElement = Dom.find(`[data-gid="${groupe.id}"]`, container)[0];
+
+        if (Dom.isElement(oldElement)) oldElement.remove();
+        Dom.append(container, element);
+    });
+
+
+    if (user.isLoggedIn)
+        listGroup.update().then(function () {
+            let r = URLrooter.parseURL('/app/groupes/$id/');
+            if (r) _toggleSelected(r);
+        })
+
+    user.addListener(MainUser.EVENT_STATE_CHANGE, async function () {
+        if (user.isLoggedIn) {
+            await listGroup.update();
+            let r = URLrooter.parseURL('/app/groupes/$id/');
+            if (r) _toggleSelected(r);
+        }
+    });
+
+    URLrooter.addListener('/app/groupes/$id/', _toggleSelected);
+
+    window.LG = listGroup;
+
+>>>>>>> Stashed changes
 </script>

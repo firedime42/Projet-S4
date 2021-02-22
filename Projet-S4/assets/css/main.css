@@ -1,3 +1,7 @@
+<<<<<<< Updated upstream
+=======
+@charset "UTF-8";
+>>>>>>> Stashed changes
 @import url(config.css);
 html {
   padding: 0;
@@ -13,6 +17,17 @@ body {
   color: var(--site-text-color);
 }
 
+<<<<<<< Updated upstream
+=======
+body p {
+  text-align: justify;
+}
+
+body .text-center p {
+  text-align: center;
+}
+
+>>>>>>> Stashed changes
 body section {
   position: absolute;
   top: var(--site-nav-height);
@@ -25,12 +40,30 @@ body section .page {
   width: 100vw;
 }
 
+<<<<<<< Updated upstream
 /* controle visible or not*/
 div[data-visible=false] {
   display: none;
 }
 
 /* CUSTOM SCROLLBAR */
+=======
+body section .page .content {
+  padding: 40px 15px;
+}
+
+body section .subpage {
+  height: 100%;
+}
+
+/* controle visible or not*/
+*[data-visible=false] {
+  display: none !important;
+}
+
+/* CUSTOM SCROLLBAR */
+/* TODO : placer certains paramètre comme les couleurs en variable lié au theme */
+>>>>>>> Stashed changes
 .scrollable::-webkit-scrollbar {
   width: 5px;
 }
