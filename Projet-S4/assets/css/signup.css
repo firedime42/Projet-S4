@@ -20,3 +20,20 @@
     background-color: #17a2b8; /* comme pour telechargement a voir pour la couleur du bouton */ 
     border-color: #17a2b8;
 }
+=======
+#principale {
+    text-align: center;
+    background-color: lightslategray;
+}
+
+body, nav, a, li, div {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
