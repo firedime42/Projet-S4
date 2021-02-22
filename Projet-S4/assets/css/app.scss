@@ -1,0 +1,103 @@
+@import url(config.css);
+
+.app {
+
+    // display fetch to contain columns
+    display: flex;
+    flex-wrap: wrap;
+
+    // height max
+    height: 100%;
+
+    --sidebar-max-width: 200px;
+
+    .sidebar {
+        background-color: var(--sidebar-background-color);
+        border-right: var(--sidebar-border);
+        color: var(--sidebar-text-color);
+
+        height: 100%;
+
+        padding: 10px 10px;
+
+        .sidebar-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(var(--sidebar-text-color), .8);
+        }
+
+        .scrollable {
+            height: 100%;
+        }
+
+        > div {
+            text-align: center;
+
+            h6 { text-align: left; }
+
+            ul {
+                text-align: left;
+                padding: 0;
+            
+                a[href] {
+                    text-decoration: none;
+                }
+
+                .groupItem {
+                    border-radius: 5px;
+                    padding: 10px;
+                    transition: .2s; // animation 
+
+                    .avatar {
+
+                    }
+
+                    .name {
+
+                    }
+                }
+
+                .groupItem:hover {
+                    background-color: rgba(0, 0, 0, .1);
+                    padding-left: 20px;
+                }
+
+                .groupItem[data-selected=true] {
+                    padding-left: 20px;
+                    font-weight: bold;
+
+                    
+                }
+
+                
+            }
+        }
+    }
+
+    @media (min-width: 768px) {
+        .sidebar {
+            flex: 0 0 auto;
+            width: 200px;
+            max-width: var(--sidebar-max-width);
+        }
+        
+        .main {
+            flex: 0 0 auto;
+            width: calc(100% - var(--sidebar-max-width));
+            max-width: calc(100% - var(--sidebar-max-width));
+        }
+    }
+
+
+    .app-home {
+
+        background: var(--app-home-background);
+        background-size: cover;
+        background-position: center;
+
+        .container {
+            max-width: 500px;
+            padding-top: 200px;
+        }
+    }
+}

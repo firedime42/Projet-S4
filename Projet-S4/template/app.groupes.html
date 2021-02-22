@@ -1,0 +1,42 @@
+<div class="groupe-add scrollable" data-visible="{{ IN page _ADD _SEARCH _CREATE }}">
+    {{ INCLUDE this.currentNode "/template/app.groupe.add.html" }}
+</div>
+<div class="groupe-settings" data-visible="{{ EQUALS page _SETTINGS }}">
+
+</div>
+<div class="groupe-browse" data-visible="{{ EQUALS page _BROWSE }}">
+    <!-- fenetre centrale -->
+    <div class="">
+        {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
+        <!---->
+        {{ INCLUDE this.currentNode "/template/app.preview.html" }}
+    </div>
+
+    <!-- fenetre chatbox -->
+    {{ INCLUDE this.currentNode "/template/app.chatbox.html" }}
+</div>
+
+<script>
+    const pages = {
+        ADD : "/app/groupes/add",
+        CREATE : "/app/groupes/create",
+        BROWSE : "/app/groupes/$id/*",
+        SETTINGS : "/app/groupes/$id/settings",
+        SEARCH : "/app/groupes/search/$searched"
+    };
+
+    doc.update({
+        page : null,
+        _ADD: pages.ADD,
+        _SEARCH: pages.SEARCH,
+        _CREATE: pages.CREATE,
+        _SETTINGS: pages.SETTINGS,
+        _BROWSE: pages.BROWSE,
+    });
+
+    URLrooter.addListener(pages.ADD,      function () { doc.update({ page: pages.ADD      }); });
+    URLrooter.addListener(pages.CREATE,   function () { doc.update({ page: pages.CREATE   }); });
+    URLrooter.addListener(pages.BROWSE,   function () { doc.update({ page: pages.BROWSE   }); }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.SETTINGS, function () { doc.update({ page: pages.SETTINGS }); }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.SEARCH,   function () { doc.update({ page: pages.SEARCH   }); });
+</script>
