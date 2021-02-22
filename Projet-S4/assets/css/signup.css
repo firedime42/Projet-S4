@@ -1,3 +1,26 @@
+.container-fluid {
+    border: 2px lightslategray solid;
+    border-radius: 10px ;
+    margin-top:100px;
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    width:500px ;
+
+}
+.form-group{
+    width:100%;
+}
+.form-check {
+    margin-left : 28%;
+}
+.btn:nth-child(6) {
+    margin-left : 42%;
+    background-color: #17a2b8; /* comme pour telechargement a voir pour la couleur du bouton */ 
+    border-color: #17a2b8;
+}
+=======
 #principale {
     text-align: center;
     background-color: lightslategray;
@@ -13,4 +36,4 @@ body, nav, a, li, div {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-  }
+}
