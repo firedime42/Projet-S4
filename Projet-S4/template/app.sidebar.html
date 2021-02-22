@@ -22,7 +22,7 @@
     </div>
 </nav>
 <script>
-    doc.update({});
+    doc.update();
 
     // création du template à partir des données du serveur
     var groupeItem = null;
@@ -42,6 +42,8 @@
     function _toggleSelected({ id }) {
         let selected = Dom.find(`[data-gid="${id}"] .groupItem`, doc.getElements()[0]); // selectionner celui qui a l'identifiant id
         let other = Dom.find(`[data-gid]:not([data-gid="${id}"]) .groupItem`, doc.getElements()[0]); // selectionner ceux qui ne l'ont pas
+
+        if (selected.length == 0) return ;
 
         for (let i = 0, nb_groupes = other.length; i < nb_groupes; i++)
             other[i].setAttribute("data-selected", "false");

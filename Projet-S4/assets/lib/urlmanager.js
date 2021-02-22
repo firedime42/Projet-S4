@@ -89,7 +89,7 @@
                     varnames.push(varname);
                     varvalues.push(i);
                     vartests.push(
-                        (test instanceof RegExp) ? test.test :
+                        (test instanceof RegExp) ? (str) => test.test(str) :
                         (typeof test == 'function') ? test :
                         null
                     );
