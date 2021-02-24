@@ -28,9 +28,20 @@ body[data-theme="light"] {
     --sidebar-header-color: #8e8e8e;
 
     /* paramètre acceuil dans l'application */
+
+    /*
+    mettre les images en variable ne fonctionne pas bien du tout
     --app-home-background: url(/assets/img/eezy_03.svg);
     --groupeadd-header-background: url(/assets/img/eezy_79.svg);
+    */
+    
 }
+
+/**
+ * Les fonds d'écrans non pas le choix d'être representer de cette manière pour des soucis d'efficacitée
+ */
+body[data-theme="light"] .groupe .groupe-add .header { background-image: url(/assets/img/eezy_79.svg); }
+body[data-theme="light"] .app .app-home { background-image: url(/assets/img/eezy_03.svg); } 
 
 body[data-theme="dark"] {
     /* paramètre generale */
@@ -51,8 +62,4 @@ body[data-theme="dark"] {
     --sidebar-background-color: rgb(232, 232, 233);
     --sidebar-text-color: #4e4e4e;
     --sidebar-header-color: #8e8e8e;
-
-    /* paramètre acceuil dans l'application */
-    --app-home-background: url(/assets/img/eezy_03.svg);
-    --groupeadd-header-background: url(/assets/img/eezy_79.svg);
 }

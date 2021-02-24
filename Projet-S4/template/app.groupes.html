@@ -4,7 +4,7 @@
 <div class="groupe-settings" data-visible="{{ EQUALS page _SETTINGS }}">
 
 </div>
-<div class="groupe-browse" data-visible="{{ EQUALS page _BROWSE }}">
+<div class="groupe-browse" data-visible="{{ IN page _BROWSE _BROWSEDIR }}">
     <!-- fenetre centrale -->
     <div class="">
         {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
@@ -20,7 +20,8 @@
     const pages = {
         ADD : "/app/groupes/add",
         CREATE : "/app/groupes/create",
-        BROWSE : "/app/groupes/$id/*",
+        BROWSE : "/app/groupes/$id",
+        BROWSEDIR : "/app/groupes/$id/*",
         SETTINGS : "/app/groupes/$id/settings",
         SEARCH : "/app/groupes/search/$searched"
     };
@@ -31,12 +32,14 @@
         _SEARCH: pages.SEARCH,
         _CREATE: pages.CREATE,
         _SETTINGS: pages.SETTINGS,
-        _BROWSE: pages.BROWSE
+        _BROWSE: pages.BROWSE,
+        _BROWSEDIR: pages.BROWSEDIR
     });
 
-    URLrooter.addListener(pages.ADD,      function () { doc.update({ page: pages.ADD      }); });
-    URLrooter.addListener(pages.CREATE,   function () { doc.update({ page: pages.CREATE   }); });
-    URLrooter.addListener(pages.BROWSE,   function () { doc.update({ page: pages.BROWSE   }); }, null, { id : /^[0-9]+$/ });
-    URLrooter.addListener(pages.SETTINGS, function () { doc.update({ page: pages.SETTINGS }); }, null, { id : /^[0-9]+$/ });
-    URLrooter.addListener(pages.SEARCH,   function () { doc.update({ page: pages.SEARCH   }); });
+    URLrooter.addListener(pages.ADD,       function () { doc.update({ page: pages.ADD      });  });
+    URLrooter.addListener(pages.CREATE,    function () { doc.update({ page: pages.CREATE   });  });
+    URLrooter.addListener(pages.BROWSE,    function () { doc.update({ page: pages.BROWSE   });  }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.BROWSEDIR, function () { doc.update({ page: pages.BROWSEDIR }); }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.SETTINGS,  function () { doc.update({ page: pages.SETTINGS });  }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.SEARCH,    function () { doc.update({ page: pages.SEARCH   });  });
 </script>

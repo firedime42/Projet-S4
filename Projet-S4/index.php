@@ -40,6 +40,7 @@
     <script src="/assets/js/models/search.js"></script>
 
     <!-- feuille de style -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/config.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/nav.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>

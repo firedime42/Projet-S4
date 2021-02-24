@@ -1,6 +1,12 @@
+# rewrite url for webapp
 RewriteEngine on
 RewriteCond %{REQUEST_URI} !^/assets/.*$
 RewriteCond %{REQUEST_URI} !^/core/.*$
 RewriteCond %{REQUEST_URI} !^/template/.*$
 RewriteCond %{REQUEST_URI} !^/test/.*$
 RewriteRule /.* /index.php
+
+# Cache File for optimization
+<FilesMatch "\.(xml|txt|css|js)$">
+Header set Cache-Control "max-age=172800, proxy-revalidate"
+</FilesMatch>

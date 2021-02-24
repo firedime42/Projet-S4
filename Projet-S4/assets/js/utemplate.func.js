@@ -57,16 +57,23 @@
          * @param {String} url le chemin du fichier à inclure
          */
         INCLUDE: async function (node, url) {
-            if ( node.parentElement == null ) return;
+            if ( node.parentElement == null ) {
+                console.log("error parrentNull", node, url);
+                return;
+            }
 
             if ( !Dom.isReady() ) {
+                console.log("error isnt ready", node, url);
                 Dom.ready(function () {
                     uTemplate.BASIC_DATA.INCLUDE(node, url);
                 });
                 return;
             }
 
-            if ( !Dom.isVisible(node) ) return;
+            if ( !Dom.isVisible(node) ) {
+                console.log("error isnt visible", node.parentElement, url);
+                return;
+            }
 
             // request content
             let r = await fetch(url, { "method": "GET" });

@@ -8,12 +8,12 @@ $res = array(
 );
 
 $groups = array(
-    array("id" => 0, "nom" => "CCG", "time" => 1613909869, "status" => "membre", "descr" => "organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules.", "root" => 0, "nb_membres" => 10),
-    array("id" => 1, "nom" => "NERV", "time" => 1613909869, "status" => "membre", "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges.", "root" => 0, "nb_membres" => 10),
-    array("id" => 2, "nom" => "Systeme Sibyl", "time" => 1613954609, "status" => "membre", "descr" => "Organisation privée de gestion de la criminalité au Japon.", "root" => 0, "nb_membres" => 10),
+    array("id" => 0, "nom" => "CCG",               "time" => 1613909869, "status" => "membre", "descr" => "organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules.", "root" => 0, "nb_membres" => 10),
+    array("id" => 1, "nom" => "NERV",              "time" => 1613909869, "status" => "membre", "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges.", "root" => 0, "nb_membres" => 10),
+    array("id" => 2, "nom" => "Systeme Sibyl",     "time" => 1613954609, "status" => "ex", "descr" => "Organisation privée de gestion de la criminalité au Japon.", "root" => 0, "nb_membres" => 10),
     array("id" => 3, "nom" => "Future Gadget Lab", "time" => 1613909869, "status" => "membre", "descr" => "founded by Rintaro Okabe in the year 2010. Our main objective is the creation of Future Gadget that are to be used to plunge the world into chaos !", "root" => 0, "nb_membres" => 10),
-    array("id" => 4, "nom" => "SERN", "time" => 1613909869, "status" => "membre", "descr" => "global research organization secretly controlled by the Committee of 300.", "root" => 0, "nb_membres" => 10),
-    array("id" => 5, "nom" => "Dark Reunion", "time" => 1613909869, "status" => "membre", "descr" => "A secret society which plans to weed out unnecessary elements from humankind.", "descr" => "", "root" => 0, "nb_membres" => 10)
+    array("id" => 4, "nom" => "SERN",              "time" => 1613909869, "status" => "ex", "descr" => "global research organization secretly controlled by the Committee of 300.", "root" => 0, "nb_membres" => 10),
+    array("id" => 5, "nom" => "Dark Reunion",      "time" => 1613909869, "status" => "membre", "descr" => "A secret society which plans to weed out unnecessary elements from humankind.", "descr" => "", "root" => 0, "nb_membres" => 10)
 );
 
 
@@ -98,7 +98,10 @@ switch ($_post->action) {
 
         array_multisort($scores, SORT_DESC, $groups);
 
-        $res["results"] = array_slice($groups, $_post->page_first, $_post->nb_results);
+        $res["results"] = array_slice(array_filter($groups, function ($pos) {
+            global $scores;
+            return $scores[$pos] > 0;
+        }, ARRAY_FILTER_USE_KEY), $_post->page_first, $_post->nb_results);
         $res["scores"] = $scores;
     default: $res["error"] = 0; break;
 }
