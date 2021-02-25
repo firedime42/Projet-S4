@@ -22,9 +22,6 @@
     doc.update({ user });
     user.addListener(MainUser.EVENT_STATE_CHANGE, function () { doc.update(); });
     URLrooter.addListener('/app/*', function () {
-        console.log('coucou');
-        console.log(user);
-        console.log(doc.ctx.URLLIKE('/app/'));
         doc.update();
     }, function () { doc.update(); });
 </script>

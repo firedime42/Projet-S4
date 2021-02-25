@@ -56,14 +56,14 @@
          * @param {Node} node l'endroit où inserer le code
          * @param {String} url le chemin du fichier à inclure
          */
-        INCLUDE: async function (node, url) {
+        INCLUDE: async function (node, url, ctx={}) {
             if ( node.parentElement == null ) {
-                console.log("error parrentNull", node, url);
+                //console.log("error parrentNull", node, url);
                 return;
             }
 
             if ( !Dom.isReady() ) {
-                console.log("error isnt ready", node, url);
+                //console.log("error isnt ready", node, url);
                 Dom.ready(function () {
                     uTemplate.BASIC_DATA.INCLUDE(node, url);
                 });
@@ -71,7 +71,7 @@
             }
 
             if ( !Dom.isVisible(node) ) {
-                console.log("error isnt visible", node.parentElement, url);
+                //console.log("error isnt visible", node.parentElement, url);
                 return;
             }
 
@@ -115,8 +115,10 @@
 
             // execute the scripts
             for (let i = 0; i < nb_scripts; i++) {
-                let f = AsyncFunction("doc", script[i]);
-                f(template);
+                let ctx_var_names = Object.keys(ctx);
+                let ctx_var_values = Object.values(ctx);
+                let f = AsyncFunction("doc", ...ctx_var_names, script[i]);
+                f(template, ...ctx_var_values);
             }
         },
 

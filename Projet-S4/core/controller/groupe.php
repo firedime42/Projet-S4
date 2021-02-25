@@ -8,12 +8,26 @@ $res = array(
 );
 
 $groups = array(
-    array("id" => 0, "nom" => "CCG",               "time" => 1613909869, "status" => "membre", "descr" => "organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules.", "root" => 0, "nb_membres" => 10),
-    array("id" => 1, "nom" => "NERV",              "time" => 1613909869, "status" => "membre", "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges.", "root" => 0, "nb_membres" => 10),
-    array("id" => 2, "nom" => "Systeme Sibyl",     "time" => 1613954609, "status" => "ex", "descr" => "Organisation privée de gestion de la criminalité au Japon.", "root" => 0, "nb_membres" => 10),
-    array("id" => 3, "nom" => "Future Gadget Lab", "time" => 1613909869, "status" => "membre", "descr" => "founded by Rintaro Okabe in the year 2010. Our main objective is the creation of Future Gadget that are to be used to plunge the world into chaos !", "root" => 0, "nb_membres" => 10),
-    array("id" => 4, "nom" => "SERN",              "time" => 1613909869, "status" => "ex", "descr" => "global research organization secretly controlled by the Committee of 300.", "root" => 0, "nb_membres" => 10),
-    array("id" => 5, "nom" => "Dark Reunion",      "time" => 1613909869, "status" => "membre", "descr" => "A secret society which plans to weed out unnecessary elements from humankind.", "descr" => "", "root" => 0, "nb_membres" => 10)
+    array("id" =>  0, "nom" => "CCG",               "time" => 1613909869, "status" => "membre", "descr" => "Organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules.", "root" => 0, "nb_membres" => 10),
+    array("id" =>  1, "nom" => "NERV",              "time" => 1613909869, "status" => "membre", "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges.", "root" => 0, "nb_membres" => 10),
+    array("id" =>  2, "nom" => "Systeme Sibyl",     "time" => 1613954609, "status" => "membre", "descr" => "Organisation privée de gestion de la criminalité au Japon.", "root" => 0, "nb_membres" => 10),
+    array("id" =>  3, "nom" => "Future Gadget Lab", "time" => 1613909869, "status" => "membre", "descr" => "Founded by Rintaro Okabe in the year 2010. Our main objective is the creation of Future Gadget that are to be used to plunge the world into chaos !", "root" => 0, "nb_membres" => 10),
+    array("id" =>  4, "nom" => "SERN",              "time" => 1613909869, "status" => "membre", "descr" => "Global research organization secretly controlled by the Committee of 300.", "root" => 0, "nb_membres" => 10),
+    array("id" =>  5, "nom" => "Dark Reunion",      "time" => 1613909869, "status" => "membre", "descr" => "A secret society which plans to weed out unnecessary elements from humankind.", "root" => 0, "nb_membres" => 10),
+    array("id" =>  6, "nom" => "Groupama",          "time" => 1613909869, "status" => "ex", "descr" => "Toujours là pour toi.", "root" => 0, "nb_membres" => 10),
+    array("id" =>  7, "nom" => "Le coté obscure de la force",          "time" => 1613909869, "status" => "ex", "descr" => "Rejoins nous on a des cookies.", "root" => 0, "nb_membres" => 10),
+    array("id" =>  8, "nom" => "L'espada",          "time" => 1613909869, "status" => "ex", "descr" => "", "root" => 0, "nb_membres" => 13),
+    array("id" =>  9, "nom" => "La brigade fantome","time" => 1613909869, "status" => "ex", "descr" => "Spécialisé dans diverses activités illicites : assassinats, trafics, corruption etc... ", "root" => 0, "nb_membres" => 13),
+    array("id" => 10, "nom" => "SOS fantome",       "time" => 1613909869, "status" => "ex", "descr" => "Ghostbuster! If there's something strange in your neighborhood.. Who you gonna call? Ghostbusters!", "root" => 0, "nb_membres" => 10),
+    array("id" => 11, "nom" => "L'Alliance des super-vilains",      "time" => 1613909869, "status" => "ex", "descr" => "", "root" => 0, "nb_membres" => 5),
+    array("id" => 12, "nom" => "L'Akatsuki",        "time" => 1613909869, "status" => "ex", "descr" => "Organisation criminelle la plus activement recherchée dans le monde ninja. Le but initial du groupe créé par Yahiko, Pain et Konan était d'apporter la paix par le dialogue et non par la force. ", "root" => 0, "nb_membres" => 10),
+    array("id" => 13, "nom" => "Ordre des Capitaines Corsaires",      "time" => 1613909869, "status" => "ex", "descr" => "Pirates très puissants ayant fait un marché avec les autorités.", "root" => 0, "nb_membres" => 10),
+    array("id" => 14, "nom" => "Homonculus",        "time" => 1613909869, "status" => "ex", "descr" => "Humains artificiels qui portent les noms des sept péchés capitaux. Mission : assurer son plan de suprématie sur la race humaine.", "root" => 0, "nb_membres" => 10),
+    array("id" => 15, "nom" => "L'Armée du Ruban Rouge",      "time" => 1613909869, "status" => "ex", "descr" => "Organisation militaire souhaitant acquérir les Sept Boules de Cristal.", "root" => 0, "nb_membres" => 10),
+    array("id" => 16, "nom" => "Pourfendeurs",      "time" => 1613909869, "status" => "ex", "descr" => "Organisation qui a pour mission de protéger les hommes des démons et les guerriers qui la compose.", "root" => 0, "nb_membres" => 10),
+    array("id" => 17, "nom" => "arbre aogiri",      "time" => 1613909869, "status" => "ex", "descr" => "", "root" => 0, "nb_membres" => 10),
+    array("id" => 18, "nom" => "phamtom lord",      "time" => 1613909869, "status" => "ex", "descr" => "Fairy Tail", "root" => 0, "nb_membres" => 10),
+    array("id" => 19, "nom" => "les taureaux noir",      "time" => 1613909869, "status" => "ex", "descr" => "Black clover", "root" => 0, "nb_membres" => 10),
 );
 
 

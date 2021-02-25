@@ -2,18 +2,13 @@
     {{ INCLUDE this.currentNode "/template/app.groupes.add.html" }}
 </div>
 <div class="groupe-settings" data-visible="{{ EQUALS page _SETTINGS }}">
-
+    {{ INCLUDE this.currentNode "/template/app.groupes.settings.html" }}
+</div>
+<div class="groupe-settings" data-visible="{{ EQUALS page _JOIN }}">
+    {{ INCLUDE this.currentNode "/template/app.groupes.join.html" }}
 </div>
 <div class="groupe-browse" data-visible="{{ IN page _BROWSE _BROWSEDIR }}">
-    <!-- fenetre centrale -->
-    <div class="">
-        {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
-        <!---->
-        {{ INCLUDE this.currentNode "/template/app.preview.html" }}
-    </div>
-
-    <!-- fenetre chatbox -->
-    {{ INCLUDE this.currentNode "/template/app.chatbox.html" }}
+    {{ INCLUDE this.currentNode "/template/app.groupes.main.html" }}
 </div>
 
 <script>
@@ -23,6 +18,7 @@
         BROWSE : "/app/groupes/$id",
         BROWSEDIR : "/app/groupes/$id/*",
         SETTINGS : "/app/groupes/$id/settings",
+        JOIN: "/app/groupes/$id/join",
         SEARCH : "/app/groupes/search/$searched"
     };
 
@@ -32,14 +28,16 @@
         _SEARCH: pages.SEARCH,
         _CREATE: pages.CREATE,
         _SETTINGS: pages.SETTINGS,
+        _JOIN: pages.JOIN,
         _BROWSE: pages.BROWSE,
         _BROWSEDIR: pages.BROWSEDIR
     });
 
-    URLrooter.addListener(pages.ADD,       function () { doc.update({ page: pages.ADD      });  });
-    URLrooter.addListener(pages.CREATE,    function () { doc.update({ page: pages.CREATE   });  });
-    URLrooter.addListener(pages.BROWSE,    function () { doc.update({ page: pages.BROWSE   });  }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.ADD,       function () { doc.update({ page: pages.ADD       }); });
+    URLrooter.addListener(pages.CREATE,    function () { doc.update({ page: pages.CREATE    }); });
+    URLrooter.addListener(pages.BROWSE,    function () { doc.update({ page: pages.BROWSE    }); }, null, { id : /^[0-9]+$/ });
     URLrooter.addListener(pages.BROWSEDIR, function () { doc.update({ page: pages.BROWSEDIR }); }, null, { id : /^[0-9]+$/ });
-    URLrooter.addListener(pages.SETTINGS,  function () { doc.update({ page: pages.SETTINGS });  }, null, { id : /^[0-9]+$/ });
-    URLrooter.addListener(pages.SEARCH,    function () { doc.update({ page: pages.SEARCH   });  });
+    URLrooter.addListener(pages.SETTINGS,  function () { doc.update({ page: pages.SETTINGS  }); }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.JOIN,      function () { doc.update({ page: pages.JOIN      }); }, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener(pages.SEARCH,    function () { doc.update({ page: pages.SEARCH    }); });
 </script>

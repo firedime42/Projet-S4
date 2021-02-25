@@ -2,6 +2,7 @@
 
 var ERRCODES = null;
 var CACHECODES = null;
+
 var user = new MainUser();
 
 fetch("/assets/js/ErrCodes.json").then(async function (r) {

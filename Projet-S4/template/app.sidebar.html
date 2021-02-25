@@ -30,9 +30,9 @@
     let r = await fetch("/template/app.sidebar.groupeItem.html");
     let html = await r.text();
 
-    groupeItem = new uTemplate.parser(html);
-
     let listGroup = new ListGroupe();
+
+    groupeItem = new uTemplate.parser(html);
 
     let htmllist = {};
     htmllist["membre"] = doc.ctx.markedElement.groups;
@@ -49,6 +49,12 @@
             other[i].setAttribute("data-selected", "false");
         
         selected[0].setAttribute("data-selected", "true");
+    }
+
+    function _removeAllSelected() {
+        let other = Dom.find(`[data-gid] .groupItem`, doc.getElements()[0]); // selectionner ceux qui ne l'ont pas
+        for (let i = 0, nb_groupes = other.length; i < nb_groupes; i++)
+            other[i].setAttribute("data-selected", "false");
     }
 
 
@@ -97,9 +103,7 @@
         }
     });
 
-    URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, null, { id : /[0-9]+/ });
-    URLrooter.addListener('/app/groupes/$id', _toggleSelected, null, { id : /[0-9]+/ });
-
-    window.LG = listGroup;
+    URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
+    URLrooter.addListener('/app/groupes/$id', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
 
 </script>
