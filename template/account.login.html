@@ -1,0 +1,40 @@
+<div class="form-signin text-center">
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    
+    <p class="error" data-visible="{{ IN error ERRCODES.LOGIN_INVALID_EMAIL ERRCODES.LOGIN_INVALID_USERNAME ERRCODES.LOGIN_INVALID_PASSWORD }}"> Votre mot de passe ou votre identifiant est incorrecte </p>
+    
+    <input name="emailOrUname" type="text" class="form-control" placeholder="Email address or username" required="" autofocus="">
+    <input name="password" type="password" class="form-control" placeholder="Password" required="">
+    <button name="submit" class="btn btn-lg btn-primary">Sign in</button>
+    <!--<p class="mt-5 mb-3 text-muted">© 2021-2022</p>-->
+</div>
+<script>
+    // update default data
+    doc.update({
+        ERRCODES,
+        error: -1
+    });
+
+    let form = doc.getElements()[0];
+    let emailOrUname_input = Dom.find("[name=emailOrUname]", form)[0];
+    let password_input = Dom.find("[name=password]", form)[0];
+    let button = Dom.find("[name=submit]", form)[0];
+
+    // update new data
+    Dom.addListener(button, "click", async function () {
+        let emailOrUname = emailOrUname_input.value;
+        let password = password_input.value;
+
+        let r = await user.login(emailOrUname, password);
+
+        if (r instanceof Error)
+            doc.update({ error: r.code });
+        else {
+            setURL("/app/");
+
+            // reinitialisation des champs
+            emailOrUname_input.value = "";
+            password_input.value = "";
+        }
+    });
+</script>
