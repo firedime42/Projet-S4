@@ -1,0 +1,91 @@
+@import url(config.css);
+.app {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  height: 100%;
+  --sidebar-max-width: 200px;
+}
+
+.app .sidebar {
+  background-color: var(--sidebar-background-color);
+  border-right: var(--sidebar-border);
+  color: var(--sidebar-text-color);
+  height: 100%;
+  padding: 10px 10px;
+}
+
+.app .sidebar .sidebar-header {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: rgba(var(--sidebar-text-color), 0.8);
+}
+
+.app .sidebar .scrollable {
+  height: 100%;
+}
+
+.app .sidebar > div {
+  text-align: center;
+}
+
+.app .sidebar > div h6 {
+  text-align: left;
+}
+
+.app .sidebar > div ul {
+  text-align: left;
+  padding: 0;
+}
+
+.app .sidebar > div ul a[href] {
+  text-decoration: none;
+}
+
+.app .sidebar > div ul .groupItem {
+  border-radius: 5px;
+  padding: 10px;
+  -webkit-transition: .2s;
+  transition: .2s;
+}
+
+.app .sidebar > div ul .groupItem:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding-left: 20px;
+}
+
+.app .sidebar > div ul .groupItem[data-selected=true] {
+  padding-left: 20px;
+  font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  .app .sidebar {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+    width: 200px;
+    max-width: var(--sidebar-max-width);
+  }
+  .app .main {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+    width: calc(100% - var(--sidebar-max-width));
+    max-width: calc(100% - var(--sidebar-max-width));
+  }
+}
+
+.app .app-home {
+  background: var(--app-home-background);
+  background-size: cover;
+  background-position: center;
+}
+
+.app .app-home .container {
+  max-width: 500px;
+  padding-top: 200px;
+}
+/*# sourceMappingURL=app.css.map */
