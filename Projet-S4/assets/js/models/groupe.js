@@ -42,34 +42,58 @@
     }
 
     class Groupe {
-        #groupe;
+        #id;
+        #nom;
+        #descr;
+        #status;
+        #root;
+        #nb_membre;
 
         constructor() {
         }
 
         async load(id) {
-            let r = await fetch("/core/controller/groupe.php", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify({
-                    action: 'info',
-                    id
-                })
-            });
+            let r =  __getGroupeInfo(id, time = 0);
     
-            let rdata = await r.json();
+            if (r instanceof Error) return r;
     
-            if (!rdata.success)
-                return _error(rdata.error);
-    
-            this.#groupe = rdata.groupe;
+            this.setData(r);
 
-            return rdata.groupe;
+            return this;
         }
 
-        
+        setData(groupe) {
+            this.#id = groupe.id || this.#id;
+            this.#nom = groupe.nom || this.#nom;
+            this.#descr = groupe.descr || this.#descr;
+            this.#root = groupe.root || this.#root;
+            this.#status = groupe.status || this.#status;
+            this.#nb_membre = groupe.nb_membre || this.#nb_membre;
+        }
+
+        get id() { return this.#id; }
+        get nom() { return this.#nom; }
+        get descr() { return this.#descr; }
+        get root() { return this.#root; }
+        get status() { return this.#status; }
+        get nb_membre() { return this.#nb_membre; }
     }
 
+    class GroupeManager {
+        #groupes;
+
+        constructor () {
+            this.#groupes = {};
+        }
+
+/** A FINIR */
+
+        get(id) { return this.#groupes[id]; }
+
+
+    }
+
+    window.Groupe = Groupe;
+
+    window.GROUPES = new GroupeManager();
 })();

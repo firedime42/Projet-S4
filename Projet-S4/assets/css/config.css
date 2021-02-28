@@ -29,6 +29,9 @@ body[data-theme="light"] {
 
     /* paramètre acceuil dans l'application */
 
+    /* paramètre groupe */
+    --groupe-card-background-color: #fff;
+
     /*
     mettre les images en variable ne fonctionne pas bien du tout
     --app-home-background: url(/assets/img/eezy_03.svg);
