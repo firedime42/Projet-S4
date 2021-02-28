@@ -1,0 +1,19 @@
+<div class="content">
+    <img class="avatar" src="" />
+    <h1 class="nom text-center">{{ nom }}</h1>
+    <p class="descr text-justify">{{ descr }}</p>
+    <div class="text-center" data-visible="{{ IN status 'ex' 'invite' }}">
+        <button class="btn btn-primary">Rejoindre</button>
+    </div>
+    <div class="text-center" data-visible="{{ EQUALS status 'candidate' }}">
+        <button class="btn btn-primary">Abandoner la candidature</button>
+    </div>
+</div>
+
+<script>
+    doc.update({
+        nom: "Super groupe test",
+        descr: "Lorem ipsum dolor sit amet, consectetur adip ",
+        status: "ex"
+    });
+</script>

@@ -1,0 +1,27 @@
+<div class="app" data-visible="{{ user.isLoggedIn }}">
+    <!-- Groupes -->
+    {{ INCLUDE this.currentNode "/template/app.sidebar.html" }}
+
+    <div class="main subpage">
+        <div class="app-home text-center subpage" data-visible="{{ URLLIKE '/app/' }}">
+            {{ INCLUDE this.currentNode "/template/app.home.html" }}
+        </div>
+        <div class="groupe subpage" data-visible="{{ URLLIKE '/app/groupes/*' }}">
+            {{ INCLUDE this.currentNode "/template/app.groupes.html" }}
+        </div>
+    </div>
+</div>
+<div class="content text-center" data-visible="{{ NOT user.isLoggedIn }}">
+    <h2>Attendez !!!</h2>
+    <p>Vous devez être connecté afin d'utiliser nos services.</p>
+    <a class="btn btn-primary" href="/account/login">Se connecter</a>
+    <a class="btn btn-primary" href="/account/register">S'inscrire</a>
+</div>
+
+<script>
+    doc.update({ user });
+    user.addListener(MainUser.EVENT_STATE_CHANGE, function () { doc.update(); });
+    URLrooter.addListener('/app/*', function () {
+        doc.update();
+    }, function () { doc.update(); });
+</script>
