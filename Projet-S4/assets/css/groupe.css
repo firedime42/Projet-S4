@@ -67,6 +67,7 @@
 
 .groupe .groupe-add .search_result .card {
   color: inherit;
+  background-color: var(--groupe-card-background-color);
   width: calc(25% - 2rem);
   min-width: calc(25% - 2rem);
   height: 300px;
