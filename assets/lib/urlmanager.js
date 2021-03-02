@@ -72,19 +72,26 @@
             Dom.addListener(window, 'pushstate', function () { _this.urlchange(); });
         }
 
-        addListener(path, match, unmatch, tests={}) {
-            if (path.startsWith('/')) path = path.substr(1);// remove the first char
+        /**
+         * Ajout un ecouteur d'evenement
+         * @param {String} pattern le pattern à detecter
+         * @param {Function} match la fonction à executer lorsque l'url match <path>
+         * @param {Function} unmatch fonction à executer lorsque l'url ne match pas <path> n'est executé que la première fois
+         * @param {Object} tests Conditions sur les variables { nom variable => fonction ou regex }
+         */
+        addListener(pattern, match, unmatch, tests={}) {
+            if (pattern.startsWith('/')) pattern = pattern.substr(1);// remove the first char
 
-            let _path = path.split('/');
-            let nb_nodes = _path.length;
+            let _pattern = pattern.split('/');
+            let nb_nodes = _pattern.length;
 
             let varnames = [];
             let varvalues = [];
             let vartests = [];
 
             for (let i = 0; i < nb_nodes; i++) {
-                if (_path[i][0] == '$') {
-                    let varname = _path[i].substr(1);
+                if (_pattern[i][0] == '$') {
+                    let varname = _pattern[i].substr(1);
                     let test = tests[varname];
                     varnames.push(varname);
                     varvalues.push(i);
@@ -93,16 +100,16 @@
                         (typeof test == 'function') ? test :
                         null
                     );
-                    _path[i] = '*';
+                    _pattern[i] = '*';
                 } else vartests.push(null);
             }
 
             // gerer le cas ou l'url est déjà actuelle
-            let r = this.parseURL('/'+path, tests);
+            let r = this.parseURL('/'+pattern, tests);
             if (typeof r == 'object' && typeof match == 'function') match(r);
 
             this.#listeners.push({
-                path: _path,
+                pattern: _pattern,
                 deep: nb_nodes,
                 varnames,
                 varvalues,
@@ -113,6 +120,14 @@
             });
         }
 
+        /**
+         * execute un ecouteur
+         * 
+         * @warning NE DOIT PAS ETRE APPELER PAR LEXTERIEUR
+         * @param {Array.<String>} url 
+         * @param {Object} listener 
+         * @param {Boolean} match indiquant si l'url match ou pas
+         */
         execListener(url, listener, match) {
             if (match && typeof listener.match == 'function') {
                 let varobject = {};
@@ -126,6 +141,11 @@
                 listener.unmatch();
         }
 
+
+        /**
+         * fonction lancé lorsque l'url change
+         * @warning NE DOIT PAS ETRE APPELER PAR LEXTERIEUR
+         */
         urlchange() {
             let _url = window.location.pathname.substr(1).split('/');
 
@@ -140,7 +160,7 @@
                 let listener = this.#listeners[j];
                 let deep = listener.deep;
 
-                if (listener.deep == urldeep || (listener.deep < urldeep && listener.path[deep - 1] == "*"))
+                if (listener.deep == urldeep || (listener.deep < urldeep && listener.pattern[deep - 1] == "*"))
                     survivor[nb_survivor++] = j;
                 else
                     this.execListener(_url, listener, false);
@@ -155,9 +175,9 @@
                 for (let j = 0; j < nb_listeners; j++) {
                     let listener = this.#listeners[survivor[j]];
 
-                    if (listener.path[i] != _url[i] && listener.path[i] != "*")
+                    if (listener.pattern[i] != _url[i] && listener.pattern[i] != "*")
                         this.execListener(_url, listener, false);
-                    else if (listener.path[i] == '*' && listener.vartests[i] != null && !listener.vartests[i](_url[i]))
+                    else if (listener.pattern[i] == '*' && listener.vartests[i] != null && !listener.vartests[i](_url[i]))
                         this.execListener(_url, listener, false);
                     else if (listener.deep > i + 1)
                         survivor[nb_survivor++] = survivor[j];
@@ -169,6 +189,11 @@
             }
         }
 
+        /**
+         * Parse l'url courante
+         * @param {String} pattern 
+         * @param {Object} tests { varname => regex ou function }
+         */
         parseURL(pattern, tests = {}) {
             let url = window.location.pathname.split('/');
             pattern = pattern.split('/');

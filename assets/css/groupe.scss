@@ -1,17 +1,17 @@
-@import url(config.css);
-
 .groupe {
     > div {
         height: 100%;
     }
 
     .groupe-add {
+        overflow-y: scroll;
         padding: 10px;
 
         .header {
             border-radius: 10px;
 
-            background: var(--groupeadd-header-background);
+            // background in config.css
+            
             background-size: cover;
             background-position: center;
 
@@ -31,6 +31,10 @@
 
                     margin-bottom: 10px;
 
+                    overflow: hidden;
+                    height: calc(1.5em + 10px);
+                    text-align: right;
+
                     input {
                         width: 100%;
                         border: none;
@@ -43,14 +47,34 @@
 
                 .search:after {
                     content: "\e917";
+
                     font-family: 'icomoon' !important;
-
                     color: #7e7e7e;
-
-                    position: absolute;
-                    margin-left: -25px;
-                    margin-top: 5px;
+                    position: relative;
+                    left: -15px;
+                    top: -29px;
                 }
+            }
+        }
+
+        .search_result {
+            display: flex;
+            margin: 0 auto;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1000px;
+
+            .card {
+                color: inherit;
+                background-color: var(--groupe-card-background-color);
+                width: calc(25% - 2rem);
+                min-width: calc(25% - 2rem);
+                height: 300px;
+                min-height: 300px;
+                perspective: 1000px;
+                margin: 1rem;
+                position: relative;
             }
         }
     }

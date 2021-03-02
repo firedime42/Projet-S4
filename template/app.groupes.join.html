@@ -1,0 +1,30 @@
+<div class="content">
+    <img class="avatar" src="" />
+    <h1 class="nom text-center">{{ groupe.nom }}</h1>
+    <p class="descr text-justify">{{ groupe.descr }}</p>
+    <div class="text-center" data-visible="{{ IN groupe.status 'ex' 'invite' }}">
+        <button class="btn btn-primary">Rejoindre</button>
+    </div>
+    <div class="text-center" data-visible="{{ EQUALS groupe.status 'candidate' }}">
+        <button class="btn btn-primary">Abandoner la candidature</button>
+    </div>
+    <div class="text-center" data-visible="{{ EQUALS groupe.status 'membre' }}">
+        <a class="btn btn-primary" href="/app/groupes/{{ id }}/{{ root }}/">Entrer</a>
+    </div>
+</div>
+
+<script>
+    doc.update({
+        groupe: {
+            nom: "Super groupe test",
+            descr: "Lorem ipsum dolor sit amet, consectetur adip ",
+            status: "ex",
+
+        }
+    });
+
+    URLrooter.addListener('/app/groupes/$id/join', function ({ id }) {
+        let groupe = GROUPES.get(id);
+        doc.update({ groupe });
+    }, null, { id : /^[0-9]+$/ });
+</script>

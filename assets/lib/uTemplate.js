@@ -127,7 +127,7 @@
     }
 
     /**
-     * 
+     * Extrait les codes précompilés d'un text
      * @param {String} text 
      * @param {Object}
      */
@@ -162,9 +162,10 @@
 
 
     /**
-     * 
-     * @param {String} variableName chemin d'une variable "user.pomme.truc"
+     * récupere la valeur d'une variable
+     * @param {String} variable chemin d'une variable "user.pomme.truc"
      * @param {Object} data 
+     * @param {UpdTemplate} _this le template qui a appelé la fonciton
      */
     function _getValue(variable, data, _this) {
         let value;
@@ -183,6 +184,9 @@
         return value;
     }
 
+    /**
+     * Parse un code avec des données
+     */
     function _parseCode(code, data, _this) {
 
         let first_var = _getValue(code[0], data, _this);
@@ -201,6 +205,9 @@
         return value;
     }
 
+    /**
+     * Parse un enseble de codes
+     */
     function _parseCodes(codes, data, _this) {
         let res = codes.joins[0];
         let values = new Array(codes.nb_codes);
@@ -218,6 +225,10 @@
         return res;
     }
 
+    /**
+     * Renvoi l'ensemble des noeuds enfant du noeud passé en paramètre
+     * @param {Node} e le noeud parent
+     */
     function _childNodes(e) {
         let nb_nodes = e.childNodes.length;
         let nodes = new Array(nb_nodes);
@@ -240,8 +251,8 @@
 
         /**
          * 
-         * @param {String|Node|Array.<Node>} html 
-         * @param {Object|undefined} data 
+         * @param {String|Node|Array.<Node>} html la source du code du template
+         * @param {Object|undefined} data les données passé pour un premiere update
          */
         constructor(html, data) {
             // construction du context commun
@@ -287,10 +298,16 @@
             }
         }
 
+        /**
+         * Renvoi le noeud qui a contenu / contient les elements du template lors de la création de ce dernier.
+         */
         getElement() {
             return this.#element;
         }
 
+        /**
+         * Renvoi la liste des elements du template
+         */
         getElements() {
             return this.#elements;
         }
@@ -299,11 +316,19 @@
     class TemplateParser {
         #parsingCodes;
 
+        /**
+         * Permet de creer un parseur specifique au code html passé en paramètre
+         * @param {String} html 
+         */
         constructor (html) {
             this.#parsingCodes = _extractParsingCodes(html);
             this.ctx = Object.assign({}, uTemplate.BASIC_DATA);
         }
 
+        /**
+         * génère un nouvelle element contenant à partir du template et des données passés en paramètres
+         * @param {Object} data
+         */
         parse (data) {
             Object.assign(this.ctx, data);
             let html = _parseCodes(this.#parsingCodes, this.ctx);
@@ -314,7 +339,7 @@
     var uTemplate = {
         template: UpdTemplate,
         parser: TemplateParser,
-        BASIC_DATA: {
+        BASIC_DATA: { // fonctions disponibles par défaut.
             /**
              * Vérifie a == b
              */
