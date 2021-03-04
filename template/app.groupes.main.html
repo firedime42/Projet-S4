@@ -1,5 +1,3 @@
-
-
 <!-- fenetre centrale -->
 <div class="">
     {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
@@ -9,6 +7,7 @@
 
 <!-- fenetre chatbox -->
 {{ INCLUDE this.currentNode "/template/app.chatbox.html" }}
+
 
 <div class="groupe-header">
     <!-- Information sur le groupe  -->
@@ -48,4 +47,5 @@
     }
 
     URLrooter.addListener("/app/groupes/$id/$dir", checkGroupe, null, { id : /^[0-9]+$/, dir: /^(?:[0-9]+)?$/ });
+
 </script>

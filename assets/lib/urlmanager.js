@@ -171,7 +171,7 @@
         /**
          * fonction lancé lorsque l'url change
          * @warning NE DOIT PAS ETRE APPELER PAR LEXTERIEUR
-*/
+         */
         urlchange() {
             let _url = window.location.pathname.substr(1).split('/');
 
@@ -219,7 +219,7 @@
          * Parse l'url courante
          * @param {String} pattern 
          * @param {Object} tests { varname => regex ou function }
-*/
+         */
         parseURL(pattern, tests = {}) {
             let url = window.location.pathname.split('/');
             pattern = pattern.split('/');

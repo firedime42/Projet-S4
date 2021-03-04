@@ -1,6 +1,7 @@
 <div class="content">
     <img class="avatar" src="" />
     <h1 class="nom text-center">{{ groupe.nom }}</h1>
+
     <div class="descr">
         <div class="info">
             <div class="info-items"><em class="icon icon-groups"></em>{{ groupe.nb_membres }} membres</div>
@@ -17,6 +18,7 @@
     </div>
     <div class="btn-box text-center" data-visible="{{ EQUALS groupe.status 'membre' }}">
         <a class="btn btn-primary" href="/app/groupes/{{ groupe.id }}/{{ groupe.root }}/">{{ MARK this 'btn-enter' }}Entrer</a>
+
     </div>
 </div>
 
@@ -37,4 +39,5 @@
     }, null, { id : /^[0-9]+$/ });
 
     /* TO DO : connect buttons */
+
 </script>

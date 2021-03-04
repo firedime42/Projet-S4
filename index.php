@@ -37,6 +37,8 @@
     <script src="/assets/js/models/listenable.js"></script>
     <script src="/assets/js/models/user.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
+    <script src="/assets/js/models/groupe.js"></script>
+    <script src="/assets/js/models/search.js"></script>
 
     <script src="/assets/js/models/groupe.js"></script>
     <script src="/assets/js/models/search.js"></script>
@@ -74,7 +76,8 @@
                         <div class="nav-item dropdown" onclick="Dom.toggleClass(this.children[1], 'show');">
                             <div class="profil"><div class="avatar" data-avatar=""></div><span class="px-2">{{ user.username }}</span></div>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="/account/params">Paramètres</a>
+                                <a class="dropdown-item" href="/profil/">Mon Profil</a>
+                                <a class="dropdown-item" href="/account/params/">Paramètres</a>
                                 <a class="dropdown-item" href="/account/logout">Déconnexion</a>
                             </div>
                         </div>
@@ -99,7 +102,10 @@
         <div class="page" data-visible="{{ URLLIKE url '/account/*' }}">
             {{ INCLUDE this.currentNode "/template/account.html" }}
         </div>
-
+        <!-- profil -->
+        <div class="page" data-visible="{{ URLLIKE url '/profil/*' }}">
+            {{ INCLUDE this.currentNode "/template/profil.html" }}
+        </div>
         <!-- 404 page -->
         <div class="page" data-visible="{{ URLLIKE url '/404' }}"></div>
     </section>

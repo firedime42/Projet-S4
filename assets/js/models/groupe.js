@@ -78,6 +78,7 @@
 
         setData(groupe) {
 
+
             this.#nom    = groupe.nom    || this.#nom;
             this.#descr  = groupe.descr  || this.#descr;
             this.#root   = groupe.root   || this.#root;
@@ -92,6 +93,7 @@
         get descr() { return this.#descr; }
         get root() { return this.#root; }
         get status() { return this.#status; }
+
 
         get nb_membres() { return this.#nb_membres; }
 
@@ -121,6 +123,7 @@
             // verifier/recuperer les infos sur le serveur
             return this.#waiting[id];
         }
+
     }
 
     window.Groupe = Groupe;

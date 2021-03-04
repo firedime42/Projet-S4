@@ -28,7 +28,6 @@
         "hash_method" => "sha256"
     );
 
-
 <?php
     global $_CONFIG;
     $_CONFIG = array(
@@ -57,6 +56,5 @@
         # methode initial : "sha256"
         "hash_method" => "sha256"
     );
-
 
 ?>
