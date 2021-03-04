@@ -1,0 +1,49 @@
+<div class="explorer-header">
+    <div class="search">
+        <input type="text">
+    </div>
+    <nav class="">
+        <ul>
+            <li>dossiers</li>
+            <li>fichiers</li>
+            <li>flux</li>
+            <li>membres</li>
+        </ul>
+    </nav>
+</div>
+<div class="content scrollable">
+    <div class="folders" data-visible="true">
+
+    </div>
+    <div class="files" data-visible="true">
+
+    </div>
+    <div class="flux" data-visible="true">
+
+    </div>
+    <div class="membres" data-visible="true">
+        
+    </div>
+</div>
+<script>
+
+    doc.update({ groupe: {} });
+
+    async function setGroupe({ id, dir }) {
+        if (dir == "settings" || dir == "create" || dir == "join") return;
+
+        let groupe = await GROUPES.get(id);
+
+        //console.log($ctx.groupe);
+
+        doc.update({ groupe });
+    }
+
+    // parse url
+    setGroupe(URLrooter.parseURL("/app/groupes/$id/$dir", { id : /^[0-9]+$/ }));
+
+
+    URLrooter.addListener("/app/groupes/$id/$reste", setGroupe, null, { id : /^[0-9]+$/, $reste: /^[0-9]*(?:\/.*)*$/ });
+
+    
+</script>

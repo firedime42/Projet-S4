@@ -1,3 +1,4 @@
+
 <div class="params" data-visible="{{ user.isLoggedIn }}">
 
 	{{ INCLUDE this.currentNode "/template/account.params.sidebar.html" }}
@@ -12,6 +13,7 @@
 </div>
 
 <script>
+
 	doc.update({ user, url: window.location.pathname });
 
 	URLrooter.addListener(

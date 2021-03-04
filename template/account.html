@@ -7,7 +7,9 @@
 <div class="logout" data-visible="{{ URLLIKE url '/account/logout' }}">
     {{ INCLUDE this.currentNode "/template/account.logout.html" }}
 </div>
-<div class="params" data-visible="{{ URLLIKE url '/account/params/*' }}">
+
+<div class="params" data-visible="{{ URLLIKE url '/account/params' }}">
+
     {{ INCLUDE this.currentNode "/template/account.params.html" }}
 </div>
 <script>
