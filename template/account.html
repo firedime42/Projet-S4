@@ -7,6 +7,9 @@
 <div class="logout" data-visible="{{ URLLIKE url '/account/logout' }}">
     {{ INCLUDE this.currentNode "/template/account.logout.html" }}
 </div>
+<div class="params" data-visible="{{ URLLIKE url '/account/params/*' }}">
+    {{ INCLUDE this.currentNode "/template/account.params.html" }}
+</div>
 <script>
 
     Dom.addListener(window, 'pushstate', function (event) {// detection d'un changement d'url
@@ -17,4 +20,5 @@
     doc.update({
         url: window.location.pathname
     });
+
 </script>

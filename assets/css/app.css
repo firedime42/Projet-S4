@@ -1,4 +1,3 @@
-@import url(config.css);
 .app {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -79,7 +78,6 @@
 }
 
 .app .app-home {
-  background: var(--app-home-background);
   background-size: cover;
   background-position: center;
 }

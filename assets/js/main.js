@@ -2,16 +2,13 @@
 
 var ERRCODES = null;
 var CACHECODES = null;
+
 var user = new MainUser();
 
 fetch("/assets/js/ErrCodes.json").then(async function (r) {
     ERRCODES = await r.json();
 
     user.retrieveSession();
-});
-
-fetch("/assets/js/CACHECODES.json").then(async function (r) {
-    //CACHECODES = await r.json();
 });
 
 

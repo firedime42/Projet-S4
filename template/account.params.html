@@ -1,3 +1,30 @@
-<div>
-    
+<div class="params" data-visible="{{ user.isLoggedIn }}">
+
+	{{ INCLUDE this.currentNode "/template/account.params.sidebar.html" }}
+    <div class="params subpage">
+        <div class="params-home subpage" data-visible="{{ URLIN url '/account/params/main' '/account/params/' }}">
+            {{ INCLUDE this.currentNode '/template/account.params.main.html' }}
+        </div>
+        <div class="params-compte subpage" data-visible="{{ URLLIKE url '/account/params/compte' }}">
+            {{ INCLUDE this.currentNode '/template/account.params.compte.html' }}
+        </div>
+    </div>
 </div>
+
+<script>
+	doc.update({ user, url: window.location.pathname });
+
+	URLrooter.addListener(
+		"/account/params/*", 
+		function () {
+            console.log(uTemplate.BASIC_DATA.URLLIKE(
+                window.location.pathname,
+                '/account/params/compte'
+            ));
+            doc.update({ url: window.location.pathname });
+        },
+		function () {
+            doc.update({ url: window.location.pathname });
+        }
+	);
+</script>
