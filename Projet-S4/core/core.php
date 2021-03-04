@@ -9,5 +9,4 @@
         echo "error: database connection";
         die();
     }
-
 ?>

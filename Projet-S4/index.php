@@ -47,6 +47,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/app.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/chat.css"></link>
 </head>
 <body data-theme="light">
     <!-- nav bar -->

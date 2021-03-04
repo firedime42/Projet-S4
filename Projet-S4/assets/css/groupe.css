@@ -77,4 +77,79 @@
   margin: 1rem;
   position: relative;
 }
+
+.groupe .groupe-join {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.groupe .groupe-join .content {
+  max-width: 700px;
+  position: relative;
+  top: 80px;
+  margin: 0 auto;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.groupe .groupe-join .content h1 {
+  font-size: 3em;
+  margin-bottom: 40px;
+}
+
+.groupe .groupe-join .content .descr {
+  background-color: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+  padding: 20px 20px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.groupe .groupe-join .content .descr p {
+  max-height: 200px;
+  padding: 0 20px;
+  margin-bottom: 0;
+}
+
+.groupe .groupe-join .content .btn-box {
+  margin-bottom: 50px;
+}
+
+.groupe .groupe-join .content .btn-box .btn {
+  padding: 10px 40px;
+}
+
+.groupe .groupe-browse {
+  /* header d'un groupe*/
+}
+
+.groupe .groupe-browse .groupe-header {
+  height: 100px;
+  border-bottom: 1px solid #000;
+}
+
+.groupe .groupe-browse .groupe-main {
+  width: 100%;
+  height: calc(100% - 100px);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.groupe .groupe-browse .groupe-main .column {
+  height: 100%;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  -webkit-transition: 1s;
+  transition: 1s;
+}
+
+.groupe .groupe-browse .groupe-main .chat {
+  border-left: 1px solid #000;
+  height: 100%;
+}
 /*# sourceMappingURL=groupe.css.map */

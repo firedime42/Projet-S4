@@ -37,7 +37,7 @@
     let htmllist = {};
     htmllist["membre"] = doc.ctx.markedElement.groups;
     htmllist["candidat"] = doc.ctx.markedElement.groupsAsked;
-    htmllist["invite"] = doc.ctx.markedElement.groupsInvitations;
+    htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
 
     function _toggleSelected({ id }) {
         let selected = Dom.find(`[data-gid="${id}"] .groupItem`, doc.getElements()[0]); // selectionner celui qui a l'identifiant id
@@ -96,14 +96,9 @@
             await listGroup.update();
             let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
             if (r) _toggleSelected(r);
-            else {
-                r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
-                if (r) _toggleSelected(r);
-            }
         }
     });
 
     URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
-    URLrooter.addListener('/app/groupes/$id', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
 
 </script>
