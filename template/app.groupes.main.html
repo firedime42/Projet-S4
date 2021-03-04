@@ -1,3 +1,15 @@
+
+
+<!-- fenetre centrale -->
+<div class="">
+    {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
+    <!---->
+    {{ INCLUDE this.currentNode "/template/app.preview.html" }}
+</div>
+
+<!-- fenetre chatbox -->
+{{ INCLUDE this.currentNode "/template/app.chatbox.html" }}
+
 <div class="groupe-header">
     <!-- Information sur le groupe  -->
     <h1>{{ groupe.nom }}</h1>

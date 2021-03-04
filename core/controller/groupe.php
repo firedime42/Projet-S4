@@ -7,6 +7,7 @@ $res = array(
     "error" => -1
 );
 
+
 $groups = [
     array("id" =>  0, "nom" => "CCG",                            "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules."),
     array("id" =>  1, "nom" => "NERV",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges."),
@@ -77,10 +78,14 @@ function scoreQuery($query, $data) {
 }
 
 
-
 switch ($_post->action) {
     case "list":
         $res["success"] = true;
+        $res["groups"] = array_filter($groups, function($v) {
+            global $_post;
+            return $v["time"] > $_post->time;
+        });
+    break;
 
         $mesgroupes = array_filter($groupeJoin, function ($e) { return $e['user_id'] == 0; });
         $mesgroupes = emulateJoin(

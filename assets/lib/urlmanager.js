@@ -25,6 +25,7 @@
         }
     }
 
+
     /**
      * Indique si une liste contient un element
      * @param {Array<*>} list 
@@ -37,6 +38,7 @@
         return i < nb_elements;
     }
 
+
     History.pushState = _createEventTrigger(History.pushState, "pushstate");// when history is changed by scripts
     window.addEventListener('popstate', () => window.dispatchEvent(new Event("pushstate")));// when history is changed by user
 
@@ -46,6 +48,7 @@
      * @param {String} url 
      */
     function goTo (url) {
+
         // on formate l'url
         url = new URL(url, window.location.href);
 
@@ -101,7 +104,7 @@
          * @param {Function} match la fonction à executer lorsque l'url match <path>
          * @param {Function} unmatch fonction à executer lorsque l'url ne match pas <path> n'est executé que la première fois
          * @param {Object} tests Conditions sur les variables { nom variable => fonction ou regex }
-         * /
+*/
         addListener(pattern, match, unmatch, tests={}) {
             if (pattern.startsWith('/')) pattern = pattern.substr(1);// remove the first char
 
@@ -150,7 +153,7 @@
          * @param {Array.<String>} url 
          * @param {Object} listener 
          * @param {Boolean} match indiquant si l'url match ou pas
-         * /
+*/
         execListener(url, listener, match) {
             if (match && typeof listener.match == 'function') {
                 let varobject = {};
@@ -168,7 +171,7 @@
         /**
          * fonction lancé lorsque l'url change
          * @warning NE DOIT PAS ETRE APPELER PAR LEXTERIEUR
-         * /
+*/
         urlchange() {
             let _url = window.location.pathname.substr(1).split('/');
 
@@ -216,7 +219,7 @@
          * Parse l'url courante
          * @param {String} pattern 
          * @param {Object} tests { varname => regex ou function }
-         * /
+*/
         parseURL(pattern, tests = {}) {
             let url = window.location.pathname.split('/');
             pattern = pattern.split('/');
@@ -252,7 +255,6 @@
             return (pattern_match) ? data : false;
         }
     }
-*/
 
     class URLrooter {
         #listeners;
@@ -431,7 +433,6 @@
             return match ? this.__varsValues(url, ppattern.vars) : null; 
         }
     }
-
     window.setURL = goTo;
     window.URLrooter = new URLrooter();
 })(window, document);

@@ -30,6 +30,7 @@
     let r = await fetch("/template/app.sidebar.groupeItem.html");
     let html = await r.text();
 
+
     let listGroup = new ListGroupe();
 
     groupeItem = new uTemplate.parser(html);
@@ -38,6 +39,7 @@
     htmllist["membre"] = doc.ctx.markedElement.groups;
     htmllist["candidat"] = doc.ctx.markedElement.groupsAsked;
     htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
+
 
     function _toggleSelected({ id }) {
         let selected = Dom.find(`[data-gid="${id}"] .groupItem`, doc.getElements()[0]); // selectionner celui qui a l'identifiant id
@@ -50,6 +52,7 @@
         
         selected[0].setAttribute("data-selected", "true");
     }
+
 
     function _removeAllSelected() {
         let other = Dom.find(`[data-gid] .groupItem`, doc.getElements()[0]); // selectionner ceux qui ne l'ont pas
@@ -83,6 +86,7 @@
 
     if (user.isLoggedIn)
         listGroup.update().then(function () {
+
             let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
             if (r) _toggleSelected(r);
             else {
@@ -94,11 +98,15 @@
     user.addListener(MainUser.EVENT_STATE_CHANGE, async function () {
         if (user.isLoggedIn) {
             await listGroup.update();
+
             let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
+
             if (r) _toggleSelected(r);
         }
     });
 
+
+    window.LG = listGroup;
     URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
 
 </script>

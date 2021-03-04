@@ -43,9 +43,11 @@ body[data-theme="light"] {
 /**
  * Les fonds d'écrans non pas le choix d'être representer de cette manière pour des soucis d'efficacitée
  */
+
 body[data-theme="light"] .app .app-home { background-image: url(/assets/img/eezy_03.svg); } 
 body[data-theme="light"] .groupe .groupe-add .header { background-image: url(/assets/img/eezy_79.svg); }
 body[data-theme="light"] .groupe .groupe-join { background-image: url(/assets/img/eezy_08.svg); }
+
 
 body[data-theme="dark"] {
     /* paramètre generale */
