@@ -1,0 +1,65 @@
+@charset "UTF-8";
+html {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  --site-nav-height: 56px;
+  background-color: var(--site-background-color);
+  font-family: var(--site-font-family);
+  color: var(--site-text-color);
+}
+
+body p {
+  text-align: justify;
+}
+
+body .text-center p {
+  text-align: center;
+}
+
+body section {
+  position: absolute;
+  top: var(--site-nav-height);
+  height: calc(100vh - var(--site-nav-height));
+  width: 100vw;
+}
+
+body section .page {
+  height: 100%;
+  width: 100vw;
+}
+
+body section .page .content {
+  padding: 40px 15px;
+}
+
+body section .subpage {
+  height: 100%;
+}
+
+/* controle visible or not*/
+*[data-visible=false] {
+  display: none !important;
+}
+
+/* CUSTOM SCROLLBAR */
+/* TODO : placer certains paramètre comme les couleurs en variable lié au theme */
+.scrollable::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  background-color: #eee;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  border-radius: 1rem;
+  background-color: #00d2ff;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#00d2ff), to(#3a7bd5));
+  background-image: linear-gradient(to top, #00d2ff 0%, #3a7bd5 100%);
+}
+/*# sourceMappingURL=main.css.map */
