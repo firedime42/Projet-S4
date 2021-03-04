@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 <?php
     require_once dirname(__FILE__).'/config.php';
 
@@ -11,7 +11,6 @@
         die();
     }
 
-=======
 <?php
     require_once dirname(__FILE__).'/config.php';
 
@@ -23,6 +22,4 @@
         echo "error: database connection";
         die();
     }
-
->>>>>>> Stashed changes
 ?>

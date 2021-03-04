@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 <?php
     global $_CONFIG;
     $_CONFIG = array(
@@ -28,7 +28,7 @@
         "hash_method" => "sha256"
     );
 
-=======
+
 <?php
     global $_CONFIG;
     $_CONFIG = array(
@@ -58,5 +58,5 @@
         "hash_method" => "sha256"
     );
 
->>>>>>> Stashed changes
+
 ?>

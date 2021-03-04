@@ -30,14 +30,16 @@
     let r = await fetch("/template/app.sidebar.groupeItem.html");
     let html = await r.text();
 
-    groupeItem = new uTemplate.parser(html);
 
     let listGroup = new ListGroupe();
+
+    groupeItem = new uTemplate.parser(html);
 
     let htmllist = {};
     htmllist["membre"] = doc.ctx.markedElement.groups;
     htmllist["candidat"] = doc.ctx.markedElement.groupsAsked;
-    htmllist["invite"] = doc.ctx.markedElement.groupsInvitations;
+    htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
+
 
     function _toggleSelected({ id }) {
         let selected = Dom.find(`[data-gid="${id}"] .groupItem`, doc.getElements()[0]); // selectionner celui qui a l'identifiant id
@@ -49,6 +51,13 @@
             other[i].setAttribute("data-selected", "false");
         
         selected[0].setAttribute("data-selected", "true");
+    }
+
+
+    function _removeAllSelected() {
+        let other = Dom.find(`[data-gid] .groupItem`, doc.getElements()[0]); // selectionner ceux qui ne l'ont pas
+        for (let i = 0, nb_groupes = other.length; i < nb_groupes; i++)
+            other[i].setAttribute("data-selected", "false");
     }
 
 
@@ -77,20 +86,27 @@
 
     if (user.isLoggedIn)
         listGroup.update().then(function () {
-            let r = URLrooter.parseURL('/app/groupes/$id/');
+
+            let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
             if (r) _toggleSelected(r);
+            else {
+                r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
+                if (r) _toggleSelected(r);
+            }
         })
 
     user.addListener(MainUser.EVENT_STATE_CHANGE, async function () {
         if (user.isLoggedIn) {
             await listGroup.update();
-            let r = URLrooter.parseURL('/app/groupes/$id/');
+
+            let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
+
             if (r) _toggleSelected(r);
         }
     });
 
-    URLrooter.addListener('/app/groupes/$id/', _toggleSelected);
 
     window.LG = listGroup;
+    URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
 
 </script>

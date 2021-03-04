@@ -38,12 +38,20 @@
     <script src="/assets/js/models/user.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
 
+    <script src="/assets/js/models/groupe.js"></script>
+    <script src="/assets/js/models/search.js"></script>
+
     <!-- feuille de style -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/config.css"></link>
+
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/nav.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/app.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>
+
+    <link rel="stylesheet" type="text/css" href="/assets/css/chat.css"></link>
+
 </head>
 <body data-theme="light">
     <!-- nav bar -->
