@@ -1,0 +1,42 @@
+<div class="content">
+    <img class="avatar" src="" />
+    <h1 class="nom text-center">{{ groupe.nom }}</h1>
+
+    <div class="descr">
+        <div class="info">
+            <div class="info-items"><em class="icon icon-groups"></em>{{ groupe.nb_membres }} membres</div>
+            <div class="info-items"><em class="icon icon-chat"></em>{{ groupe.nb_messages }} messages</div>
+            <div class="info-items"><em class="icon icon-file-text"></em>{{ groupe.nb_files }} documents</div>
+        </div>
+        <p class="text-justify scrollable">{{ groupe.descr }}</p>
+    </div>
+    <div class="btn-box text-center" data-visible="{{ IN groupe.status 'left' 'invite' }}">
+        <button class="btn btn-primary">{{ MARK this 'btn-join' }}Rejoindre</button>
+    </div>
+    <div class="btn-box text-center" data-visible="{{ EQUALS groupe.status 'candidat' }}">
+        <button class="btn btn-primary">{{ MARK this 'btn-giveup' }}Abandoner la candidature</button>
+    </div>
+    <div class="btn-box text-center" data-visible="{{ EQUALS groupe.status 'membre' }}">
+        <a class="btn btn-primary" href="/app/groupes/{{ groupe.id }}/{{ groupe.root }}/">{{ MARK this 'btn-enter' }}Entrer</a>
+
+    </div>
+</div>
+
+<script>
+    doc.update({
+        groupe: {
+            nom: "Super groupe test",
+            descr: "Lorem ipsum dolor sit amet, consectetur adip ",
+            status: "ex",
+
+        }
+    });
+
+    URLrooter.addListener('/app/groupes/$id/join', async function ({ id }) {
+        let groupe = await GROUPES.get(id);
+        doc.update({ groupe });
+    }, null, { id : /^[0-9]+$/ });
+
+    /* TO DO : connect buttons */
+
+</script>

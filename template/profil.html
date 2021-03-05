@@ -1,0 +1,45 @@
+<div>
+	<div style="width: 100%; height: 100px; background-image: url({{ user.banner }}); background-size: cover;"></div>
+
+	<img src="{{ user.picture }}">
+	<h2> {{ user.nom }} </h2> 
+
+	<label for="biography">Modifier votre Biographie</label>
+
+	<textarea name="biography" rows="5" cols="33"> {{ user.biography }} </textarea>  <!-- Fonction modif bio -->
+
+	<div>	
+		<p>Derniers Messages </p><!-- Oscours, je sais pas quoi mettre --> 
+	</div>
+
+	<table class="statsProfil">
+		<tr>
+			<td> Temps passé sur le site : </td>
+			<td> {{ user.time }} secondes</td> <!-- Fonction secondes -> heures, minutes, secondes -->
+		</tr>
+		<tr>
+			<td>Nb de messages postés : </td>
+			<td>{{ user.nbMessages }}</td>
+		</tr>
+		<tr>
+			<td>Nombres de Groupes rejoint : </td>
+			<td>{{ user.nbGroupe }}</td>
+		</tr>
+	</table>
+</div>
+
+
+<script type="text/javascript">
+	doc.update({
+		user: {
+			"id": 0123,
+			"nom": "Ladar",
+			"picture":"/assets/img/tmp/pp.jpeg",
+			"banner" :"/assets/img/tmp/banner.gif",
+			"biography" : "Blab bal bal we don't care \n\n -Someone",
+			"time":"580",
+			"nbMessages":"8326",
+			"nbGroupe":"6"
+		}
+	});
+</script>
