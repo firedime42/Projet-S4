@@ -4,9 +4,9 @@
         "sitename" => "Shared",
 
         # base de données
-        "db_host" => "",
-        "db_name" => "",
-        "db_user" => "",
+        "db_host" => "localhost",
+        "db_name" => "share",
+        "db_user" => "root",
         "db_password" => "",
 
         # session
