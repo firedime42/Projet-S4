@@ -40,7 +40,7 @@
     }
 
     // parse url
-    setGroupe(URLrooter.parseURL("/app/groupes/$id/$dir", { id : /^[0-9]+$/ }));
+    //setGroupe(URLrooter.parseURL("/app/groupes/$id/$dir", { id : /^[0-9]+$/ }));
 
 
     URLrooter.addListener("/app/groupes/$id/$reste", setGroupe, null, { id : /^[0-9]+$/, $reste: /^[0-9]*(?:\/.*)*$/ });

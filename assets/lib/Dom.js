@@ -706,9 +706,11 @@
         element._event[event].keys.push(listener);
         var _listener = function(e) {
             var evt = new Dom.Event(e);
-            if (listener.call(element, evt) === false && typeof e.stop == 'function') {
+            var stop = listener.call(element, evt);
+            if (stop === false && typeof e.stop == 'function') {
                 e.stop();
             }
+            return stop !== false;
         };
         element._event[event].values.push(_listener);
 

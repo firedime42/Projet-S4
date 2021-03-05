@@ -31,7 +31,6 @@
 
         }
     });
- { id : /^[0-9]+$/ });
 
     URLrooter.addListener('/app/groupes/$id/join', async function ({ id }) {
         let groupe = await GROUPES.get(id);

@@ -63,12 +63,12 @@
             }
 
             if ( !Dom.isReady() ) {
-
                 //console.log("error isnt ready", node, url);
                 Dom.ready(function () {
                     uTemplate.BASIC_DATA.INCLUDE(node, url);
                 });
                 return;
+            }
 
             if ( !Dom.isVisible(node) ) {
                 //console.log("error isnt visible", node.parentElement, url);
@@ -141,9 +141,7 @@
          * @param {String} url l'url de la page
          * @param {String} urlpattern le pattern de l'url
          */
-
         URLLIKE: function (url, urlpattern = "", tests= {}) {
-
             if (urlpattern == "") {
                 urlpattern = url;
                 url = window.location.pathname;
@@ -161,7 +159,6 @@
             let nb_patterns = urlpatterns.length;
             while (i < nb_patterns && !uTemplate.BASIC_DATA.URLLIKE(url, urlpatterns[i])) i++;
             return i < nb_patterns;
-
         },
 
         /**
@@ -171,7 +168,6 @@
          */
         CURRENT_URL_MATCH: function (urlpattern, tests = {}) {
             return !!URLrooter.parseURL(urlpattern, tests);
-
         }
     });
 })(uTemplate);

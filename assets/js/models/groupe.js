@@ -43,14 +43,11 @@
 
     class Groupe {
         #id;
-
         #lastUpdate;
-
         #nom;
         #descr;
         #status;
         #root;
-
         #nb_membres;
 
         #lastCheck;
@@ -72,20 +69,16 @@
     
             if (r.groupe != null) this.setData(r.groupe);
 
-
             return this;
         }
 
         setData(groupe) {
-
-
             this.#nom    = groupe.nom    || this.#nom;
             this.#descr  = groupe.descr  || this.#descr;
             this.#root   = groupe.root   || this.#root;
             this.#status = groupe.status || this.#status;
             this.#nb_membres = groupe.nb_membres || this.#nb_membres;
             this.#lastUpdate = groupe.lastUpdate || this.#lastUpdate;
-
         }
 
         get id() { return this.#id; }
@@ -93,15 +86,11 @@
         get descr() { return this.#descr; }
         get root() { return this.#root; }
         get status() { return this.#status; }
-
-
         get nb_membres() { return this.#nb_membres; }
-
     }
 
     class GroupeManager {
         #groupes;
-
         #waiting;
 
         constructor () {
@@ -123,7 +112,6 @@
             // verifier/recuperer les infos sur le serveur
             return this.#waiting[id];
         }
-
     }
 
     window.Groupe = Groupe;

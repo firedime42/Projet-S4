@@ -48,7 +48,6 @@ body section .subpage {
 
 /* CUSTOM SCROLLBAR */
 /* TODO : placer certains paramètre comme les couleurs en variable lié au theme */
-
 .scrollable {
   overflow-y: auto;
 }

@@ -7,8 +7,6 @@ $res = array(
     "error" => -1
 );
 
-
-
 $groups = [
     array("id" =>  0, "nom" => "CCG",                            "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules."),
     array("id" =>  1, "nom" => "NERV",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges."),
@@ -79,72 +77,10 @@ function scoreQuery($query, $data) {
 }
 
 
-function distanceLevenshtein($str1, $str2, $max_cout) {
-    $len_str1 = strlen($str1);
-    $len_str2 = strlen($str2);
-
-    $prev_line = array();
-
-    for ($j = 0; $j < $len_str2; $j++)
-        $prev_line[] = $j;
-
-    for ($i = 1; $i < $len_str1; $i++) {
-        $line = array($i);
-        for ($j = 1; $j < $len_str2; $j++) {
-            $coutSubstitution = ($str1[$i] == $str2[$j]) ? 0 : 1;
-
-            $line[] = min(
-                $prev_line[$j] + 1,
-                $line[$j - 1] + 1,
-                $prev_line[$j - 1] + $coutSubstitution
-            );
-
-            if ($line[$j] >= $max_cout) return $max_cout; // exit if cout exceeds limit
-        }
-        $prev_line = $line;
-    }
-
-    return $prev_line[$len_str2 - 1];
-}
-
-function scoreQuery($query, $data) {
-    $score = 0.0;
-
-    $nb_mot_query = count($query);
-    $nb_mot_data = count($data);
-
-    for ($i = 0; $i < $nb_mot_query; $i++) {
-        $mot_score = 0.0;
-        $len_mot = strlen($query[$i]);
-        $max_diff = .5 * $len_mot;
-
-        for ($j = 0; $j < $nb_mot_data && $mot_score < 2.0; $j++)
-            if ($query[$i] == $data[$j])
-                $mot_score += 1.0;
-            else if (stripos($data[$j], $query[$i]) !== false || stripos($query[$i], $data[$j]) !== false )
-                $mot_score += 0.25;
-            else if (strlen($data[$j]) >= 2) {
-                $d = distanceLevenshtein($query[$i], $data[$j], $max_diff);
-                if ($d < $max_diff)
-                    $mot_score += ($len_mot - $d) / $len_mot;
-            }
-
-        $score += $mot_score;
-    }
-
-    return $score;
-}
-
-
 
 switch ($_post->action) {
     case "list":
         $res["success"] = true;
-        $res["groups"] = array_filter($groups, function($v) {
-            global $_post;
-            return $v["time"] > $_post->time;
-        });
-    break;
 
         $mesgroupes = array_filter($groupeJoin, function ($e) { return $e['user_id'] == 0; });
         $mesgroupes = emulateJoin(

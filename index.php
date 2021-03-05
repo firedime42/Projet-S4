@@ -51,7 +51,6 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/app.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>
-
     <link rel="stylesheet" type="text/css" href="/assets/css/chat.css"></link>
 
 </head>
@@ -102,10 +101,12 @@
         <div class="page" data-visible="{{ URLLIKE url '/account/*' }}">
             {{ INCLUDE this.currentNode "/template/account.html" }}
         </div>
+
         <!-- profil -->
-        <div class="page" data-visible="{{ URLLIKE url '/profil/*' }}">
+        <div class="page scrollable" data-visible="{{ URLLIKE url '/profil/*' }}">
             {{ INCLUDE this.currentNode "/template/profil.html" }}
         </div>
+
         <!-- 404 page -->
         <div class="page" data-visible="{{ URLLIKE url '/404' }}"></div>
     </section>
