@@ -41,7 +41,7 @@
                         border-radius: 8px;
 
                         background-color: transparent;
-                        padding: 5px 40px 5px 25px;
+                        padding: 5px 25px 5px 40px;
                     }
                 }
 
@@ -51,7 +51,7 @@
                     font-family: 'icomoon' !important;
                     color: #7e7e7e;
                     position: relative;
-                    left: -15px;
+                    left: -230px;
                     top: -29px;
                 }
             }
@@ -75,6 +75,95 @@
                 perspective: 1000px;
                 margin: 1rem;
                 position: relative;
+            }
+        }
+    }
+
+    .groupe-join {
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        .content {
+            max-width: 700px;
+            position: relative;
+            top: 80px;
+            margin: 0 auto;
+            align-items: center;
+
+            h1 {
+                font-size: 3em;
+                margin-bottom: 40px;
+            }
+
+            .descr {
+                background-color: rgba(255,255,255,.8);
+                backdrop-filter: blur(2px); 
+                padding: 20px 20px;
+                border-radius: 20px;
+                margin-bottom: 20px;
+
+                p {
+                    max-height: 200px;
+                    padding: 0 20px;
+                    margin-bottom: 0;
+                }
+            }
+
+            .btn-box {
+                margin-bottom: 50px; 
+
+                .btn {
+                    padding: 10px 40px;
+
+                }
+            }
+        }
+
+        .search_result {
+            display: flex;
+            margin: 0 auto;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1000px;
+
+            .card {
+                color: inherit;
+                background-color: var(--groupe-card-background-color);
+                width: calc(25% - 2rem);
+                min-width: calc(25% - 2rem);
+                height: 300px;
+                min-height: 300px;
+                perspective: 1000px;
+                margin: 1rem;
+                position: relative;
+            }
+        }
+    }
+
+    .groupe-browse {
+
+        /* header d'un groupe*/
+        .groupe-header {
+            height: 100px;
+            border-bottom: 1px solid #000;
+        }
+
+        .groupe-main {
+            width: 100%;
+            height: calc(100% - 100px); // soustrait la hauteur du header
+            display: flex; // permet de mettre les colonnes cotes à cotes
+
+            .column {
+                height: 100%;
+                flex: 0 0 auto;
+                transition: 1s;
+            }
+
+            .chat {
+                border-left: 1px solid #000;
+                height: 100%;
             }
         }
     }

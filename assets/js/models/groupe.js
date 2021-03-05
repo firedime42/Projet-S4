@@ -43,32 +43,42 @@
 
     class Groupe {
         #id;
+        #lastUpdate;
         #nom;
         #descr;
         #status;
         #root;
-        #nb_membre;
+        #nb_membres;
 
-        constructor() {
+        #lastCheck;
+
+        constructor(id) {
+            this.#id = id;
+            this.#lastUpdate = 0;
+            this.#lastCheck = 0;
         }
 
-        async load(id) {
-            let r =  __getGroupeInfo(id, time = 0);
+        async load() {
+            if (new Date().getTime() - this.#lastCheck < 5000) return this;
+
+            let r = await __getGroupeInfo(this.#id, this.#lastUpdate);
+
+            this.lastCheck = new Date().getTime();
     
             if (r instanceof Error) return r;
     
-            this.setData(r);
+            if (r.groupe != null) this.setData(r.groupe);
 
             return this;
         }
 
         setData(groupe) {
-            this.#id = groupe.id || this.#id;
-            this.#nom = groupe.nom || this.#nom;
-            this.#descr = groupe.descr || this.#descr;
-            this.#root = groupe.root || this.#root;
+            this.#nom    = groupe.nom    || this.#nom;
+            this.#descr  = groupe.descr  || this.#descr;
+            this.#root   = groupe.root   || this.#root;
             this.#status = groupe.status || this.#status;
-            this.#nb_membre = groupe.nb_membre || this.#nb_membre;
+            this.#nb_membres = groupe.nb_membres || this.#nb_membres;
+            this.#lastUpdate = groupe.lastUpdate || this.#lastUpdate;
         }
 
         get id() { return this.#id; }
@@ -76,21 +86,32 @@
         get descr() { return this.#descr; }
         get root() { return this.#root; }
         get status() { return this.#status; }
-        get nb_membre() { return this.#nb_membre; }
+        get nb_membres() { return this.#nb_membres; }
     }
 
     class GroupeManager {
         #groupes;
+        #waiting;
 
         constructor () {
             this.#groupes = {};
+            this.#waiting = {};
         }
 
-/** A FINIR */
+        get(id) {
+            if (this.#waiting[id]) return this.#waiting[id];
 
-        get(id) { return this.#groupes[id]; }
+            let _this = this;
 
+            // creer ou récuperer le groupe
+            this.#groupes[id] = this.#groupes[id] || new Groupe(id);
 
+            this.#waiting[id] = this.#groupes[id].load();
+            this.#waiting[id].then(function () { _this.#waiting[id] = null; });
+
+            // verifier/recuperer les infos sur le serveur
+            return this.#waiting[id];
+        }
     }
 
     window.Groupe = Groupe;

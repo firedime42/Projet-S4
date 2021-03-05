@@ -76,7 +76,6 @@
             
             this.emit("newSearch");
 
-
             await this.loadMore();
 
             return this.#results;
