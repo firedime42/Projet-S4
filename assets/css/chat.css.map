@@ -1,9 +1,0 @@
-{
-    "version": 3,
-    "mappings": "AACA,AAEI,KAFC,CAED,aAAa,CAAC;EACV,MAAM,EAAE,iBAAiB;CAC5B;;AAJL,AAMI,KANC,CAMD,SAAS,CAAC;EACN,MAAM,EAAE,IAAI;CAMf;;AAbL,AASQ,KATH,CAMD,SAAS,CAGL,WAAW,CAAC;EACR,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,IAAI;CACf",
-    "sources": [
-        "chat.scss"
-    ],
-    "names": [],
-    "file": "chat.css"
-}
