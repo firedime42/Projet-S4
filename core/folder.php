@@ -135,9 +135,36 @@ function renomer_dossier($folderId, $name){
 	mysqli_close($sql);
 }
 
+function renomer_fichier($fileId, $newName){
+
+	$sql = sqlconnect();
+	$querry = "UPDATE `File` SET `name` = '$newName' WHERE `File`.`id` = $fileId;";
+
+	$res = mysqli_query($sql, $querry);
+	mysqli_close($sql);
+}
+
 function supprimer_dossier($folderId){
 
-	// Demander de voir comment on gère la suppression
+	// Demander de voir comment on gère la suppression	
+}
+
+function deplacer_fichier($fileId, $newFolderId){
+
+	$sql = sqlconnect();
+	$querry = "UPDATE `File` SET `location` = '$newFolderId' WHERE `File`.`id` = $fileId;";
+
+	$res = mysqli_query($sql, $querry);
+	mysqli_close($sql);
+}
+
+function deplacer_dossier($folderId, $newFolderId){
+
+	$sql = sqlconnect();
+	$querry = "UPDATE `folder` SET `parentFolderId` = '$newFolderId', `rootFoldrer` = b'0' WHERE `folder`.`idFolder` = $folderId;";
+
+	$res = mysqli_query($sql, $querry);
+	mysqli_close($sql);
 }
 
 
