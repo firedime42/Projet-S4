@@ -48,33 +48,3 @@ function valide_membre($id_utilisateur, $id_proprietaire, $id_groupe) {
 function supprime_membre($id_utilisateur, $id_groupe) {
 
 }
-function id_to_nom($id){
-	return false;
-}
-function id_to_status($id){
-	return false;
-}
-function id_to_descr($id){
-	return false;
-}
-function id_to_avatar($id){
-	return false;
-}
-function id_to_root($id){
-	return false;
-}
-function id_to_membres($id){
-	return false;
-}
-function id_to_messages($id){
-	return false;
-}
-function id_to_nbFiles($id){
-	return false;
-}
-function id_to_lastUpdate($id){
-	return false;
-}
-function nb_groups(){
-	return 0;
-}

@@ -1,5 +1,5 @@
 <?php
-
+require_once("groupe.php");
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
@@ -80,6 +80,53 @@ function scoreQuery($query, $data) {
 
 switch ($_post->action) {
     case "list":
+        break;
+    case "info":
+        if($_post->id==NULL) $res["error"]=4000;
+        elseif (cherche_groupe_id($post->id)) $res["error"]=4000;
+        elseif ($post->time==NULL) $res["error"]=4000;
+        elseif( $post->time==id_to_lastUpdate($_post->id)){
+            $res["success"]=true;
+            $res["groupe"]=NULL;
+        }
+        else {
+            $res["success"]=true;
+            $res["groupe"]= array(
+                "id" => $_post->id,
+                "nom" => id_to_nom($_post->id),
+                "status" => id_to_status($_post->id),
+                "descr" => id_to_descr($_post->id),
+                "avatar" => id_to_avatar($_post->id),
+                "root" => id_to_root($_post->id),
+                "nb_membres" => id_to_membres($_post->id),
+                "nb_messages" => id_to_messages($_post->id),
+                "nb_files" => id_to_nbFiles($_post->id),
+                "lastUpdate" => id_to_lastUpdate($_post->id)
+            );
+            }
+        break;
+    case "search":
+        if($_post->nb_results<=0) $res["error"]=4001;
+        elseif($_post->query!=NULL){
+            for($i=0;$i<nb_groups();$i++){
+
+
+                $group=array(
+                    "id" => $id,
+                    "nom" => id_to_nom($id),
+                    "descr" => id_to_descr($id),
+                    "avatar" => id_to_avatar($id),
+                    "nb_membre" => id_to_membres($id)
+                );
+                $groups[$i]=$group;
+            }
+            
+            $res["results"]=$groups;
+        }else{
+            $res["error"]=4000;
+        }
+        break;
+    /*case "list":
         $res["success"] = true;
 
         $mesgroupes = array_filter($groupeJoin, function ($e) { return $e['user_id'] == 0; });
@@ -146,7 +193,7 @@ switch ($_post->action) {
 
         }
 
-    break;
+    break;*/
     default: $res["error"] = 0; break;
 }
 

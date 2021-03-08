@@ -1,0 +1,38 @@
+function email_to_id($_post->login)  //renvoie l'email associé a l'id
+function username_to_id($_post->login)   //renvoie l'username associé a l'id
+
+function id_to_email($id)    //renvoie l'id associé a l'email
+function id_to_username($id)   //renvoie l'id associé au login
+
+function connecte_utilisateur_email($_post->email, $mot_de_passe)    //renvoie un bool : true si la combinaison mot de passe/login est juste
+function connecte_utilisateur_username($_post->login, $mot_de_passe)    //renvoie un bool
+
+function cherche_username  //renvoie un bool
+function cherche_email   //renvoie un bool
+
+function force_password($_post->password)    //renvoie un bool : true si le mdp est suffisament fort
+function format_mail($_post->email)  //renvoie un bool : true si le mail est au bon format
+function format_username($_post->login) //renvoie un bool : true si l'username est au bon format
+
+
+
+function id_to_nom($_post->id)
+function id_to_status($_post->id)
+function id_to_descr($_post->id)
+function id_to_avatar($_post->id)
+function id_to_root($_post->id)
+function id_to_membres($_post->id)
+function id_to_messages($_post->id)
+function id_to_nbFiles($_post->id)
+function id_to_lastUpdate($_post->id)
+function nb_groups() //renvoie le nombre de groupes dans la Bdd
+
+Questions : 
+ 
+ Gestion du mot de passe ?
+ Deconnexion user ? Qu'est ce qui est attendu ?
+ 
+ "page_first": Number
+ 
+
+
