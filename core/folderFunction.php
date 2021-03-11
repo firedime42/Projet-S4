@@ -25,7 +25,7 @@ function ajoute_dossier_racine($groupId){
 	mysqli_close($sql);
 }
 
-function ajoute_dossier($name, $idParentFolder){
+function ajoute_dossier($name, $idParentFolder,$groupId){
 
 	$sql = sqlconnect();
 	$querry = "INSERT INTO 
@@ -155,8 +155,11 @@ function supprimer_dossier($folderId){
 // 	return $res;	
 // }
 
+function recup_folder_id($id){
+	return false;
+}
 
-
-
-?>
-
+function create_folder($nom,$parent){
+	$id_cree=0;
+	return $id_cree;
+}

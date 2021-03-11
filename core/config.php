@@ -4,11 +4,11 @@
         "sitename" => "Shared",
 
         # base de données
-        "db_host" => "",
-        "db_name" => "",
-        "db_user" => "",
+        "db_host" => "localhost",//"51.178.54.52",
+        "db_name" => "Share",
+        "db_user" => "root",
         "db_password" => "",
-
+        
         # session
         "session_keepalive" => 365 * 24 * 3600, # seconds
         "max_concurrent_sessions" => 3,         # nombre maximum de sessions simultanées (3 ~> 3 appareils)
@@ -22,7 +22,7 @@
         "password_nb_special_char" => 0,
 
 
-        # la modification de la methode si dessous rend obselete les anciens mots de passe.
+        # la modification de la methode si dessous rend obsolete les anciens mots de passe.
         # methode initial : "sha256"
         "hash_method" => "sha256"
     );

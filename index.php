@@ -1,7 +1,8 @@
 <?php
 
 //require_once dirname(__FILE__).'/core/modules/mainuser.php';
-
+require_once dirname(__FILE__)."/core/sql.php";
+sqlconnect();
 ?>
 
 <!DOCTYPE html>
