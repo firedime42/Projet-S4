@@ -82,17 +82,23 @@ function modifie_mot_de_passe_utilisateur($id, $ancien_mot_de_passe, $mot_de_pas
 
 function format_mail($email){
 	$res=true;
+	$log=str_split($email);
+	foreach($log as $element){
+		if ($element==" ") {
+			$res=false;
+		}
+	}
 	return $res;
 } //renvoie un bool : true si le mail est au bon format
 function format_username($login){
 	$res=true;
 	$log=str_split($login);
 	foreach($log as $element){
-		if ($element=" ") {
+		if ($element==" ") {
 			$res=false;
 		}
 	}
-	return true;
+	return $res;
 } //renvoie un bool : true si l'username est au bon format
 
 function recup_user_username($login){

@@ -1,5 +1,6 @@
 <?php
 session_start();
+header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../folderFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
@@ -11,10 +12,7 @@ $res = array(
 );
 
 switch($_post->action){
-    case "content":
-        
-        break;
-    case "info":
+    case "pull":
         if ($_post->id == NULL) {
             $res["error"] = 0002; //id vide
         } else {
@@ -34,6 +32,8 @@ switch($_post->action){
                     //"id" => $folder["id"],
                     "nom" => $folder["folderName"],
                     "description" => $folder["description"],
+                    "folders" => recupere_dossiers_dans_dossier($_post->id),
+                    "files" => recupere_fichiers_dans_dossier($_post->id),
                     "lastUpdate" => $file["lastUpdate"]
                 );
             }
@@ -47,10 +47,9 @@ switch($_post->action){
         } elseif (!empty(recup_folder_id($_post->parent)[0])) {
             $res["error"] = 4004; //dossier parent inexistant
         }else{
-            $res["success"]=true;
-            $res["id"]=create_folder($_post->nom,$_post->parent);
+            $res["success"]=create_folder($_post->nom,$_post->parent,$_post->description);
+            $res["id"]=recup_folder_nom_descr($_post->nom,$_post->description);
         }
-        break;
         break;
     default:
     $res["error"]=4000; //Erreur inconnu généré par folder

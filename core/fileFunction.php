@@ -14,4 +14,8 @@ function supprime_file($id){
 function create_file($folder,$filename,$content_type,$size,$descr){
 
 }
+
+function modifie_file($id,$nom,$description){
+
+}
 ?>

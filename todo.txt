@@ -1,22 +1,16 @@
-function format_mail($_post->email)  //renvoie un bool : true si le mail est au bon format
-function format_username($_post->login) //renvoie un bool : true si l'username est au bon format
+recup_groups_user_modified($id_user,$time) //Renvoie un tableau associatif avec les groupes de l'Utilisateur modifiés depuis le temps en parametres
 
 recup_file_filename($filename) //Renvoie un tableau associatif avec les attributs du fichier 
-recup_file_id($id) //Renvoie un tableau associatif avec les attributs du fichier 
+recup_file_id($id) //Renvoie un tableau associatif avec les attributs du fichier
+recup_files_modified($id_folder,$time) //Renvoie un tableau associatif avec les fichiers modifiés depuis le temps en parametres dans le dossier concerné
 
 supprime_fichier($id)
 create_file($folder,$filename,$content_type,$size,$descr)//Crée un fichier avec les parametres
+modifie_file($id,$nom,$description) // Modifie le fichier avec un nouveua nom et description
 
 recup_folder_id($id) //Renvoie un tableau associatif avec les attributs du dossier 
-create_folder($nom,$parent) //Crée le dossier puis renvoyer l'id du dossier crée
-
-recup_groups_user_modified($id_user,$time) //Renvoie un tableau associatif avec les groupes de l'Utilisateur modifiés depuis le temps en parametres
-recup_files_modified($id_folder,$time) //Renvoie un tableau associatif avec les fichiers modifiés depuis le temps en parametres dans le dossier concerné
-
-
-
-Format email valide ?
-Format username valide ?
+create_folder($nom,$parent,$description) //Crée le dossier puis renvoyer un bool
+recup_folder_nom_descr($nom,$description) // Renvoie l'id du folder, null sinon
 
 Penser a modifier les lastUpdates !!!
 Time/lastUpdates : fixer une valeur ?

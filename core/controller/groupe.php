@@ -1,4 +1,5 @@
 <?php
+header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
@@ -101,7 +102,7 @@ switch ($_post->action) {
                     "descr" => $group["descr"],
                     //"avatar" => $group["avatar"],
                     "root" => recup_id_dossier_racine($_post->id),
-                    //"nb_membres" => id_to_membres($_post->id),
+                    "nb_membres" => $group["nbMembres"],
                     //"nb_messages" => id_to_messages($_post->id),
                     //"nb_files" => id_to_nbFiles($_post->id),
                     "lastUpdate" => $group["lastUpdate"]
