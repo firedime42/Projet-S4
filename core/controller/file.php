@@ -21,8 +21,8 @@ switch ($_post->action) {
             $res["error"] = 3002; //Dossier vide
         } elseif (!empty(recup_folder_id($_post->folder)[0])) {
             $res["error"] = 4003; //Dossier inexistant
-        }elseif (!empty(recup_file_filename($_post->nom)[0])) {
-            $res["error"] = 3004; //un fichier a le meme nom
+        /*}elseif (!empty(recup_file_filename($_post->nom)[0])) {
+            $res["error"] = 3004; //un fichier a le meme nom*/
         }else{
             create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description);
         }

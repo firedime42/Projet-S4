@@ -201,3 +201,4 @@ function create_folder($nom,$parent){
 function recup_folder_nom_descr($nom,$description){
 	return NULL;
 }
+?>
