@@ -15,15 +15,6 @@
         return (i < nb_values) ? i : -1;
     }
 
-    /**
-     * Génère une nouvelle instance d'{Erreur} avec le code entrée en paramètre
-     * @param {Number} errcode le code de l'erreur
-     */
-    function _error(errcode) {
-        let err = new Error();
-        err.code = errcode;
-        return err;
-    }
 
     class ListGroupe extends Listenable {
         #list;

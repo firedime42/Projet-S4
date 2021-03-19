@@ -4,10 +4,11 @@
         "sitename" => "Shared",
 
         # base de données
-        "db_host" => "",
-        "db_name" => "",
-        "db_user" => "",
-        "db_password" => "",
+        "db_host" => "51.178.54.52",
+        "db_port" => 3306,
+        "db_name" => "Share",
+        "db_user" => "acces@localhost",
+        "db_password" => "2bde19f5",
 
         # session
         "session_keepalive" => 365 * 24 * 3600, # seconds

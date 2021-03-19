@@ -1,0 +1,156 @@
+@charset "UTF-8";
+.explorer .explorer-header {
+  color: #fff;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+.explorer .explorer-header .search {
+  border-radius: 3px;
+  background-color: #fff;
+  max-width: 300px;
+  display: inline-block;
+  -webkit-box-shadow: 0px 2px 8px 2px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 8px 2px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+  overflow: hidden;
+  height: calc(1.5em + 2px);
+  text-align: right;
+}
+
+.explorer .explorer-header .search input {
+  width: 100%;
+  border: none;
+  border-radius: 3px;
+  background-color: transparent;
+  padding: 1px 25px 1px 28px;
+}
+
+.explorer .explorer-header .search:after {
+  content: "\e917";
+  font-family: 'icomoon' !important;
+  color: #7e7e7e;
+  position: relative;
+  left: -227px;
+  top: -26px;
+}
+
+.explorer .browse-main .row-container .clip {
+  /* Permet de garder le texte sur une ligne et de l'elypsé s'il depasse */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.explorer .browse-main .row-container .item {
+  background-color: #fff;
+  padding: 0 20px;
+  position: relative;
+  -webkit-transition: .1s;
+  transition: .1s;
+}
+
+.explorer .browse-main .row-container .item > div {
+  border-bottom: 1px solid #999;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+
+.explorer .browse-main .row-container .item > div > div {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  vertical-align: middle;
+  padding: 2px 5px;
+}
+
+.explorer .browse-main .row-container .item > div .data {
+  width: calc(100% - 130px);
+}
+
+.explorer .browse-main .row-container .item > div .data .nom {
+  font-size: 14px;
+  letter-spacing: .01em;
+}
+
+.explorer .browse-main .row-container .item > div .data .description {
+  font-size: 12px;
+  letter-spacing: .01em;
+}
+
+.explorer .browse-main .row-container .item > div .optional-data {
+  width: 100px;
+}
+
+.explorer .browse-main .row-container .item > div .optional-data > div {
+  font-size: 12px;
+  letter-spacing: .01em;
+}
+
+.explorer .browse-main .row-container .item > div .optional-data > div:before {
+  display: inline-block;
+  width: 15px;
+  text-align: center;
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.explorer .browse-main .row-container .item > div .action {
+  cursor: pointer;
+  width: 30px;
+  text-align: center;
+  -webkit-transition: .5s;
+  transition: .5s;
+}
+
+.explorer .browse-main .row-container .item > div .action:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.explorer .browse-main .row-container .item:hover {
+  -webkit-box-shadow: 0px 3px 13px 0px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 3px 13px 0px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  border-radius: 3px;
+  -webkit-transform: scale(1.01);
+          transform: scale(1.01);
+}
+
+.explorer .browse-main .nb_messages:before {
+  content: "\e914";
+}
+
+.explorer .browse-main .nb_files:before {
+  content: "\e909";
+}
+
+.explorer .browse-main .nb_likes:before {
+  content: "\e919";
+}
+
+.explorer .browse-main .nb_likes[data-liked=true]:before {
+  content: "\e91a";
+}
+
+.explorer .browse-main .nb_messages[data-new-messages=true] {
+  color: blue;
+}
+
+.explorer .browse-main .nb_files[data-new-file=true] {
+  color: blue;
+}
+
+.explorer .browse-main .nb_likes[data-liked=true] {
+  color: red;
+}
+/*# sourceMappingURL=explorer.css.map */

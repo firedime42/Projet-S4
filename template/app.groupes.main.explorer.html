@@ -4,19 +4,27 @@
     </div>
     <nav class="">
         <ul>
-            <li>dossiers</li>
-            <li>fichiers</li>
-            <li>flux</li>
-            <li>membres</li>
+            <li>Explorateur</li>
+            <li>Flux</li>
+            <li>Membres</li>
         </ul>
     </nav>
-</div>
-<div class="content scrollable">
-    <div class="folders" data-visible="true">
-
+    <div class="path">
+        {{ MARK this "path" }}
     </div>
-    <div class="files" data-visible="true">
-
+</div>
+<div class="content">
+    <div class="browse-main" data-visible="true">
+        {{ MARK this "dropzone" }}
+        <center><em>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</em></center>
+        <h3>Dossiers</h3>
+        <div class="folders row-container">
+            {{ MARK this "folders" }}
+        </div>
+        <h3><em class="icon icon-files"></em> Fichiers</h3>
+        <div class="files row-container">
+            {{ MARK this "files" }}
+        </div>
     </div>
     <div class="flux" data-visible="true">
 
@@ -26,9 +34,10 @@
     </div>
 </div>
 <script>
+    let groupe = null;
+    let folder = null;
 
-    doc.update({ groupe: {} });
-
+    /*
     async function setGroupe({ id, dir }) {
         if (dir == "settings" || dir == "create" || dir == "join") return;
 
@@ -39,11 +48,102 @@
         doc.update({ groupe });
     }
 
-    // parse url
-    //setGroupe(URLrooter.parseURL("/app/groupes/$id/$dir", { id : /^[0-9]+$/ }));
-
-
     URLrooter.addListener("/app/groupes/$id/$reste", setGroupe, null, { id : /^[0-9]+$/, $reste: /^[0-9]*(?:\/.*)*$/ });
+    */
 
+    /**
+     * Set the correct dir to the windows
+     */
+    async function setDir({ groupe_id, folder_id }) {
+        if (!folder_id) return;
+
+        folder_id *= 1;
+
+        if (folder_id == folder.id) {// actualise data on the folder
+            folder.pull();
+        } else { // change folder
+            if (folder) removeListeners();
+            folder = await FOLDERS.get(folder_id);
+            addListeners();
+        }
+    }
+
+    doc.update();
+
+    doc.ctx.markedElement['dropzone'].addEventListener('dragenter', function (e) { e.preventDefault(); e.stopPropagation(); });
+    doc.ctx.markedElement['dropzone'].addEventListener('dragleave', function (e) { e.preventDefault(); e.stopPropagation(); });
+    doc.ctx.markedElement['dropzone'].addEventListener('dragover',  function (e) { e.preventDefault(); e.stopPropagation(); });
+    doc.ctx.markedElement['dropzone'].addEventListener('drop', function (e) { e.preventDefault(); e.stopPropagation(); console.log(e.dataTransfer.files); });
+
+    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/*", setDir, null, { groupe_id: /^[0-9]+$/, $folder_id: /^[0-9]+$/ });
+
+    function onFileChange(file) {
+        let html_element = Dom.find(`[data-file-id="${file.id}"]`, doc.ctx.markedElement.files)[0];
+        if (html_element) {
+            let fhtml = fileParser.parse({ groupe, parentFolder: folder, file });
+            Dom.replace(html_element, fhtml);
+        } else file.removeListener(WFile.EVENT_UPDATE);
+    }
+
+    async function addFile(file_id) {
+        let file = await WFILES.get(file_id);
+        let fhtml = fileParser.parse({ groupe, parentFolder: folder, file });
+        file.addListener(WFile.EVENT_UPDATE, onFileChange);
+        Dom.append(doc.ctx.markedElement.files, fhtml);
+    }
+
+    /**
+     * retire les listeners du dossier courant
+     */
+    function removeListeners() {
+        folder.removeListener(Folder.EVENT_UPDATE, onFolderUpdate);
+        folder.removeListener(Folder.EVENT_NEW_FILE, addFile);
+        folder.removeListener(Folder.EVENT_REMOVE_FILE, removeFile);
+    }
+
+    /**
+     * ajoute des listeners au dossier courant
+     */
+    function addListeners() {
+        folder.addListener(Folder.EVENT_UPDATE, onFolderUpdate);
+        folder.addListener(Folder.EVENT_NEW_FILE, addFile);
+        folder.addListener(Folder.EVENT_REMOVE_FILE, removeFile);
+    }
+
+
+    let folderHTML = fetch("/template/app.explorer.folderitem.html");
+    let fileHTML = fetch("/template/app.explorer.fileitem.html");
+
+    folderHTML = (await folderHTML).text();
+    fileHTML = (await fileHTML).text();
+
+    folderHTML = await folderHTML;
+    fileHTML = await fileHTML;
+
+    let folderParser = new uTemplate.parser(folderHTML);
+    let fileParser = new uTemplate.parser(fileHTML);
+
+    for (let i = 0; i < 3; i++) Dom.append(doc.ctx.markedElement.folders, folderParser.parse({
+        folder: {
+            nom: "Dossier n°" + i,
+            description: 'ma description',
+            nb_files: Math.round(Math.random() * 50),
+            nb_messages: Math.round(Math.random() * 500),
+            new_files: Math.random() < .15,
+            new_messages: Math.random() < .25
+        }
+    }));
+
+    for (let i = 0; i < 10; i++) Dom.append(doc.ctx.markedElement.files, fileParser.parse({
+        file: {
+            nom: "Fichier n°" + i,
+            description: 'ma description',
+            nb_likes: Math.round(Math.random() * 1000),
+            nb_messages: Math.round(Math.random() * 50),
+
+            liked: Math.random() < .5,
+            new_messages: Math.random() < .5
+        }
+    }));
     
 </script>

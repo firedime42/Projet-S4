@@ -35,10 +35,10 @@
 
     <!-- models -->
     <script src="/assets/js/models/listenable.js"></script>
-    <script src="/assets/js/models/user.js"></script>
+    <script src="/assets/js/models/mainuser.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
-    <script src="/assets/js/models/groupe.js"></script>
-    <script src="/assets/js/models/search.js"></script>
+    <script src="/assets/js/models/folder.js"></script>
+    <script src="/assets/js/models/wazapfile.js"></script>
 
     <script src="/assets/js/models/groupe.js"></script>
     <script src="/assets/js/models/search.js"></script>
@@ -51,6 +51,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/app.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/explorer.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/chat.css"></link>
 
 </head>
@@ -72,7 +73,7 @@
                         <li class="nav-item"><a class="nav-link" href="/account/register">Créer un compte</a></li>
                     </ul>
                     <div class="navbar-nav" data-visible="{{ user.isLoggedIn }}">
-                        <div class="nav-item dropdown" onclick="Dom.toggleClass(this.children[1], 'show');">
+                        <div class="nav-item dropdown">
                             <div class="profil"><div class="avatar" data-avatar=""></div><span class="px-2">{{ user.username }}</span></div>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item" href="/profil/">Mon Profil</a>

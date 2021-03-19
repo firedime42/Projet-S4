@@ -1,0 +1,147 @@
+.explorer {
+    .explorer-header {
+        color: #fff;
+        text-shadow: 0 0 3px rgba(0, 0, 0, .2);
+
+
+        .search{
+            border-radius: 3px;
+            background-color: #fff;
+            max-width: 300px;
+            display: inline-block;
+            box-shadow: 0px 2px 8px 2px rgba(0, 0, 0, .3);
+
+            margin-bottom: 10px;
+
+            overflow: hidden;
+            height: calc(1.5em + 2px);
+            text-align: right;
+
+            input {
+                width: 100%;
+                border: none;
+                border-radius: 3px;
+
+                background-color: transparent;
+                padding: 1px 25px 1px 28px;
+            }
+        }
+
+        .search:after {
+            content: "\e917";
+
+            font-family: 'icomoon' !important;
+            color: #7e7e7e;
+            position: relative;
+            left: -227px;
+            top: -26px;
+        }
+    }
+
+    .browse-main {
+        h3 {
+
+        }
+
+        .row-container {
+            .clip {
+                /* Permet de garder le texte sur une ligne et de l'elypsé s'il depasse */
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            .item {
+                background-color: #fff;
+                padding: 0 20px;
+                position: relative;
+                transition: .1s;
+
+                > div {
+                    border-bottom: 1px solid #999;
+                    display: flex;
+                    width: 100%;
+
+                    > div {
+                        flex: 0 0 auto;
+                        vertical-align: middle;
+                        padding: 2px 5px;
+                    }
+
+                    .data {
+                        width: calc(100% - 130px);
+                        .nom {
+                            font-size: 14px;
+                            letter-spacing: .01em;
+                        }
+                        .description {
+                            font-size: 12px;
+                            letter-spacing: .01em;
+                        }
+                    }
+
+                    .optional-data {
+                        width: 100px;
+                        > div {
+                            font-size: 12px;
+                            letter-spacing: .01em;
+                        }
+                        > div:before {
+                            display: inline-block;
+                            width: 15px;
+                            text-align: center;
+
+                            /* use !important to prevent issues with browser extensions that change fonts */
+                            font-family: 'icomoon' !important;
+                            speak: never;
+                            font-style: normal;
+                            font-weight: normal;
+                            font-variant: normal;
+                            text-transform: none;
+                            line-height: 1;
+
+                            /* Better Font Rendering =========== */
+                            -webkit-font-smoothing: antialiased;
+                            -moz-osx-font-smoothing: grayscale;
+                        }
+                    }
+
+                    .action {
+                        cursor: pointer;
+                        width: 30px;
+                        text-align: center;
+                        transition: .5s;
+                    }
+
+                    .action:hover {
+                        background-color: rgba(0, 0, 0, .1);
+                    }
+                }
+            }
+
+            .item:hover {
+                box-shadow: 0px 3px 13px 0px rgba(0, 0, 0, .3);
+                z-index: 2;
+                border-radius: 3px;
+                transform: scale(1.01);
+            }
+        }
+
+        .nb_messages:before { content: "\e914"; }
+        .nb_files:before { content: "\e909"; }
+        .nb_likes:before { content: "\e919"; }
+        .nb_likes[data-liked=true]:before { content: "\e91a"; }
+
+        .nb_messages[data-new-messages=true] { color: blue; }
+        .nb_files[data-new-file=true] { color: blue; }
+        .nb_likes[data-liked=true] { color: red; }
+
+        .files {
+
+        }
+
+        .folders {
+
+        }
+    }
+}

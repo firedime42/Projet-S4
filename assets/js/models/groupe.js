@@ -9,22 +9,12 @@
         return (i < nb_values) ? i : -1;
     }
 
-    /**
-     * Génère une nouvelle instance d'{Erreur} avec le code entrée en paramètre
-     * @param {Number} errcode le code de l'erreur
-     */
-    function _error(errcode) {
-        let err = new Error();
-        err.code = errcode;
-        return err;
-    }
-
 
     async function __getGroupeInfo(id, time = 0) {
         let r = await fetch("/core/controller/groupe.php", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json;charset=utf-8'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 action: 'info',
@@ -58,7 +48,10 @@
             this.#lastCheck = 0;
         }
 
-        async load() {
+        /**
+         * Récupère les informations depuis le serveur et les actualise si elles ont changées
+         */
+        async pull() {
             if (new Date().getTime() - this.#lastCheck < 5000) return this;
 
             let r = await __getGroupeInfo(this.#id, this.#lastUpdate);
@@ -106,7 +99,7 @@
             // creer ou récuperer le groupe
             this.#groupes[id] = this.#groupes[id] || new Groupe(id);
 
-            this.#waiting[id] = this.#groupes[id].load();
+            this.#waiting[id] = this.#groupes[id].pull();
             this.#waiting[id].then(function () { _this.#waiting[id] = null; });
 
             // verifier/recuperer les infos sur le serveur
