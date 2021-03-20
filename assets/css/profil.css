@@ -1,0 +1,23 @@
+.profil .h2 {
+  border-color: black;
+  border-radius: 1px;
+}
+
+.profil .img {
+  margin-left: 40%;
+}
+
+.profil .table {
+  position: absolute;
+  margin-left: 45%;
+  text-align: center;
+}
+
+.profil .tr {
+  text-align: center;
+}
+
+.profil .biography {
+  margin-left: 45%;
+}
+/*# sourceMappingURL=profil.css.map */

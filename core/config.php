@@ -5,9 +5,9 @@
 
         # base de données
         "db_host" => "localhost",//"51.178.54.52",
-        "db_name" => "Share",
-        "db_user" => "root",
-        "db_password" => "",
+        "db_name" => "id16419041_wazap",
+        "db_user" => "id16419041_info406",
+        "db_password" => "^YE#>RNuaIGe_1@(",
         
         # session
         "session_keepalive" => 365 * 24 * 3600, # seconds

@@ -31,10 +31,12 @@ body section {
 body section .page {
   height: 100%;
   width: 100vw;
+  background-color: lightgrey;
 }
 
 body section .page .content {
   padding: 40px 15px;
+  color: black;
 }
 
 body section .subpage {

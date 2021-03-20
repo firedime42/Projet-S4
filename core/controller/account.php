@@ -4,48 +4,41 @@ header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../accountFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
-$_SESSION["user"]=array(
-    "id" => -1,
-    "userName" => "",
-    "email" => ""
-);
 $res = array(
     "success" => false,
-    "error" => -1
+    "error" => 1000
 );
 
 switch ($_post->action) {
     case "login":
         
-        if(($_post->time+2)<time()){
+        if(($_post->time+10)<time()){
             $res["error"]=1102; //Le timestamp est trop vieux
         }
         elseif ($_post->email != NULL) { //Connexion par mail   
-               $user = recup_user_email($_post->email)[0];
+               $user = recup_user_email($_post->email);
                 if(empty($user)){
                     $res["error"]=1104; //Erreur l'email ne correspond à aucun utilisateur
                 }
-                    
-                elseif (!(hash('sha256', "$_post->time".$user["passWord"])==$_post->password)){
+                elseif (!(hash('sha256', "$_post->time".$user["password"])==$_post->password)){
                     $res["error"]=1101; //Le mot de passe ne correspond pas
                 }
-                   
                 else{
                     $res["success"]=true;
                     $res["user"] = array(
                         "id" => $user["id"],//$_SESSION["user"]["id"],
                         "email" => $_post->email,
-                        "username" => $user["userName"]
+                        "username" => $user["username"]
                     );
                     $_SESSION["user"]=$user;
                }       
         }elseif($_post->username != NULL) { //Connexion par username   
-            $user = recup_user_username($_post->username)[0];
+            $user = recup_user_username($_post->username);
             if(empty($user)){
                 $res["error"]=1103; //Erreur l'identifiant ne correspond à aucun utilisateur
             }
                 
-            elseif (!(hash('sha256', "$_post->time".$user["passWord"])==$_post->password)){
+            elseif (!(hash('sha256', "$_post->time".$user["password"])==$_post->password)){
                 $res["error"]=1101; //Le mot de passe ne correspond pas
             }
             else{
@@ -79,24 +72,26 @@ switch ($_post->action) {
         $res["error"] = 1205; //le mot de passe est vide
     } 
     else {
-        print("Inscription valide");
-        creation_utilisateur($_post->username, $_post->email, $_post->password);
-        $res["success"] = true;
+        $res["success"] = creation_utilisateur($_post->username, $_post->email, $_post->password);
+        $_SESSION["user"] = recup_user_username($_post->username);
         $res["user"] = array(
-            "id" => recup_user_email($_post->email)[0]["id"],
+            "id" => $_SESSION["user"]["id"],//recup_user_email($_post->email)["id"],
             "email" => $_post->email,
             "username" => $_post->username
         );
-        $_SESSION["user"] = recup_user_username($_post->username)[0];
     }
     break;
     case "retrieve":
-        $res["success"] = true;
-        $res["user"] = array(
+        if(isset($_SESSION["user"])){
+            $res["success"] = true;
+            $res["user"] = array(
             "id" => $_SESSION["user"]["id"],
             "email" => $_SESSION["user"]["email"],
-            "username" => $_SESSION["user"]["userName"]
+            "username" => $_SESSION["user"]["username"]
         );
+        }else{
+            $res["error"] = 101;
+        }
         break;
     case "logout":
         $res["success"] = true;

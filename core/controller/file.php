@@ -10,7 +10,7 @@ $_SESSION["file"]=array(
 );
 $res = array(
     "success" => false,
-    "error" => -1
+    "error" => 3000
 );
 
 switch ($_post->action) {
@@ -19,19 +19,20 @@ switch ($_post->action) {
             $res["error"] = 3001; //Nom de fichier vide
         } elseif ($_post->folder == NULL) {
             $res["error"] = 3002; //Dossier vide
-        } elseif (!empty(recup_folder_id($_post->folder)[0])) {
-            $res["error"] = 4003; //Dossier inexistant
-        /*}elseif (!empty(recup_file_filename($_post->nom)[0])) {
+        } elseif (!empty(recup_folder_id($_post->folder))) {
+            $res["error"]=3003;
+        /*}elseif (!empty(recup_file_filename($_post->nom))) {
             $res["error"] = 3004; //un fichier a le meme nom*/
         }else{
-            create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description);
+            $res["success"]=true;
+            $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_SESSION["user"]["id"]);
         }
         break;
     case "pull":
         if ($_post->id == NULL) {
             $res["error"] = 0002; //id vide
         } else {
-            $file = recup_file_id($_post->id)[0];
+            $file = recup_file_id($_post->id);
             if (empty($file)){
                 $res["error"] = 3006; //Fichier inexistant
             }
@@ -45,20 +46,20 @@ switch ($_post->action) {
                 $res["success"] = true;
                 $res["file"] = array(
                     //"id" => $file["id"],
-                    "nom" => $file["fileName"],
-                    "description" => $file["description"],
-                    "auteur" => $file["auteur"],
-                    "type" => $file["type"],
-                    "size" => $file["size"],
+                    "nom" => $file["name"],
+                    //"description" => $file["description"],
+                    "auteur" => $file["creator_id   "],
+                    "type" => $file["extension"],
+                    //"size" => $file["size"],
                     
-                    "etat" => $file["etat"],
-                    "nb_comments" => $file["nb_comments"],
-                    "nb_likes" => $file["nb_likes"],
+                    //"etat" => $file["etat"],
+                    //"nb_comments" => $file["nb_comments"],
+                    //"nb_likes" => $file["nb_likes"],
 
-                    "renamed" => $file["renamed"],
-                    "delete" => $file["delete"],
-                    "liked" => $file["liked"],
-                    "lastUpdate" => $file["lastUpdate"]
+                    //"renamed" => $file["renamed"],
+                    //"delete" => $file["delete"],
+                    //"liked" => $file["liked"],
+                    //"lastUpdate" => $file["last_update"]
                 );
             }
         }
@@ -67,11 +68,10 @@ switch ($_post->action) {
         session_destroy();
         if ($_post->id == NULL) {
             $res["error"] = 0002; //id vide
-        } elseif (empty(recup_file_id($id)[0])) {
+        } elseif (empty(recup_file_id($id))) {
             $res["error"] = 3006; //Fichier inexistant
         } else {
-            supprime_file($_post->id);
-            $res["success"] = true;
+            $res["success"]=supprime_file($_post->id);
         }
         break;
     case "push":
@@ -81,11 +81,10 @@ switch ($_post->action) {
             $res["error"] = 3001; //nom vide
         }elseif($_post->description == NULL){
             $res["error"] = 3005; //description vide
-        }elseif (empty(recup_file_id($id)[0])) {
+        }elseif (empty(recup_file_id($id))) {
             $res["error"] = 3006; //Fichier inexistant
         } else {
-            modifie_file($_post->id,$_post->nom,$_post->description);
-            $res["success"] = true;
+            $res["success"] = modifie_file($_post->id,$_post->nom,$_post->description);
         }
         break;
     default:

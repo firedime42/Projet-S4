@@ -51,13 +51,10 @@ function recupere_fichiers_dans_dossier($folderId){
 	// Retourne les information concernant les fichiers contenus dans le dossier donné
 
 	$sql = sqlconnect();
-	$querry = "SELECT `id` FROM `file` WHERE location = $folderId";
+	$querry = "SELECT id FROM file WHERE location = $folderId";
 
 	$resq = mysqli_query($sql, $querry);
 	mysqli_close($sql);
-
-	$folderarray = array();
-
 	while($row = mysqli_fetch_assoc($resq)) {
 		$folderarray[] = $row;
 	}
@@ -69,17 +66,15 @@ function recupere_dossiers_dans_dossier($folderId){
 	// Retourne les information concernant les fichiers contenus dans le dossier donné
 
 	$sql = sqlconnect();
-	$querry = "SELECT id FROM `folder` WHERE parentFolderId = $folderId";
+	$querry = "SELECT id FROM folder WHERE parent_id = $folderId";
 
 	$resq = mysqli_query($sql, $querry);
 	mysqli_close($sql);
-
-	$folderarray = array();
-
 	while($row = mysqli_fetch_assoc($resq)) {
 		$folderarray[] = $row;
 	}
 	return $folderarray;
+}
 /*
 function recupere_fichier_dans_dossier($folderId){
 
@@ -190,15 +185,28 @@ function supprimer_dossier($folderId){
 // }
 
 function recup_folder_id($id){
-	return false;
+	$sql=sqlconnect();
+    $folder =  "SELECT * FROM folder WHERE id = $id";
+	$result = mysqli_query($sql, $folder);
+	$folder_data=mysqli_fetch_assoc($result);
+	mysqli_close($sql);
+	return $folder_data;
 }
 
 function create_folder($nom,$parent){
-	$id_cree=0;
-	return $id_cree;
+	$sql = sqlconnect();
+
+	$querry = "INSERT INTO folder (name,root) VALUES ('$nom',$parent)";
+	$res = mysqli_query($sql, $querry);
+	mysqli_close($sql);
+	return $res;
 }
 
 function recup_folder_nom_descr($nom,$description){
-	return NULL;
+	$sql=sqlconnect();
+    $user =  "SELECT * FROM folder WHERE name = '$nom' ";//AND description='$description";
+	$result = mysqli_query($sql, $user);
+	$file_data=mysqli_fetch_assoc($result);
+	mysqli_close($sql);
+	return $file_data;
 }
-?>

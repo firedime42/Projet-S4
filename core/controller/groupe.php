@@ -5,7 +5,7 @@ $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
     "success" => false,
-    "error" => -1
+    "error" => 2000
 );
 
 /*$groups = [
@@ -84,12 +84,12 @@ switch ($_post->action) {
         
         break;
     case "info":
-        if($_post->id==NULL) $res["error"]=0002; //id vide
+        if($_post->id==NULL) $res["error"]=2; //id vide
         else{
-            $group=recup_group_id($_post->id)[0];
+            $group=recup_group_id($_post->id);
             if (empty($group)) $res["error"]=2002; //groupe inexistant
             elseif ($post->time==NULL) $res["error"]=0003; //temps invalide
-            elseif( $post->time==$group["lastUpdate"]){
+            elseif( $post->time==$group["last_update"]){
             $res["success"]=true;
             $res["groupe"]=NULL;
             }
@@ -97,15 +97,15 @@ switch ($_post->action) {
                 $res["success"]=true;
                 $res["groupe"]= array(
                     "id" => $group["id"],
-                    "nom" => $group["groupName"],
+                    "nom" => $group["name"],
                     "status" => recup_status_by_user_and_group($_SESSION["id"],$_post->id),
-                    "descr" => $group["descr"],
-                    //"avatar" => $group["avatar"],
-                    "root" => recup_id_dossier_racine($_post->id),
-                    "nb_membres" => $group["nbMembres"],
-                    //"nb_messages" => id_to_messages($_post->id),
-                    //"nb_files" => id_to_nbFiles($_post->id),
-                    "lastUpdate" => $group["lastUpdate"]
+                    "descr" => $group["description"],
+                    "avatar" => $group["avatar"],
+                    "root" => $group["root"], //???
+                    "nb_membres" => $group["nb_membres"],
+                    "nb_messages" => $group["nb_messages"],
+                    "nb_files" => $group["nb_files"],
+                    "lastUpdate" => $group["last_update"]
                 );
                 }
         }
@@ -116,7 +116,18 @@ switch ($_post->action) {
         }
         elseif($_post->query!=NULL){
             $res["success"]=true;
-            $res["results"] = recherche_par_nom_ou_description($_post->query, $_post->page_first, (int)$_post->nb_results);
+            $group_data=recherche_par_nom_ou_description($_post->query, $_post->page_first, (int)$_post->nb_results);
+            $groups=array();
+            foreach($group_data as $group){
+                $groups[]=array(
+                    "id" => $group["id"],
+                    "nom" => $group["name"],
+                    "descr" => $group["description"],
+                    "avatar" => $group["avatar"],
+                    "nb_membres"=> $group["nb_membres"]
+                );
+            }
+            $res["results"] = $groups; 
         }else{
             $res["error"]=2005; //Recherche invalide(champ vide)
         }

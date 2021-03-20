@@ -8,7 +8,7 @@ $_SESSION["folder"]=array(
 );
 $res = array(
     "success" => false,
-    "error" => -1
+    "error" => 4000
 );
 
 switch($_post->action){
@@ -23,18 +23,18 @@ switch($_post->action){
             elseif ($post->lastUpdate == NULL){
                 $res["error"] = 0003; //temps invalide
             }            
-            elseif ($post->lastUpdate == $folder["lastUpdate"]) {
+            elseif ($post->lastUpdate == $folder["last_update"]) {
                 $res["success"] = true;
                 $res["groupe"] = NULL;
             } else {
                 $res["success"] = true;
                 $res["folder"] = array(
                     //"id" => $folder["id"],
-                    "nom" => $folder["folderName"],
+                    "nom" => $folder["name"],
                     "description" => $folder["description"],
                     "folders" => recupere_dossiers_dans_dossier($_post->id),
                     "files" => recupere_fichiers_dans_dossier($_post->id),
-                    "lastUpdate" => $file["lastUpdate"]
+                    "lastUpdate" => $file["last_update"]
                 );
             }
         }
