@@ -168,7 +168,7 @@
             this.#folders = {};
         }
 
-        __valideID(id) { return id instanceof Number && Number.isInteger(id) && id >= 0; }
+        __valideID(id) { return Number.isInteger(id) && id >= 0; }
 
         /**
          * Recupère un fichier
@@ -179,7 +179,7 @@
             if (!this.__valideID(id)) return null;
 
             // on crée le fichier s'il n'existe pas
-            if (!this.#folders[id]) this.#folders[id] = new WazapFile(id);
+            if (!this.#folders[id]) this.#folders[id] = new Folder(id);
 
             // on récupère les données depuis le serveur
             return await this.#folders[id].pull();

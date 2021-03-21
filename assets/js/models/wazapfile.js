@@ -234,15 +234,19 @@
 
             let r = await request("/core/controller/file.php", {
                 action: 'create',
-                nom: this.#nom,
-                description: this.#description,
+                nom: this.#newNom,
+                description: this.#newDescription,
                 folder: folder_id,
+                type: file.type,
                 size: file.size
             });
 
             if (r instanceof Error) return r;
 
-            this.#etat = 'pending';
+            this.#id = r.id;
+            this.#etat = 'uploading';
+            this.#type = file.type;
+            this.#size = file.size;
 
             return this.upload(file);
         }
@@ -252,7 +256,7 @@
          * @param {File} file 
          */
         upload(file) {
-            if (this.etat != "pending") return false;
+            if (this.etat != "uploading") return false;
 
             var _this = this;
             var u = new Upload("/core/controller/upload.php", this.#id, file);
@@ -301,7 +305,8 @@
             this.#files = {};
         }
 
-        __valideID(id) { return id instanceof Number && Number.isInteger(id) && id >= 0; }
+        __valideID(id) { return Number.isInteger(id) && id >= 0; }
+
 
         /**
          * Recupère un fichier

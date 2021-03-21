@@ -5,10 +5,10 @@ include_once("sql.php");
 function create_group($nom, $description, $id_proprietaire) {
 
 	$sql = sqlconnect();
-	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom','$id_proprietaire')";
+	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom',$id_proprietaire)";
 	mysqli_query($sql,$query);
 	$id=mysqli_insert_id($sql);
-	$query = "INSERT INTO group (name, description, root, id_creator) VALUES ('$nom', '$description', '$id', $id_proprietaire)";//, $avatar )";
+	$query = "INSERT INTO `group` (name, description, root, id_creator) VALUES ('$nom', '$description', $id, $id_proprietaire)";//, $avatar )";
 	mysqli_query($sql, $query);
 	$id=mysqli_insert_id($sql);
 	mysqli_close($sql);
