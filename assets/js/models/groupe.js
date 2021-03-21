@@ -64,7 +64,7 @@
             this.lastCheck = Date.now();
     
             if (r instanceof Error) return r;
-    
+
             if (r.groupe != null) this.setData(r.groupe);
 
             return this;

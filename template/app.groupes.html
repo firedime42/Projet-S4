@@ -17,8 +17,6 @@
 </div>
 
 <script>
-    let groupe = null;
-
     doc.update({
         VARTESTS: {
             id : /^[0-9]+$/,
@@ -32,9 +30,12 @@
     });
 
     async function onurlchange({ id }) {
-        if (groupe != null && groupe.id == id) return;
 
-        groupe = await GROUPES.get(id);
+        //console.log(groupe, id);
+        //if (groupe != null && groupe.id == id) return;
+
+        let groupe = await GROUPES.get(id);
+
 
         let { dir } = URLrooter.parseURL("/app/groupes/$id/$dir/*");
 
