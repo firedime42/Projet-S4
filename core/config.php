@@ -5,7 +5,7 @@
 
         # base de données
         "db_host" => "localhost",//"51.178.54.52",
-        "db_name" => "Share",//"id16419041_wazap",
+        "db_name" => "share",//"id16419041_wazap",
         "db_user" => "root",//"id16419041_info406",
         "db_password" => "",//"^YE#>RNuaIGe_1@(",
         

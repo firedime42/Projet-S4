@@ -24,10 +24,10 @@
         static EVENT_CHANGE = 'change';
         static EVENT_REMOVE = 'remove';
 
-        static STATUS_MEMBRE = 'membre';
+        static STATUS_MEMBRE = 'accepted';
         static STATUS_INVITE = 'invite';
-        static STATUS_CANDIDAT = 'candidat';
-        static STATUS_EX = 'ex';
+        static STATUS_CANDIDAT = 'pending';
+        static STATUS_EX = 'left';
 
 
         constructor() {

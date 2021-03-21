@@ -82,7 +82,25 @@ function scoreQuery($query, $data) {
 
 switch ($_post->action) {
     case "list":
-        
+        if ($_post->time===NULL) $res["error"]=0003; //temps invalide
+        else{
+            $res["success"]=true;
+            $group_data=recup_groups_since($_SESSION["user"]["id"],$_post->time);
+            $groups=array();
+            foreach($group_data as $group){
+                $groups[]=array(
+                    "id" => $group["id"],
+                    "nom" => $group["name"],
+                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$group["id"]),
+                    "new_docs" => 0,
+                    "unread_docs" => 0,
+                    "new_messages" => 0,
+                    "descr" => $group["description"],
+                    "lastUpdate" => $group["last_update"]
+                );
+            }
+            $res["groups"] = $groups; 
+        }
         break;
     case "info":
         if($_post->id==NULL) $res["error"]=2; //id vide
@@ -131,6 +149,13 @@ switch ($_post->action) {
             $res["results"] = $groups; 
         }else{
             $res["error"]=2005; //Recherche invalide(champ vide)
+        }
+        break;
+    case "join":
+        if($_post->id==NULL){
+            $res["error"]=0001;
+        }else{
+            $res["success"]=join_group($_post->id,$_SESSION["user"]["id"]);
         }
         break;
     /*case "list":
