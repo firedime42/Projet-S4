@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
@@ -88,8 +89,8 @@ switch ($_post->action) {
         else{
             $group=recup_group_id($_post->id);
             if (empty($group)) $res["error"]=2002; //groupe inexistant
-            elseif ($post->time==NULL) $res["error"]=0003; //temps invalide
-            elseif( $post->time==$group["last_update"]){
+            elseif ($_post->time===NULL) $res["error"]=0003; //temps invalide
+            elseif( $_post->time==$group["last_update"]){
             $res["success"]=true;
             $res["groupe"]=NULL;
             }
@@ -98,7 +99,7 @@ switch ($_post->action) {
                 $res["groupe"]= array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_SESSION["id"],$_post->id),
+                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$_post->id),
                     "descr" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???

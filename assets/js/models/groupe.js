@@ -54,13 +54,36 @@
         async pull() {
             if (Date.now() - this.#lastCheck < 5000) return this;
 
-            let r = await __getGroupeInfo(this.#id, this.#lastUpdate);
+            //let r = await __getGroupeInfo(this.#id, this.#lastUpdate);
+            let r = await request("/core/controller/groupe.php", {
+                action: 'info',
+                id: this.#id,
+                time: this.#lastUpdate
+            });
 
             this.lastCheck = Date.now();
     
             if (r instanceof Error) return r;
     
             if (r.groupe != null) this.setData(r.groupe);
+
+            return this;
+        }
+
+        /**
+         * envoi une requete pour rejoindre un groupe
+         */
+        async join() {
+            if (this.#status == 'membre' || this.#status == 'candidat') return _error(-1);
+
+            let r = await request("/core/controller/groupe.php", {
+                action: "join",
+                id: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            this.#status = r.status;
 
             return this;
         }
@@ -93,6 +116,8 @@
         }
 
         get(id) {
+            id *= 1;
+
             if (this.#waiting[id]) return this.#waiting[id];
 
             let _this = this;

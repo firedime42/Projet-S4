@@ -45,8 +45,7 @@ function recup_group_id($id) {
     // retourne les info du group passé en paramètre sous forme d'un tableau
     
     $sql = sqlconnect();
-    $querry = "SELECT * FROM group WHERE id = $id";
-
+    $querry = "SELECT * FROM `group` WHERE id = $id";
     $res = mysqli_query($sql, $querry);
 	$group_data=mysqli_fetch_assoc($res);
     mysqli_close($sql);
@@ -58,7 +57,7 @@ function recup_group_nom($nom) {
     // retourne les info du group passé en paramètre sous forme d'un tableau
     
     $sql = sqlconnect();
-    $querry = "SELECT * FROM group WHERE name = '$nom'";
+    $querry = "SELECT * FROM `group` WHERE name = '$nom'";
 
     $resq = mysqli_query($sql, $querry);
     mysqli_close($sql);

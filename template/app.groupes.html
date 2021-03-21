@@ -9,6 +9,9 @@
 <div class="groupe-join scrollable" data-visible="{{ CURRENT_URL_MATCH JOIN VARTESTS }}">
     {{ INCLUDE this.currentNode "/template/app.groupes.join.html" }}
 </div>
+<div class="groupe-join scrollable" data-visible="{{ CURRENT_URL_MATCH CREATE VARTESTS }}">
+    {{ INCLUDE this.currentNode "/template/app.groupes.create.html" }}
+</div>
 <div class="groupe-browse" data-visible="{{ CURRENT_URL_MATCH BROWSEDIR VARTESTS }}">
     {{ INCLUDE this.currentNode "/template/app.groupes.main.html" }}
 </div>
@@ -22,6 +25,7 @@
             dir: /^[0-9]+$/
         },
         ADD : "/app/groupes/(add|search)/*",
+        CREATE : "/app/groupes/create",
         BROWSEDIR : "/app/groupes/$id/$dir/*",
         SETTINGS :  "/app/groupes/$id/settings",
         JOIN:       "/app/groupes/$id/join"
@@ -36,7 +40,6 @@
 
         if (groupe instanceof Error) groupe = null;
         else {
-            console.log(groupe);
             if (groupe.status == 'membre') {
                 if (dir == undefined) 
                     replaceURL(`/app/groupes/${id}/${groupe.root}`);

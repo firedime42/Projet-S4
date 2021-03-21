@@ -47,7 +47,8 @@ function request(url, post_data) {
         body: JSON.stringify(post_data)
     }).then(async function (r) {
         try {
-            let rd = r.json();
+            let rd = await r.json();
+
             if (rd.success) rdata.resolve(rd);
             else rdata.resolve(_error(rd.error));
         } catch (e) {

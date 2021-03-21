@@ -1,0 +1,34 @@
+<div class="content">
+    <img class="avatar" src="" />
+    <h1 class="title text-center">Creer un groupe</h1>
+
+    <div class="descr">
+        {{ MARK this "form" }}
+        <input name="nom" type="text" placeholder="nom du groupe">
+        <div name="descr" type="text-area" contentEditable="true" placeholder="description"></div>
+    </div>
+    <div class="btn-box text-center">
+        <button class="btn btn-primary">{{ MARK this 'btn-giveup' }}Annuler</button>
+        <button class="btn btn-primary">{{ MARK this 'btn-valide' }}C'est partie !</button>
+    </div>
+</div>
+
+<script>
+    doc.update();
+
+    let input_nom = Dom.find('*[name="nom"]', doc.ctx.markedElement['form']);
+    let input_descr = Dom.find('*[name="descr"]', doc.ctx.markedElement['form']);
+
+    function goBack() {
+        input_nom.value = "";
+        input_descr.innerText = "";
+        setURL('/app/groupes/add');
+    }
+
+    function valide() {
+
+    }
+
+    Dom.addListener(doc.ctx.markedElement['btn-giveup'], 'click', goBack);
+    Dom.addListener(doc.ctx.markedElement['btn-valide'], 'click', valide);
+</script>
