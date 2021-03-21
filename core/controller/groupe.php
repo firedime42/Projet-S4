@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
@@ -81,15 +82,33 @@ function scoreQuery($query, $data) {
 
 switch ($_post->action) {
     case "list":
-        
+        if ($_post->time===NULL) $res["error"]=0003; //temps invalide
+        else{
+            $res["success"]=true;
+            $group_data=recup_groups_since($_SESSION["user"]["id"],$_post->time);
+            $groups=array();
+            foreach($group_data as $group){
+                $groups[]=array(
+                    "id" => $group["id"],
+                    "nom" => $group["name"],
+                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$group["id"]),
+                    "new_docs" => 0,
+                    "unread_docs" => 0,
+                    "new_messages" => 0,
+                    "descr" => $group["description"],
+                    "lastUpdate" => $group["last_update"]
+                );
+            }
+            $res["groups"] = $groups; 
+        }
         break;
     case "info":
         if($_post->id==NULL) $res["error"]=2; //id vide
         else{
             $group=recup_group_id($_post->id);
             if (empty($group)) $res["error"]=2002; //groupe inexistant
-            elseif ($post->time==NULL) $res["error"]=0003; //temps invalide
-            elseif( $post->time==$group["last_update"]){
+            elseif ($_post->time===NULL) $res["error"]=0003; //temps invalide
+            elseif( $_post->time==$group["last_update"]){
             $res["success"]=true;
             $res["groupe"]=NULL;
             }
@@ -98,7 +117,7 @@ switch ($_post->action) {
                 $res["groupe"]= array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_SESSION["id"],$_post->id),
+                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$_post->id),
                     "descr" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???
@@ -130,6 +149,13 @@ switch ($_post->action) {
             $res["results"] = $groups; 
         }else{
             $res["error"]=2005; //Recherche invalide(champ vide)
+        }
+        break;
+    case "join":
+        if($_post->id==NULL){
+            $res["error"]=0001;
+        }else{
+            $res["success"]=join_group($_post->id,$_SESSION["user"]["id"]);
         }
         break;
     /*case "list":
