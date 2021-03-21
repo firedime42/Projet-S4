@@ -1,14 +1,3 @@
-<!-- fenetre centrale -->
-<div class="">
-    {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
-    <!---->
-    {{ INCLUDE this.currentNode "/template/app.preview.html" }}
-</div>
-
-<!-- fenetre chatbox -->
-{{ INCLUDE this.currentNode "/template/app.chatbox.html" }}
-
-
 <div class="groupe-header">
     <!-- Information sur le groupe  -->
     <h1>{{ groupe.nom }}</h1>
@@ -31,10 +20,27 @@
 </div>
 
 <script>
-    doc.update({ chat_width: '0%' });
+    let groupe = null;
+
+    doc.update({ groupe: {}, chat_width: '0%' });
 
     window.setChatSize = function (w) {
         doc.update({ chat_width: w });
     };
 
+    URLrooter.addListener("/app/groupes/$id/*",
+        async function ({ id }) {
+            if (groupe != null) {
+                if (groupe.id == id) return;
+                else groupe.removeListener(Groupe.EVENT_UPDATE, doc.update);
+            }
+            
+            groupe = await GROUPES.get(id);
+
+            if (groupe instanceof Groupe) {
+                groupe.addListener(Groupe.EVENT_UPDATE, doc.update);
+                doc.update({ groupe });
+            }
+        },
+    null, { id : /^[0-9]+$/ });
 </script>

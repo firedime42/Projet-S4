@@ -31,11 +31,13 @@
         return rdata;
     }
 
-    class Groupe {
+    class Groupe extends Listenable {
+        static EVENT_UPDATE = "update";
+
         #id;
         #lastUpdate;
         #nom;
-        #descr;
+        #description;
         #status;
         #root;
         #nb_membres;
@@ -43,6 +45,8 @@
         #lastCheck;
 
         constructor(id) {
+            super();
+
             this.#id = id;
             this.#lastUpdate = 0;
             this.#lastCheck = 0;
@@ -91,16 +95,18 @@
         setData(groupe) {
             let exists = (a, b) => (a != null && a != undefined) ? a : b;
             this.#nom = exists(groupe['nom'], this.#nom);
-            this.#descr = exists(groupe['descr'], this.#descr);
+            this.#description = exists(groupe['description'], this.#description);
             this.#root = exists(groupe['root'], this.#root);
             this.#status = exists(groupe['status'], this.#status);
             this.#nb_membres = exists(groupe['nb_membres'], this.#nb_membres);
             this.#lastUpdate = exists(groupe['lastUpdate'], this.#lastUpdate);
+
+            this.emit(Groupe.EVENT_UPDATE);
         }
 
         get id() { return this.#id; }
         get nom() { return this.#nom; }
-        get descr() { return this.#descr; }
+        get description() { return this.#description; }
         get root() { return this.#root; }
         get status() { return this.#status; }
         get nb_membres() { return this.#nb_membres; }
@@ -130,6 +136,28 @@
 
             // verifier/recuperer les infos sur le serveur
             return this.#waiting[id];
+        }
+
+        /**
+         * renvoi l'identifiant du groupe
+         * @param {*} nom 
+         * @param {*} description 
+         */
+        async create(nom, description) {
+            if (!/^\w{3,25}$/.test(nom)) return _error(2301);
+            else if (!/^.{1,500}$/.test(description)) return _error(2302);
+            else {
+                console.log(nom, description);
+                let r = await request("/core/controller/groupe.php", {
+                    action: 'create',
+                    nom: nom,
+                    description: description
+                });
+
+                if (r instanceof Error) return r;
+
+                return r.groupe;
+            }
         }
     }
 

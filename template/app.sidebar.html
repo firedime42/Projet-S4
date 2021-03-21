@@ -32,7 +32,7 @@
     let r = await fetch("/template/app.sidebar.groupeItem.html");
     let html = await r.text();
 
-    let listGroup = ListGroupe
+    let listGroup = ListGroupe;
 
     groupeItem = new uTemplate.parser(html);
     let htmllist = {};

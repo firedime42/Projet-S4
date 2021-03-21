@@ -2,13 +2,18 @@
 
 include_once("sql.php");
 
-function ajoute_group($nom, $description, $id_proprietaire,$avatar) {
+function create_group($nom, $description, $id_proprietaire) {
 
 	$sql = sqlconnect();
-	$query = "INSERT INTO group (name, description, id_creator, avatar) VALUES ('$nom', '$description', $id_proprietaire, $avatar )";
-	$res = mysqli_query($sql, $query);
+	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom','$id_proprietaire')";
+	mysqli_query($sql,$query);
+	$id=mysqli_insert_id($sql);
+	$query = "INSERT INTO group (name, description, root, id_creator) VALUES ('$nom', '$description', '$id', $id_proprietaire)";//, $avatar )";
+	mysqli_query($sql, $query);
+	$id=mysqli_insert_id($sql);
 	mysqli_close($sql);
-	return $res;
+	join_group($id,$id_proprietaire);
+	return $id;
 }
 
 function recupere_id_group_par_proprietaire($id_proprietaire) {
@@ -122,7 +127,7 @@ function join_group($id_group,$id_user){
 
 function recup_groups_since ($id_user,$time){
 	$sql = sqlconnect();
-		$query = "SELECT * FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
+		$query = "SELECT g.id,g.name,g.last_update,g.description FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
 		$resq = mysqli_query($sql, $query);
 		mysqli_close($sql);
 		$grouplist=array();

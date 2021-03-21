@@ -16,8 +16,8 @@
 <script>
     doc.update();
 
-    let input_nom = Dom.find('*[name="nom"]', doc.ctx.markedElement['form']);
-    let input_descr = Dom.find('*[name="descr"]', doc.ctx.markedElement['form']);
+    let input_nom = Dom.find('*[name="nom"]', doc.ctx.markedElement['form'])[0];
+    let input_descr = Dom.find('*[name="descr"]', doc.ctx.markedElement['form'])[0];
 
     function goBack() {
         input_nom.value = "";
@@ -25,8 +25,20 @@
         setURL('/app/groupes/add');
     }
 
-    function valide() {
+    async function valide() {
+        let nom = input_nom.value;
+        let description = input_descr.innerText;
+        
+        console.log(nom, description);
 
+        let groupe_id = await GROUPES.create(nom, description);
+
+        if (groupe_id instanceof Error) {
+            console.error(groupe_id.code);
+        } else {
+            ListGroupe.update();
+            setURL(`/app/groupes/${groupe_id}`);
+        }
     }
 
     Dom.addListener(doc.ctx.markedElement['btn-giveup'], 'click', goBack);

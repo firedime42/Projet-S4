@@ -10,26 +10,26 @@ $res = array(
 );
 
 /*$groups = [
-    array("id" =>  0, "nom" => "CCG",                            "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules."),
-    array("id" =>  1, "nom" => "NERV",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges."),
-    array("id" =>  2, "nom" => "Systeme Sibyl",                  "lastUpdate" => 1613954609, "root" => 0, "nb_membres" => 10, "descr" => "Organisation privée de gestion de la criminalité au Japon."),
-    array("id" =>  3, "nom" => "Future Gadget Lab",              "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Founded by Rintaro Okabe in the year 2010. Our main objective is the creation of Future Gadget that are to be used to plunge the world into chaos !"),
-    array("id" =>  4, "nom" => "SERN",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Global research organization secretly controlled by the Committee of 300."),
-    array("id" =>  5, "nom" => "Dark Reunion",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "A secret society which plans to weed out unnecessary elements from humankind."),
-    array("id" =>  6, "nom" => "Groupama",                       "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Toujours là pour toi."),
-    array("id" =>  7, "nom" => "Le coté obscure de la force",    "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Rejoins nous on a des cookies."),
-    array("id" =>  8, "nom" => "L'espada",                       "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 13, "descr" => ""),
-    array("id" =>  9, "nom" => "La brigade fantome",             "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 13, "descr" => "Spécialisé dans diverses activités illicites : assassinats, trafics, corruption etc... "),
-    array("id" => 10, "nom" => "SOS fantome",                    "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Ghostbuster! If there's something strange in your neighborhood.. Who you gonna call? Ghostbusters!"),
-    array("id" => 11, "nom" => "L'Alliance des super-vilains",   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" =>  5, "descr" => ""),
-    array("id" => 12, "nom" => "L'Akatsuki",                     "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation criminelle la plus activement recherchée dans le monde ninja. Le but initial du groupe créé par Yahiko, Pain et Konan était d'apporter la paix par le dialogue et non par la force. "),
-    array("id" => 13, "nom" => "Ordre des Capitaines Corsaires", "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Pirates très puissants ayant fait un marché avec les autorités."),
-    array("id" => 14, "nom" => "Homonculus",                     "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Humains artificiels qui portent les noms des sept péchés capitaux. Mission : assurer son plan de suprématie sur la race humaine."),
-    array("id" => 15, "nom" => "L'Armée du Ruban Rouge",         "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation militaire souhaitant acquérir les Sept Boules de Cristal."),
-    array("id" => 16, "nom" => "Pourfendeurs",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation qui a pour mission de protéger les hommes des démons et les guerriers qui la compose."),
-    array("id" => 17, "nom" => "arbre aogiri",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => ""),
-    array("id" => 18, "nom" => "phamtom lord",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Fairy Tail"),
-    array("id" => 19, "nom" => "les taureaux noir",              "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Black clover")
+    array("id" =>  0, "nom" => "CCG",                            "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules."),
+    array("id" =>  1, "nom" => "NERV",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges."),
+    array("id" =>  2, "nom" => "Systeme Sibyl",                  "lastUpdate" => 1613954609, "root" => 0, "nb_membres" => 10, "description" => "Organisation privée de gestion de la criminalité au Japon."),
+    array("id" =>  3, "nom" => "Future Gadget Lab",              "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Founded by Rintaro Okabe in the year 2010. Our main objective is the creation of Future Gadget that are to be used to plunge the world into chaos !"),
+    array("id" =>  4, "nom" => "SERN",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Global research organization secretly controlled by the Committee of 300."),
+    array("id" =>  5, "nom" => "Dark Reunion",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "A secret society which plans to weed out unnecessary elements from humankind."),
+    array("id" =>  6, "nom" => "Groupama",                       "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Toujours là pour toi."),
+    array("id" =>  7, "nom" => "Le coté obscure de la force",    "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Rejoins nous on a des cookies."),
+    array("id" =>  8, "nom" => "L'espada",                       "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 13, "description" => ""),
+    array("id" =>  9, "nom" => "La brigade fantome",             "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 13, "description" => "Spécialisé dans diverses activités illicites : assassinats, trafics, corruption etc... "),
+    array("id" => 10, "nom" => "SOS fantome",                    "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Ghostbuster! If there's something strange in your neighborhood.. Who you gonna call? Ghostbusters!"),
+    array("id" => 11, "nom" => "L'Alliance des super-vilains",   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" =>  5, "description" => ""),
+    array("id" => 12, "nom" => "L'Akatsuki",                     "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation criminelle la plus activement recherchée dans le monde ninja. Le but initial du groupe créé par Yahiko, Pain et Konan était d'apporter la paix par le dialogue et non par la force. "),
+    array("id" => 13, "nom" => "Ordre des Capitaines Corsaires", "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Pirates très puissants ayant fait un marché avec les autorités."),
+    array("id" => 14, "nom" => "Homonculus",                     "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Humains artificiels qui portent les noms des sept péchés capitaux. Mission : assurer son plan de suprématie sur la race humaine."),
+    array("id" => 15, "nom" => "L'Armée du Ruban Rouge",         "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation militaire souhaitant acquérir les Sept Boules de Cristal."),
+    array("id" => 16, "nom" => "Pourfendeurs",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation qui a pour mission de protéger les hommes des démons et les guerriers qui la compose."),
+    array("id" => 17, "nom" => "arbre aogiri",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => ""),
+    array("id" => 18, "nom" => "phamtom lord",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Fairy Tail"),
+    array("id" => 19, "nom" => "les taureaux noir",              "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Black clover")
 ];
 
 $groupeJoin = [
@@ -95,7 +95,7 @@ switch ($_post->action) {
                     "new_docs" => 0,
                     "unread_docs" => 0,
                     "new_messages" => 0,
-                    "descr" => $group["description"],
+                    "description" => $group["description"],
                     "lastUpdate" => $group["last_update"]
                 );
             }
@@ -117,8 +117,8 @@ switch ($_post->action) {
                 $res["groupe"]= array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$_post->id),
-                    "descr" => $group["description"],
+                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$group["id"]),
+                    "description" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???
                     "nb_membres" => $group["nb_membres"],
@@ -141,7 +141,7 @@ switch ($_post->action) {
                 $groups[]=array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "descr" => $group["description"],
+                    "description" => $group["description"],
                     "avatar" => $group["avatar"],
                     "nb_membres"=> $group["nb_membres"]
                 );
@@ -158,6 +158,18 @@ switch ($_post->action) {
             $res["success"]=join_group($_post->id,$_SESSION["user"]["id"]);
             $res["status"]="accepted";
         }
+        break;
+    case "create":
+        if($_post->nom==NULL){
+            $res["error"]=2100;
+        }
+        elseif ($_post->description==NULL) {
+            $res["error"]=2100;
+        }else{
+            $res["success"]=true;
+            $res["groupe"]= create_group($_post->nom, $_post->description, $_SESSION["user"]["id"]);
+        }
+
         break;
     /*case "list":
         $res["success"] = true;
@@ -184,7 +196,7 @@ switch ($_post->action) {
             global $query;
             return scoreQuery(
                 $query,
-                explode(" ", strtolower($g["nom"]." ".$g["descr"]))
+                explode(" ", strtolower($g["nom"]." ".$g["description"]))
             );
         }, $groups);
 
