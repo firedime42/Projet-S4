@@ -113,11 +113,10 @@
         } else file.removeListener(WFile.EVENT_UPDATE);
     }
 
-    async function addFile(file_id) {
+    async function addFile(fold, file_id) {
+        console.log(file_id);
         let file = await WFILES.get(file_id);
         let fhtml = fileParser.parse({ groupe, parentFolder: folder, file });
-        console.log("les elements", fhtml);
-        console.log(file);
         file.addListener(WFile.EVENT_UPDATE, onFileChange);
         Dom.append(doc.ctx.markedElement.files, fhtml);
     }
@@ -126,10 +125,10 @@
         if (folder == null) return;
         let nb_files = folder.nb_files;
         let files = folder.files;
-        for (let i = 0; i < nb_files; i++) addFile(files[i]);
+        for (let i = 0; i < nb_files; i++) addFile(null, files[i]);
     }
 
-    async function removeFile(file_id) {
+    async function removeFile(fold, file_id) {
         Dom.remove(doc.ctx.markedElement.files, Dom.find(`.file[data-file-id="${file_id}"]`));
         let file = await WFILES.get(file_id);
         file.removeListener(WFile.EVENT_UPDATE, onFileChange);
@@ -139,7 +138,7 @@
         let files = Dom.find('.file[data-file-id]', doc.ctx.markedElement.files);
         let nb_files = files.length;
         for (let i = 0; i < nb_files; i++)
-            removeFile(Dom.attribute(files[i], 'data-file-id'));
+            removeFile(null, Dom.attribute(files[i], 'data-file-id'));
     }
 
     /**
