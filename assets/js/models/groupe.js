@@ -74,7 +74,7 @@
          * envoi une requete pour rejoindre un groupe
          */
         async join() {
-            if (this.#status == 'accepted' || this.#status == 'left') return _error(-1);
+            if (this.#status == 'accepted' || this.#status == 'pending') return _error(-1);
 
             let r = await request("/core/controller/groupe.php", {
                 action: "join",

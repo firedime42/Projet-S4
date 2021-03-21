@@ -89,18 +89,14 @@ function recup_group_nom($nom) {
 	function recup_status_by_user_and_group($id_user, $id_group){
 
 		$sql = sqlconnect();
-		$query = "SELECT * FROM groupUser WHERE user_id = $id_user AND group_id = $id_group ";
+		$query = "SELECT status FROM groupUser WHERE user_id = $id_user AND group_id = $id_group ";
 	
 		$resq = mysqli_query($sql, $query);
-		$res = "left";
 		mysqli_close($sql);
-	
-		if (mysqli_num_rows($resq) > 0) {
-			$res = mysqli_fetch_assoc($resq);
-		}
-	
+		$res = mysqli_fetch_assoc($resq)["status"];
+		if($res==NULL) $res="left";
 		return $res;
-	
+		
 	}
 
 function recup_id_dossier_racine($id_group){

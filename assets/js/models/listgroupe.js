@@ -94,6 +94,6 @@
         }
     }
 
-    window.ListGroupe = ListGroupe;
+    window.ListGroupe = new ListGroupe();
 
 })();

@@ -156,6 +156,7 @@ switch ($_post->action) {
             $res["error"]=0001;
         }else{
             $res["success"]=join_group($_post->id,$_SESSION["user"]["id"]);
+            $res["status"]="accepted";
         }
         break;
     /*case "list":

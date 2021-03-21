@@ -32,14 +32,14 @@
     let r = await fetch("/template/app.sidebar.groupeItem.html");
     let html = await r.text();
 
-    let listGroup = new ListGroupe();
+    let listGroup = ListGroupe
 
     groupeItem = new uTemplate.parser(html);
-
     let htmllist = {};
     htmllist["accepted"] = doc.ctx.markedElement.groups;
     htmllist["pending"] = doc.ctx.markedElement.groupsAsked;
     htmllist["rejected"] = doc.ctx.markedElement.groupsAsked;
+    htmllist["excluded"] = doc.ctx.markedElement.groupsAsked;
     //htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
 
 

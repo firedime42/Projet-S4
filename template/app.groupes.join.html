@@ -44,8 +44,8 @@
         let req = await doc.ctx.groupe.join();
 
         if (req instanceof Error) { // TODO : traiter les erreurs
-            console.log(req);
-        }
+            console.log(req.code);
+        } else ListGroupe.update();
 
         doc.update({ processing: false });
     });
