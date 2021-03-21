@@ -28,8 +28,6 @@
     async function valide() {
         let nom = input_nom.value;
         let description = input_descr.innerText;
-        
-        console.log(nom, description);
 
         let groupe_id = await GROUPES.create(nom, description);
 

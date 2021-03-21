@@ -20,7 +20,7 @@ function ExternPrivatePromise() {
  * @param {Number} errcode le code de l'erreur
  */
 function _error(errcode) {
-    let err = new Error();
+    let err = new Error(`Erreur ${errcode} - `);
     err.code = errcode;
     return err;
 }

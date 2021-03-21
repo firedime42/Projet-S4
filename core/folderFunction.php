@@ -29,18 +29,13 @@ function ajoute_dossier($name, $idParentFolder,$groupId){
 
 	$sql = sqlconnect();
 	$querry = "INSERT INTO 
-				`folder` (
+				folder (
 					`idFolder`, 
 					`folderName`, 
 					`parentFolderId`, 
 					`groupId`, 
 					`rootFoldrer`) 
-				VALUES (
-					NULL, 
-					'$name', 
-					'$idParentFolder', 
-					'$groupId', 
-					b'0');
+				VALUES ('$name', '$idParentFolder', '$groupId', b'0');
 				";
 
 	$res = mysqli_query($sql, $querry);
@@ -55,8 +50,9 @@ function recupere_fichiers_dans_dossier($folderId){
 
 	$resq = mysqli_query($sql, $querry);
 	mysqli_close($sql);
+	$folderarray=array();
 	while($row = mysqli_fetch_assoc($resq)) {
-		$folderarray[] = $row;
+		$folderarray[] = (int) $row["id"];
 	}
 	return $folderarray;	
 }
@@ -70,88 +66,12 @@ function recupere_dossiers_dans_dossier($folderId){
 
 	$resq = mysqli_query($sql, $querry);
 	mysqli_close($sql);
+	$folderarray=array();
 	while($row = mysqli_fetch_assoc($resq)) {
-		$folderarray[] = $row;
+		$folderarray[] = (int) $row["id"];
 	}
 	return $folderarray;
 }
-/*
-function recupere_fichier_dans_dossier($folderId){
-
-	// Retourne les information concernant les fichiers contenus dans le dossier donné
-
-	/* format :
-
-		{
-			[0] => 
-			{
-				'idFile' 
-				'location'
-				'name'	
-				'extention'
-			},
-			{...}
-			[n] =>
-			{
-				'idFile' 
-				'location'
-				'name'	
-				'extention'
-			}
-		}
-
-
-	$sql = sqlconnect();
-	$querry = "SELECT `idFile`,`location`,`name`,`extention` FROM `file` WHERE location = $folderId";
-
-	$resq = mysqli_query($sql, $querry);
-	mysqli_close($sql);
-
-	$folderarray = array();
-
-	while($row = mysqli_fetch_assoc($resq)) {
-		$folderarray[] = $row;
-	}
-	return $folderarray;	
-}
-
-function recupere_dossier_dans_dossier($folderId){
-
-	// Retourne les information concernant les fichiers contenus dans le dossier donné
-
-	/* format :
-
-		{
-			[0] => 
-			{
-				'idFile' 
-				'location'
-				'name'	
-				'extention'
-			},
-			{...}
-			[n] =>
-			{
-				'idFile' 
-				'location'
-				'name'	
-				'extention'
-			}
-		}
-
-	$sql = sqlconnect();
-	$querry = "SELECT * FROM `folder` WHERE parentFolderId = $folderId";
-
-	$resq = mysqli_query($sql, $querry);
-	mysqli_close($sql);
-
-	$folderarray = array();
-
-	while($row = mysqli_fetch_assoc($resq)) {
-		$folderarray[] = $row;
-	}
-	return $folderarray;
-}*/
 
 function renomer_dossier($folderId, $name){
 
@@ -163,13 +83,6 @@ function renomer_dossier($folderId, $name){
 	$res = mysqli_query($sql, $querry);
 	mysqli_close($sql);
 }
-
-function supprimer_dossier($folderId){
-
-	// Demander de voir comment on gère la suppression
-}
-
-
 
 // function storeFile($folderId, $fileName, $creatorId, $rawFile){
 
@@ -209,4 +122,61 @@ function recup_folder_nom_descr($nom,$description){
 	$file_data=mysqli_fetch_assoc($result);
 	mysqli_close($sql);
 	return $file_data;
+}
+
+function supprimer_dossier($folderId){
+   $sql = sqlconnect();
+    $querry = "DELETE FROM folder f WHERE f.id = $folderId";
+
+    $res = mysqli_query($sql, $querry);
+    mysqli_close($sql);
+}
+
+function supprimer_dossier_rec($folderId){
+
+    $contentfolder = recupere_dossier_dans_dossier($folderId);
+    $contentfile = recupere_fichier_dans_dossier($folderId);
+
+
+    if (sizeof($contentfolder) > 0) {
+        foreach ($contentfolder as $key) {
+            supprimer_dossier_rec($contentfolder[$key]["idFolder"]);
+        }
+    }
+    if (sizeof($contentfile) > 0) {
+        foreach ($contentfile as $key) {
+            supprime_file($contentfile[$key]["id"]);
+        }
+    }
+
+    supprimer_dossier($folderId);
+
+}
+
+function stocker_fichier($fileName, $fileExtention, $creatorId, $folderId){
+
+    $sql = sqlconnect();
+    $querry = "INSERT INTO `file` (`id`, `location`, `name`, `extension`, `creatorId`) VALUES (NULL, '$folderId', '$fileName', '$fileExtention', '$creatorId');";
+
+    $res = mysqli_query($sql, $querry);
+    mysqli_close($sql);
+
+}
+
+function deplacer_fichier($fileId, $newFolderId){
+
+    $sql = sqlconnect();
+    $querry = "UPDATE `File` SET `location` = '$newFolderId' WHERE `File`.`id` = $fileId;";
+
+    $res = mysqli_query($sql, $querry);
+    mysqli_close($sql);
+}
+
+function deplacer_dossier($folderId, $newFolderId){
+
+    $sql = sqlconnect();
+    $querry = "UPDATE `folder` SET `parentFolderId` = '$newFolderId', `rootFoldrer` = b'0' WHERE `folder`.`idFolder` = $folderId;";
+
+    $res = mysqli_query($sql, $querry);
+    mysqli_close($sql);
 }

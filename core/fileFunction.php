@@ -25,17 +25,15 @@ function supprime_file($id){
     mysqli_close($sql);
     return $res;
 }
-function create_file($folder,$filename,$content_type,$size,$descr,$id_creator){
+function create_file($folder,$filename,$content_type,$size,$description,$id_creator){
 //créer un fichier 
 
-$sql = sqlconnect();
-
-$querry = "INSERT INTO file (location, name, extension, creator_id,size,description) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$descr   '";
-mysqli_query($sql, $querry);
-$querry = "SELECT id FROM file WHERE name='$filename' AND location=$folder AND description='$descr' AND extension='$content_type'";
-$res=mysqli_query($sql,$querry);
-mysqli_close($sql);
-return $res;
+    $sql = sqlconnect();
+    $querry = "INSERT INTO file (location, name, extension, creator_id,size,description) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description')";
+    mysqli_query($sql, $querry);
+    $id=mysqli_insert_id($sql);
+    mysqli_close($sql);
+    return $id;
 }
 
 function modifie_file($id,$nom,$description){

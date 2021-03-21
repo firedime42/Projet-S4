@@ -16,14 +16,14 @@ switch($_post->action){
         if ($_post->id == NULL) {
             $res["error"] = 0002; //id vide
         } else {
-            $folder = recup_folder_id($_post->id)[0];
+            $folder = recup_folder_id($_post->id);
             if (empty($folder)){
                 $res["error"] = 4002; //dossier inexistant
             }
-            elseif ($post->lastUpdate == NULL){
+            elseif ($_post->lastUpdate === NULL){
                 $res["error"] = 0003; //temps invalide
             }            
-            elseif ($post->lastUpdate == $folder["last_update"]) {
+            elseif ($_post->lastUpdate == $folder["last_update"]) {
                 $res["success"] = true;
                 $res["groupe"] = NULL;
             } else {
@@ -34,7 +34,7 @@ switch($_post->action){
                     "description" => $folder["description"],
                     "folders" => recupere_dossiers_dans_dossier($_post->id),
                     "files" => recupere_fichiers_dans_dossier($_post->id),
-                    "lastUpdate" => $file["last_update"]
+                    "lastUpdate" => $folder["last_update"]
                 );
             }
         }
@@ -44,7 +44,7 @@ switch($_post->action){
             $res["error"] = 4001; //nom de dossier invalide
         } elseif ($_post->parent == NULL) {
             $res["error"] = 4002; //dossier parent vide
-        } elseif (!empty(recup_folder_id($_post->parent)[0])) {
+        } elseif (!empty(recup_folder_id($_post->parent))){
             $res["error"] = 4004; //dossier parent inexistant
         }else{
             $res["success"]=create_folder($_post->nom,$_post->parent,$_post->description);

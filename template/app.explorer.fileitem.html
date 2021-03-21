@@ -5,8 +5,8 @@
             <div class="description clip">{{ file.description }}</div>
         </div>
         <div class="optional-data">
-            <div class="nb_likes" data-liked="{{ file.liked }}">{{ file.nb_likes }}</div>
-            <div class="nb_messages" data-new-messages="{{ file.new_messages }}">{{ file.nb_messages }}</div>
+            <div class="nb_likes" data-liked="{{ file.is_liked }}">{{ file.nb_likes }}</div>
+            <div class="nb_messages" data-new-messages="{{ file.new_messages }}">{{ file.nb_comments }}</div>
         </div>
         <div class="action dropstart dropdown">
             <em class="icon icon-menu"></em>

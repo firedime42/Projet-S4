@@ -49,16 +49,16 @@
         async send(part_size = 0) {
             this.uploadStarted = true;
 
-            this.#part_size = (Number.isInteger(part_size) && part_size > Upload.MIN_PART_SIZE) ? part_size : DEFAULT_PART_SIZE;
+            this.#part_size = (Number.isInteger(part_size) && part_size > Upload.MIN_PART_SIZE) ? part_size : Upload.DEFAULT_PART_SIZE;
 
             this.#nb_s_parts = 0;
             this.#nb_t_parts = Math.ceil(this.#file.size / this.#part_size);
-            
+
             this.emit(Upload.EVENT_START);
 
             this.#start_time = (performance || Date).now();
 
-            for (let i = 0; i < this.#nb_s_parts; i++)
+            for (let part_num = 0; part_num < this.#nb_t_parts; part_num++)
                 await this.__sendPart(part_num);
 
             this.#total_duration = (performance || Date).now() - this.#start_time;
@@ -78,7 +78,7 @@
             let part_blob = this.#file.slice(start_octet, start_octet + this.#part_size);
 
             let header = new Uint32Array([
-                id,
+                this.#id,
                 part_blob.size,
                 start_octet
             ]);
@@ -91,7 +91,7 @@
                     headers: {
                         'Content-Type': 'application/octet-stream'
                     },
-                    body: new Blob(new Blob(header.buffer))
+                    body: new Blob([ new Blob([ header.buffer ]), part_blob ])
                 }).catch(function (e) {
                     _this.emit(Upload.EVENT_ERROR, e);
                 })
@@ -104,7 +104,7 @@
             this.#nb_s_parts++;
             this.#total_duration = end_time - this.#start_time;
 
-            this.emit(Update.EVENT_PROGRESS, {
+            this.emit(Upload.EVENT_PROGRESS, {
                 speed: part_blob.size / upload_part_duration,
                 duration: upload_part_duration
             });
@@ -122,6 +122,8 @@
     }
 
     class WazapFile extends Listenable {
+        static EVENT_UPDATE = 'update';
+
         #id;                // identifiant du fichier
         #lastUpdate;        // timestamp de la derniere version
 
@@ -149,7 +151,7 @@
         constructor(id = null) {
             super();
 
-            this.#id = (id instanceof Number && Number.isInteger(id) && id >= 0) ? id : null;
+            this.#id = (Number.isInteger(id) && id >= 0) ? id : null;
             this.#lastUpdate = 0;
         }
 
@@ -244,9 +246,7 @@
             if (r instanceof Error) return r;
 
             this.#id = r.id;
-            this.#etat = 'uploading';
-            this.#type = file.type;
-            this.#size = file.size;
+            await this.pull();
 
             return this.upload(file);
         }
@@ -256,7 +256,8 @@
          * @param {File} file 
          */
         upload(file) {
-            if (this.etat != "uploading") return false;
+            console.log(this.#etat);
+            if (this.#etat != "uploading") return false;
 
             var _this = this;
             var u = new Upload("/core/controller/upload.php", this.#id, file);
@@ -289,13 +290,21 @@
         getChat() { return null; }
 
         __parseData(data) {
-            let keys = [ 'nom', 'description', 'auteur', 'type', 'etat', 'size', 'nb_likes', 'nb_comments', 'rename', 'delete', 'liked' ];
-            let nb_keys = keys.length;
-            for (let i = 0; i < nb_keys; i++) {
-                let key = keys[i];
-                if (typeof data[key] == 'undefined')
-                    this['#' + key] = data[key];
-            }
+            let exists = (a, b) => (a != null && a != undefined) ? a : b;
+            this.#nom = exists(data['nom'], this.#nom);
+            this.#description = exists(data['description'], this.#description);
+            this.#auteur = exists(data['auteur'], this.#auteur);
+            this.#type = exists(data['type'], this.#type);
+            this.#etat = exists(data['etat'], this.#etat);
+            this.#size = exists(data['size'], this.#size);
+            this.#nb_likes = exists(data['nb_likes'], this.#nb_likes);
+            this.#nb_comments = exists(data['nb_comments'], this.#nb_comments);
+            this.#rename = exists(data['rename'], this.#rename);
+            this.#delete = exists(data['delete'], this.#delete);
+            this.#liked = exists(data['liked'], this.#liked);
+            this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
+
+            this.emit(WazapFile.EVENT_UPDATE);
         }
     }
 
@@ -382,6 +391,6 @@
     }
 
     window.WFile = WazapFile;
-
+    window.Upload = Upload;
     window.WFILES = new WazapFileManager();
 })();

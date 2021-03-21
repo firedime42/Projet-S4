@@ -41,7 +41,7 @@
             this.#folders = [];
             this.#files = [];
 
-            this.lastUpdate = 0;
+            this.#lastUpdate = 0;
         }
 
         get id() { return this.#id; }
@@ -133,9 +133,10 @@
          * Envoyer le fichier au serveur
          * @param {WazapFile} wfile 
          */
-        async add(wfile) {
+        async addFile(wfile) {
             if (!this.#add) return _error(-1);
-            return await wfile.create(this.#id);
+            this.#files.push(wfile.id);
+            this.emit(Folder.EVENT_NEW_FILE, wfile.id);
         }
 
         /**

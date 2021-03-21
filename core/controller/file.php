@@ -19,13 +19,22 @@ switch ($_post->action) {
             $res["error"] = 3001; //Nom de fichier vide
         } elseif ($_post->folder == NULL) {
             $res["error"] = 3002; //Dossier vide
-        } elseif (!empty(recup_folder_id($_post->folder))) {
+        } elseif (empty(recup_folder_id($_post->folder))) {
             $res["error"]=3003;
         /*}elseif (!empty(recup_file_filename($_post->nom))) {
             $res["error"] = 3004; //un fichier a le meme nom*/
         }else{
             $res["success"]=true;
             $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_SESSION["user"]["id"]);
+        }
+        break;
+    case "end-upload":
+        if ($_post->id == NULL) {
+            $res["error"] = 0002; //id vide
+        }elseif (empty(recup_folder_id($_post->folder))) {
+            $res["error"]=3000;
+        }else {
+            $res["success"]=finish_upload($_post->id);
         }
         break;
     case "pull":
@@ -36,10 +45,10 @@ switch ($_post->action) {
             if (empty($file)){
                 $res["error"] = 3006; //Fichier inexistant
             }
-            elseif ($post->lastUpdate == NULL){
+            elseif ($_post->lastUpdate === NULL){
                 $res["error"] = 0003; //temps invalide
             }            
-            elseif ($post->lastUpdate == $file["lastUpdate"]) {
+            elseif ($_post->lastUpdate == $file["last_update"]) {
                 $res["success"] = true;
                 $res["file"] = NULL;
             } else {
@@ -47,19 +56,19 @@ switch ($_post->action) {
                 $res["file"] = array(
                     //"id" => $file["id"],
                     "nom" => $file["name"],
-                    //"description" => $file["description"],
-                    "auteur" => $file["creator_id   "],
+                    "description" => $file["description"],
+                    "auteur" => $file["creator_id"],
                     "type" => $file["extension"],
-                    //"size" => $file["size"],
+                    "size" => $file["size"],
                     
-                    //"etat" => $file["etat"],
-                    //"nb_comments" => $file["nb_comments"],
-                    //"nb_likes" => $file["nb_likes"],
+                    "etat" => $file["status"],
+                    "nb_comments" => $file["nb_comments"],
+                    "nb_likes" => $file["nb_likes"],
 
-                    //"renamed" => $file["renamed"],
-                    //"delete" => $file["delete"],
-                    //"liked" => $file["liked"],
-                    //"lastUpdate" => $file["last_update"]
+                    "renamed" => $file["rename"],
+                    "delete" => $file["delete"],
+                    "liked" => $file["like"],
+                    "lastUpdate" => $file["last_update"]
                 );
             }
         }

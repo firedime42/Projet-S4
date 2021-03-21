@@ -1,7 +1,8 @@
 <?php
 
+// fonction qui recupère les parametres de la requete 
 function getUploadRequestData() {
-    $r = new class { public $id; public $bsize; public $bdata; };
+    $r = new class { public $id; public $bsize; public $s_octet; public $bdata; };
 
     # on récupère les données envoyés par l'utilisateur
     $input_data = file_get_contents('php://input');
@@ -16,6 +17,7 @@ function getUploadRequestData() {
     return $r;
 }
 
+// fonction qui ajoute les données à la fin d'un fichier 
 function writeInFile($filename, $data) {
     # on ouvre le fichier en mode ajout
     $file = fopen($filename, 'ab');
@@ -26,7 +28,4 @@ function writeInFile($filename, $data) {
     # on ferme le fichier
     fclose($file);
 }
-
-$_post = getUploadRequestData();
-
-writeInFile(dirname(__FILE__)."/".$request->id.".png", $request->bdata);
+?>
