@@ -84,19 +84,24 @@
     Dom.onLoad(window, () => {
         // interception des clics sur les liens
         Dom.onClick(Dom.body, (event) => {
-            // on empêche la suivi du lien
-            event.preventDefault();
-            event.returnValue = false;
 
             // on cherche un lien activé
             var activedlink = false;
             for (let i = 0, l = event.path.length - 1; i <= l && !activedlink; i++) {
                 let element = event.path[i];
-                if (element.attributes && element.attributes['href']) {
+                if (element.attributes && element.attributes['href'] && !element.attributes['download']) {
+                    console.log('click');
                     activedlink = true;
                     goTo(element.attributes['href'].value);
                 }
             }
+
+            if (activedlink) {
+                // on empêche la suivi du lien
+                event.preventDefault();
+                event.returnValue = false;
+            }
+
 
             // on bloque éventuellement les prochains eventlisteners
             return !activedlink;

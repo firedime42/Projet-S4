@@ -118,6 +118,9 @@
         get start_time() { return this.#start_time; }
         get total_duration() { return this.#total_duration; }
 
+        get started() { return this.#uploadStarted; }
+        get ended() { return this.#uploadEnded; }
+
         getNbPartsSended() { return this.#nb_s_parts; }
     }
 
@@ -182,6 +185,7 @@
          * et au serveur de gérer le cache pour ces données lourdes
          */
         download() {
+            console.log(this);
             if (this.#id == null) return _error(-1);
             if (this.#etat != 'online') return _error(-1);
 
@@ -251,6 +255,22 @@
             return this.upload(file);
         }
 
+        async remove() {
+            if (this.#id != null) return _error(-1); // identifiant null
+            if (!this.#delete) return _error(-1);    // autorisation manquante
+
+            let r = await request("/core/controller/file.php", {
+                action: 'remove',
+                id: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            WFILES.free(this.#id);
+
+            return true;
+        }
+
         /**
          * Upload un fichier
          * @param {File} file 
@@ -263,10 +283,23 @@
             var u = new Upload("/core/controller/upload.php", this.#id, file);
 
             u.send().then(function () {
-                _this.pull();
+                _this.__upload_end();
             });
 
             return u;
+        }
+
+        async __upload_end() {
+            let r = await request("/core/controller/file.php", {
+                action: 'end-upload',
+                id: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            this.#etat = "online";
+
+            console.log(this);
         }
 
 
@@ -277,7 +310,10 @@
         get size() { return this.#size; }
         get type() { return this.#type; }
         get etat() { return this.#etat; }
-        isLiked() { return this.#liked; }
+
+        get isLiked () { return this.#liked; }
+        get canRemove () { return this.#delete; }
+
         get nb_likes() { return this.#nb_likes; }
         get nb_comments() { return this.#nb_comments; }
 

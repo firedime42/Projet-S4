@@ -168,6 +168,10 @@
          */
         CURRENT_URL_MATCH: function (urlpattern, tests = {}) {
             return !!URLrooter.parseURL(urlpattern, tests);
+        },
+
+        ADDLISTENER: function (_this, eventname, listener) {
+            Dom.addListener(_this.currentNode, eventname, listener);
         }
     });
 })(uTemplate);

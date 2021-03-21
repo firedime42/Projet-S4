@@ -31,8 +31,6 @@ switch ($_post->action) {
     case "end-upload":
         if ($_post->id == NULL) {
             $res["error"] = 0002; //id vide
-        }elseif (empty(recup_folder_id($_post->folder))) {
-            $res["error"]=3000;
         }else {
             $res["success"]=finish_upload($_post->id);
         }
@@ -96,6 +94,17 @@ switch ($_post->action) {
             $res["success"] = modifie_file($_post->id,$_post->nom,$_post->description);
         }
         break;
+    case "search":
+        if((int)$_post->nb_results <= 0){
+            $res["error"]=3000; //Nombre de resulats invalide
+        }
+        elseif($_post->query!=NULL){
+            $res["success"]=true;
+            $res["results"] = search_files($_post->query, $_post->page_first, (int)$_post->nb_results);
+        }else{
+            $res["error"]=2005; //Recherche invalide(champ vide)
+        }
+        break;    
     default:
         $ers["error"] = 3000; //Erreur inconnu généré par file
         break;

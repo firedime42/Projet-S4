@@ -1,10 +1,9 @@
 <div class="explorer-header">
-    <!--<div class="search">
-        <input type="text">
-    </div>
+    <!--<div class="search"><input type="text"></div>
     <nav class="">
         <ul>
             <li>Explorateur</li>
+            <li>Resultats</li>
             <li>Flux</li>
             <li>Membres</li>
         </ul>
@@ -26,10 +25,10 @@
             {{ MARK this "files" }}
         </div>
     </div>
-    <div class="flux" data-visible="true">
+    <div class="flux" data-visible="false">
 
     </div>
-    <div class="membres" data-visible="true">
+    <div class="membres" data-visible="false">
         
     </div>
 </div>
@@ -96,6 +95,7 @@
             let upload = await wfile.create(folder.id, file);
             if (upload instanceof Error) console.error(upload);
             else {
+                WFILES.add(wfile);
                 uploads[wfile.id] = upload;
                 upload.addListener(Upload.EVENT_END, () => console.log("Envoi terminé !"));
                 folder.addFile(wfile);
@@ -117,8 +117,38 @@
         console.log(file_id);
         let file = await WFILES.get(file_id);
         let fhtml = fileParser.parse({ groupe, parentFolder: folder, file });
+        let file_item = Dom.find('.file.item', fhtml)[0];
+        let download_btn = Dom.find('a.download', fhtml)[0];
+        let delete_btn = Dom.find('a.delete', fhtml)[0];
         file.addListener(WFile.EVENT_UPDATE, onFileChange);
         Dom.append(doc.ctx.markedElement.files, fhtml);
+        Dom.addListener(download_btn, 'click', async function () {
+            let blob = await file.download();
+            let blob_url = window.URL.createObjectURL(blob);
+            console.log(blob_url);
+            let link = document.createElement('a');
+            link.download = file.nom;
+            link.href = blob_url;
+            Dom.append(Dom.body, link);
+            link.click();
+            Dom.remove(link);
+            window.URL.revokeObjectURL(blob_url);
+        });
+        Dom.addListener(delete_btn, 'click', async function () {
+            file.remove();
+            removeFile(null, file.id);
+        });
+        if (uploads[file.id])
+            if (uploads[file.id].ended) delete uploads[file.id];
+            else {
+                uploads[file.id].addListener(Upload.EVENT_PROGRESS, function (upload) {
+                    let progress = 100 * upload.getNbPartsSended() / upload.nb_parts;
+                    file_item.style["background"] = `linear-gradient(86deg, rgba(0,212,255,1) 0%, rgba(0,212,255,1) ${progress}%, rgba(0,212,255,0) ${progress}%, rgba(0,212,255,0) 100%)`
+                });
+                uploads[file.id].addListener(Upload.EVENT_END, function (upload) {
+                    file_item.style["background"] = "";
+                });
+            }
     }
 
     async function addAllFiles() {
