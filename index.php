@@ -1,9 +1,3 @@
-<?php
-
-//require_once dirname(__FILE__).'/core/modules/mainuser.php';
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

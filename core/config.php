@@ -4,12 +4,11 @@
         "sitename" => "Shared",
 
         # base de données
-        "db_host" => "51.178.54.52",
-        "db_port" => 3306,
-        "db_name" => "Share",
-        "db_user" => "acces@localhost",
-        "db_password" => "2bde19f5",
-
+        "db_host" => "localhost",//"51.178.54.52",
+        "db_name" => "Share",//"id16419041_wazap",
+        "db_user" => "root",//"id16419041_info406",
+        "db_password" => "",//"^YE#>RNuaIGe_1@(",
+        
         # session
         "session_keepalive" => 365 * 24 * 3600, # seconds
         "max_concurrent_sessions" => 3,         # nombre maximum de sessions simultanées (3 ~> 3 appareils)
@@ -23,7 +22,7 @@
         "password_nb_special_char" => 0,
 
 
-        # la modification de la methode si dessous rend obselete les anciens mots de passe.
+        # la modification de la methode si dessous rend obsolete les anciens mots de passe.
         # methode initial : "sha256"
         "hash_method" => "sha256"
     );

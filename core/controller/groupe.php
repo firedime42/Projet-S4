@@ -1,13 +1,14 @@
 <?php
-
+header("Content-Type: application/json");
+require_once dirname(__FILE__)."/../groupFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
     "success" => false,
-    "error" => -1
+    "error" => 2000
 );
 
-$groups = [
+/*$groups = [
     array("id" =>  0, "nom" => "CCG",                            "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules."),
     array("id" =>  1, "nom" => "NERV",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "descr" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges."),
     array("id" =>  2, "nom" => "Systeme Sibyl",                  "lastUpdate" => 1613954609, "root" => 0, "nb_membres" => 10, "descr" => "Organisation privée de gestion de la criminalité au Japon."),
@@ -74,12 +75,64 @@ function scoreQuery($query, $data) {
     }
 
     return $score;
-}
+}*/
 
 
 
 switch ($_post->action) {
     case "list":
+        
+        break;
+    case "info":
+        if($_post->id==NULL) $res["error"]=2; //id vide
+        else{
+            $group=recup_group_id($_post->id);
+            if (empty($group)) $res["error"]=2002; //groupe inexistant
+            elseif ($post->time==NULL) $res["error"]=0003; //temps invalide
+            elseif( $post->time==$group["last_update"]){
+            $res["success"]=true;
+            $res["groupe"]=NULL;
+            }
+            else {
+                $res["success"]=true;
+                $res["groupe"]= array(
+                    "id" => $group["id"],
+                    "nom" => $group["name"],
+                    "status" => recup_status_by_user_and_group($_SESSION["id"],$_post->id),
+                    "descr" => $group["description"],
+                    "avatar" => $group["avatar"],
+                    "root" => $group["root"], //???
+                    "nb_membres" => $group["nb_membres"],
+                    "nb_messages" => $group["nb_messages"],
+                    "nb_files" => $group["nb_files"],
+                    "lastUpdate" => $group["last_update"]
+                );
+                }
+        }
+        break;
+    case "search":
+        if((int)$_post->nb_results <= 0){
+            $res["error"]=2004; //Nombre de resulats invalide
+        }
+        elseif($_post->query!=NULL){
+            $res["success"]=true;
+            $group_data=recherche_par_nom_ou_description($_post->query, $_post->page_first, (int)$_post->nb_results);
+            $groups=array();
+            foreach($group_data as $group){
+                $groups[]=array(
+                    "id" => $group["id"],
+                    "nom" => $group["name"],
+                    "descr" => $group["description"],
+                    "avatar" => $group["avatar"],
+                    "nb_membres"=> $group["nb_membres"]
+                );
+            }
+            $res["results"] = $groups; 
+        }else{
+            $res["error"]=2005; //Recherche invalide(champ vide)
+        }
+        break;
+    /*case "list":
         $res["success"] = true;
 
         $mesgroupes = array_filter($groupeJoin, function ($e) { return $e['user_id'] == 0; });
@@ -146,8 +199,9 @@ switch ($_post->action) {
 
         }
 
+    break;*/
+    default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;
-    default: $res["error"] = 0; break;
 }
 
 echo json_encode($res);

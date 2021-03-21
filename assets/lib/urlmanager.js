@@ -38,6 +38,7 @@
     }
 
     History.pushState = _createEventTrigger(History.pushState, "pushstate");// when history is changed by scripts
+    History.replaceState = _createEventTrigger(History.replaceState, "pushstate");// when history is changed by scripts
     window.addEventListener('popstate', () => window.dispatchEvent(new Event("pushstate")));// when history is changed by user
 
 
@@ -45,9 +46,10 @@
      * Fonction qui permet de se rendre sur une page
      * @param {String} url 
      */
-    function goTo (url) {
+    function goTo (url, title=null) {
         // on formate l'url
         url = new URL(url, window.location.href);
+        title = title || document.title;
 
         // verification d'url identique
         if (url.href == window.location.href) return;
@@ -58,8 +60,25 @@
         }
 
         // ajout dans l'historique du navigateur
-        History.pushState({ title: document.title }, document.title, url.href);
+        History.pushState({ title }, title, url.href);
     };
+
+    function replaceURL(url, title=null) {
+        // on formate l'url
+        url = new URL(url, window.location.href);
+        title = title || document.title;
+
+        // verification d'url identique
+        if (url.href == window.location.href) return;
+
+        // cross-origin
+        if (url.origin != window.location.origin) {
+            return;
+        }
+
+        // ajout dans l'historique du navigateur
+        History.replaceState({ title }, title, url.href);
+    }
 
     // chargement de la page local
     Dom.onLoad(window, () => {
@@ -433,5 +452,6 @@
     }
 
     window.setURL = goTo;
+    window.replaceURL = replaceURL;
     window.URLrooter = new URLrooter();
 })(window, document);

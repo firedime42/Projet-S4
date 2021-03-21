@@ -59,10 +59,10 @@
 
         folder_id *= 1;
 
-        if (folder_id == folder.id) {// actualise data on the folder
+        if (folder != null && folder_id == folder.id) {// actualise data on the folder
             folder.pull();
         } else { // change folder
-            if (folder) removeListeners();
+            removeListeners();
             folder = await FOLDERS.get(folder_id);
             addListeners();
         }
@@ -96,6 +96,7 @@
      * retire les listeners du dossier courant
      */
     function removeListeners() {
+        if (!(folder instanceof Folder)) return;
         folder.removeListener(Folder.EVENT_UPDATE, onFolderUpdate);
         folder.removeListener(Folder.EVENT_NEW_FILE, addFile);
         folder.removeListener(Folder.EVENT_REMOVE_FILE, removeFile);
@@ -105,6 +106,7 @@
      * ajoute des listeners au dossier courant
      */
     function addListeners() {
+        if (!(folder instanceof Folder)) return;
         folder.addListener(Folder.EVENT_UPDATE, onFolderUpdate);
         folder.addListener(Folder.EVENT_NEW_FILE, addFile);
         folder.addListener(Folder.EVENT_REMOVE_FILE, removeFile);
@@ -123,6 +125,7 @@
     let folderParser = new uTemplate.parser(folderHTML);
     let fileParser = new uTemplate.parser(fileHTML);
 
+    /*
     for (let i = 0; i < 3; i++) Dom.append(doc.ctx.markedElement.folders, folderParser.parse({
         folder: {
             nom: "Dossier n°" + i,
@@ -145,5 +148,6 @@
             new_messages: Math.random() < .5
         }
     }));
+    */
     
 </script>

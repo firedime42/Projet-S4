@@ -74,7 +74,7 @@ class Listenable {
     }
 
     /**
-     * renvoi une promesse resolu lors que l'evenement est emis
+     * renvoi une promesse resolu lors que l'evenement est emit
      */
     until(eventname) {
         if (!this.#promises[eventname])

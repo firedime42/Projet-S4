@@ -52,11 +52,11 @@
          * Récupère les informations depuis le serveur et les actualise si elles ont changées
          */
         async pull() {
-            if (new Date().getTime() - this.#lastCheck < 5000) return this;
+            if (Date.now() - this.#lastCheck < 5000) return this;
 
             let r = await __getGroupeInfo(this.#id, this.#lastUpdate);
 
-            this.lastCheck = new Date().getTime();
+            this.lastCheck = Date.now();
     
             if (r instanceof Error) return r;
     
@@ -66,12 +66,13 @@
         }
 
         setData(groupe) {
-            this.#nom    = groupe.nom    || this.#nom;
-            this.#descr  = groupe.descr  || this.#descr;
-            this.#root   = groupe.root   || this.#root;
-            this.#status = groupe.status || this.#status;
-            this.#nb_membres = groupe.nb_membres || this.#nb_membres;
-            this.#lastUpdate = groupe.lastUpdate || this.#lastUpdate;
+            let exists = (a, b) => (a != null && a != undefined) ? a : b;
+            this.#nom = exists(groupe['nom'], this.#nom);
+            this.#descr = exists(groupe['descr'], this.#descr);
+            this.#root = exists(groupe['root'], this.#root);
+            this.#status = exists(groupe['status'], this.#status);
+            this.#nb_membres = exists(groupe['nb_membres'], this.#nb_membres);
+            this.#lastUpdate = exists(groupe['lastUpdate'], this.#lastUpdate);
         }
 
         get id() { return this.#id; }

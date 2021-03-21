@@ -31,21 +31,10 @@
 </div>
 
 <script>
-    doc.update({ chat_width: '40%' });
+    doc.update({ chat_width: '0%' });
 
-    window.setChatSize= function (w) {
+    window.setChatSize = function (w) {
         doc.update({ chat_width: w });
     };
-
-    async function checkGroupe({ id, dir }) {
-        let groupe = await GROUPES.get(id);
-
-        if (dir != "join" && groupe.status != "membre") {
-            console.log(dir)
-            setURL(`/app/groupes/${id}/join`);
-        }
-    }
-
-    URLrooter.addListener("/app/groupes/$id/$dir", checkGroupe, null, { id : /^[0-9]+$/, dir: /^(?:[0-9]+)?$/ });
 
 </script>

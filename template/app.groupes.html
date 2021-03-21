@@ -14,17 +14,38 @@
 </div>
 
 <script>
-    const $ctx = {
+    let groupe = null;
+
+    doc.update({
         VARTESTS: {
             id : /^[0-9]+$/,
-            dir: /^(?:[0-9]+\/.*)?$/
+            dir: /^[0-9]+$/
         },
         ADD : "/app/groupes/(add|search)/*",
-        BROWSEDIR : "/app/groupes/$id/$dir",
+        BROWSEDIR : "/app/groupes/$id/$dir/*",
         SETTINGS :  "/app/groupes/$id/settings",
-        JOIN:       "/app/groupes/$id/join",
-    };
+        JOIN:       "/app/groupes/$id/join"
+    });
 
-    URLrooter.addListener("/app/groupes/*", function () { doc.update($ctx); }, null);
+    async function onurlchange({ id }) {
+        if (groupe != null && groupe.id == id) return;
+
+        groupe = await GROUPES.get(id);
+
+        let { dir } = URLrooter.parseURL("/app/groupes/$id/$dir/*");
+
+        if (groupe instanceof Error) groupe = null;
+        else {
+            console.log(groupe);
+            if (groupe.status == 'membre') {
+                if (dir == undefined) 
+                    replaceURL(`/app/groupes/${id}/${groupe.root}`);
+            } else if (dir != 'join')
+                replaceURL(`/app/groupes/${id}/join`);
+        }
+    }
+
+    URLrooter.addListener("/app/groupes/$id/*", onurlchange, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener("/app/groupes/*", function () { doc.update(); }, null);
 
 </script>
