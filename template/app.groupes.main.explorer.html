@@ -162,9 +162,9 @@
     }
 
     async function removeFile(fold, file_id) {
-        Dom.remove(doc.ctx.markedElement.files, Dom.find(`.file[data-file-id="${file_id}"]`));
+        Dom.remove(Dom.find(`.file[data-file-id="${file_id}"]`)[0]);
         let file = await WFILES.get(file_id);
-        file.removeListener(WFile.EVENT_UPDATE, onFileChange);
+        //file.removeListener(WFile.EVENT_UPDATE, onFileChange);
     }
 
     function removeAllFiles() {
