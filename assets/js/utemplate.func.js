@@ -57,6 +57,7 @@
          * @param {String} url le chemin du fichier à inclure
          */
         INCLUDE: async function (node, url, ctx={}) {
+            await null;
             if ( node.parentElement == null ) {
                 //console.log("error parrentNull", node, url);
                 return;
