@@ -13,8 +13,8 @@
     </div>
 </div>
 <div class="content">
+    {{ MARK this "dropzone" }}
     <div class="browse-main" data-visible="true">
-        {{ MARK this "dropzone" }}
         <center><em>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</em></center>
         <h3>Dossiers</h3>
         <div class="folders row-container">
@@ -143,10 +143,13 @@
             else {
                 uploads[file.id].addListener(Upload.EVENT_PROGRESS, function (upload) {
                     let progress = 100 * upload.getNbPartsSended() / upload.nb_parts;
-                    file_item.style["background"] = `linear-gradient(86deg, rgba(0,212,255,1) 0%, rgba(0,212,255,1) ${progress}%, rgba(0,212,255,0) ${progress}%, rgba(0,212,255,0) 100%)`
+                    Dom.attribute(file_item, {'style':`--progress:${progress}%;`})
+                    Dom.addClass(file_item, "uploading");
                 });
-                uploads[file.id].addListener(Upload.EVENT_END, function (upload) {
-                    file_item.style["background"] = "";
+                uploads[file.id].addListener(Upload.EVENT_END, async function (upload) {
+                    await sleep(500);
+                    Dom.attribute(file_item, {'style':'--progress:0%;'})
+                    Dom.removeClass(file_item, "uploading");
                 });
             }
     }
