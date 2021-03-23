@@ -39,6 +39,7 @@
 3001 : nom de fichier vide
 3002 : dossier vide
 3004 : un fichier a le meme nom
+3005 : description vide
 3006 : fichier inexistant
 3007 : temps invalide
 

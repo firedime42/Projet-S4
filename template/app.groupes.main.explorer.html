@@ -1,34 +1,43 @@
 <div class="explorer-header">
-    <div class="search">
-        <input type="text">
-    </div>
+    <!--<div class="search"><input type="text"></div>
     <nav class="">
         <ul>
-            <li>dossiers</li>
-            <li>fichiers</li>
-            <li>flux</li>
-            <li>membres</li>
+            <li>Explorateur</li>
+            <li>Resultats</li>
+            <li>Flux</li>
+            <li>Membres</li>
         </ul>
-    </nav>
+    </nav>-->
+    <div class="path">
+        {{ MARK this "path" }}
+    </div>
 </div>
-<div class="content scrollable">
-    <div class="folders" data-visible="true">
+<div class="content">
+    {{ MARK this "dropzone" }}
+    <div class="browse-main" data-visible="true">
+        <center><em>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</em></center>
+        <h3>Dossiers</h3>
+        <div class="folders row-container">
+            {{ MARK this "folders" }}
+        </div>
+        <h3><em class="icon icon-files"></em> Fichiers</h3>
+        <div class="files row-container">
+            {{ MARK this "files" }}
+        </div>
+    </div>
+    <div class="flux" data-visible="false">
 
     </div>
-    <div class="files" data-visible="true">
-
-    </div>
-    <div class="flux" data-visible="true">
-
-    </div>
-    <div class="membres" data-visible="true">
+    <div class="membres" data-visible="false">
         
     </div>
 </div>
 <script>
+    let groupe = null;
+    let folder = null;
+    let uploads = {}; // id => Upload
 
-    doc.update({ groupe: {} });
-
+    /*
     async function setGroupe({ id, dir }) {
         if (dir == "settings" || dir == "create" || dir == "join") return;
 
@@ -39,11 +48,187 @@
         doc.update({ groupe });
     }
 
-    // parse url
-    //setGroupe(URLrooter.parseURL("/app/groupes/$id/$dir", { id : /^[0-9]+$/ }));
-
-
     URLrooter.addListener("/app/groupes/$id/$reste", setGroupe, null, { id : /^[0-9]+$/, $reste: /^[0-9]*(?:\/.*)*$/ });
+    */
 
-    
+    /**
+     * Set the correct dir to the windows
+     */
+    async function setDir({ groupe_id, folder_id }) {
+        if (!folder_id) return;
+
+        folder_id *= 1;
+
+        if (folder != null && folder_id == folder.id) {// actualise data on the folder
+            folder.pull();
+        } else { // change folder
+            removeAllFiles();
+            removeListeners();
+            folder = await FOLDERS.get(folder_id);
+            addListeners();
+            addAllFiles();
+        }
+    }
+
+    doc.update();
+
+    doc.ctx.markedElement['dropzone'].addEventListener('dragenter', function (e) { e.preventDefault(); e.stopPropagation(); });
+    doc.ctx.markedElement['dropzone'].addEventListener('dragleave', function (e) { e.preventDefault(); e.stopPropagation(); });
+    doc.ctx.markedElement['dropzone'].addEventListener('dragover',  function (e) { e.preventDefault(); e.stopPropagation(); });
+    doc.ctx.markedElement['dropzone'].addEventListener('drop', async function (e) {
+        e.preventDefault(); e.stopPropagation();
+        
+        console.log(e.dataTransfer.files);
+
+        let files = e.dataTransfer.files;
+        let nb_files = files.length;
+        let wfiles = new Array(nb_files);
+
+        console.log(folder);
+
+        for (let i = 0; i < nb_files; i++) {
+            let file = files[i];
+            let wfile = new WFile();
+            wfile.nom = file.name;
+            wfile.description = "";
+            wfiles[i] = wfile;
+            let upload = await wfile.create(folder.id, file);
+            if (upload instanceof Error) console.error(upload);
+            else {
+                WFILES.add(wfile);
+                uploads[wfile.id] = upload;
+                upload.addListener(Upload.EVENT_END, () => console.log("Envoi terminé !"));
+                folder.addFile(wfile);
+            }
+        }
+    });
+
+    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/*", setDir, null, { groupe_id: /^[0-9]+$/, $folder_id: /^[0-9]+$/ });
+
+    function onFileChange(file) {
+        let html_element = Dom.find(`[data-file-id="${file.id}"]`, doc.ctx.markedElement.files)[0];
+        if (html_element) {
+            let fhtml = fileParser.parse({ groupe, parentFolder: folder, file });
+            Dom.replace(html_element, fhtml);
+        } else file.removeListener(WFile.EVENT_UPDATE);
+    }
+
+    async function addFile(fold, file_id) {
+        console.log(file_id);
+        let file = await WFILES.get(file_id);
+        let fhtml = fileParser.parse({ groupe, parentFolder: folder, file });
+        let file_item = Dom.find('.file.item', fhtml)[0];
+        let download_btn = Dom.find('a.download', fhtml)[0];
+        let delete_btn = Dom.find('a.delete', fhtml)[0];
+        file.addListener(WFile.EVENT_UPDATE, onFileChange);
+        Dom.append(doc.ctx.markedElement.files, fhtml);
+        Dom.addListener(download_btn, 'click', async function () {
+            let blob = await file.download();
+            let blob_url = window.URL.createObjectURL(blob);
+            console.log(blob_url);
+            let link = document.createElement('a');
+            link.download = file.nom;
+            link.href = blob_url;
+            Dom.append(Dom.body, link);
+            link.click();
+            Dom.remove(link);
+            window.URL.revokeObjectURL(blob_url);
+        });
+        Dom.addListener(delete_btn, 'click', async function () {
+            file.remove();
+            removeFile(null, file.id);
+        });
+        if (uploads[file.id])
+            if (uploads[file.id].ended) delete uploads[file.id];
+            else {
+                uploads[file.id].addListener(Upload.EVENT_PROGRESS, function (upload) {
+                    let progress = 100 * upload.getNbPartsSended() / upload.nb_parts;
+                    Dom.attribute(file_item, {'style':`--progress:${progress}%;`})
+                    Dom.addClass(file_item, "uploading");
+                });
+                uploads[file.id].addListener(Upload.EVENT_END, async function (upload) {
+                    await sleep(500);
+                    Dom.attribute(file_item, {'style':'--progress:0%;'})
+                    Dom.removeClass(file_item, "uploading");
+                });
+            }
+    }
+
+    async function addAllFiles() {
+        if (folder == null) return;
+        let nb_files = folder.nb_files;
+        let files = folder.files;
+        for (let i = 0; i < nb_files; i++) addFile(null, files[i]);
+    }
+
+    async function removeFile(fold, file_id) {
+        Dom.remove(Dom.find(`.file[data-file-id="${file_id}"]`)[0]);
+        let file = await WFILES.get(file_id);
+        //file.removeListener(WFile.EVENT_UPDATE, onFileChange);
+    }
+
+    function removeAllFiles() {
+        let files = Dom.find('.file[data-file-id]', doc.ctx.markedElement.files);
+        let nb_files = files.length;
+        for (let i = 0; i < nb_files; i++)
+            removeFile(null, Dom.attribute(files[i], 'data-file-id'));
+    }
+
+    /**
+     * retire les listeners du dossier courant
+     */
+    function removeListeners() {
+        if (!(folder instanceof Folder)) return;
+        folder.removeListener(Folder.EVENT_UPDATE, doc.update);
+        folder.removeListener(Folder.EVENT_NEW_FILE, addFile);
+        folder.removeListener(Folder.EVENT_REMOVE_FILE, removeFile);
+    }
+
+    /**
+     * ajoute des listeners au dossier courant
+     */
+    function addListeners() {
+        if (!(folder instanceof Folder)) return;
+        folder.addListener(Folder.EVENT_UPDATE, doc.update);
+        folder.addListener(Folder.EVENT_NEW_FILE, addFile);
+        folder.addListener(Folder.EVENT_REMOVE_FILE, removeFile);
+    }
+
+
+    let folderHTML = fetch("/template/app.explorer.folderitem.html");
+    let fileHTML = fetch("/template/app.explorer.fileitem.html");
+
+    folderHTML = (await folderHTML).text();
+    fileHTML = (await fileHTML).text();
+
+    folderHTML = await folderHTML;
+    fileHTML = await fileHTML;
+
+    let folderParser = new uTemplate.parser(folderHTML);
+    let fileParser = new uTemplate.parser(fileHTML);
+
+    /*
+    for (let i = 0; i < 3; i++) Dom.append(doc.ctx.markedElement.folders, folderParser.parse({
+        folder: {
+            nom: "Dossier n°" + i,
+            description: 'ma description',
+            nb_files: Math.round(Math.random() * 50),
+            nb_messages: Math.round(Math.random() * 500),
+            new_files: Math.random() < .15,
+            new_messages: Math.random() < .25
+        }
+    }));
+    */
+   /*
+    for (let i = 0; i < 1; i++) Dom.append(doc.ctx.markedElement.files, fileParser.parse({
+        file: {
+            nom: "Fichier n°" + i,
+            description: 'ma description',
+            nb_likes: Math.round(Math.random() * 1000),
+            nb_messages: Math.round(Math.random() * 50),
+
+            liked: Math.random() < .5,
+            new_messages: Math.random() < .5
+        }
+    }));*/
 </script>

@@ -38,6 +38,8 @@ body[data-theme="light"] {
     --groupeadd-header-background: url(/assets/img/eezy_79.svg);
     */
     
+    /* parametre explorer */
+    --upload-color: #17a2b824;
 }
 
 /**

@@ -29,3 +29,23 @@ pages.update({
 mainMenu.update({
     user
 });
+
+Dom.onClick(window, function (e) {
+    let deep = e.path.length;
+    let i = 0;
+    while (i < deep && (
+        !e.path[i].classList || 
+        quickIndexOf(e.path[i].classList, "dropdown") == -1)
+    ) i++;
+    let dropdown_menu = (i < deep) ? Dom.find(".dropdown-menu", e.path[i])[0] : null;
+
+    // masque all actived dropdown
+    let menus = Dom.find('.dropdown-menu.show');
+    let nb_menus = menus.length;
+    for (let i = 0; i < nb_menus; i++)
+        if (menus[i] != dropdown_menu)
+            Dom.removeClass(menus[i], "show");
+
+    // toggle menu
+    if (dropdown_menu) Dom.toggleClass(dropdown_menu, "show");
+});

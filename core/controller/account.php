@@ -5,8 +5,7 @@ require_once dirname(__FILE__)."/../accountFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
-    "success" => false,
-    "error" => 1000
+    "success" => false
 );
 
 switch ($_post->action) {

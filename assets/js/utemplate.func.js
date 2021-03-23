@@ -57,7 +57,8 @@
          * @param {String} url le chemin du fichier à inclure
          */
         INCLUDE: async function (node, url, ctx={}) {
-            if ( node.parentElement == null ) {
+            await null;
+            if (node == null ||  node.parentElement == null ) {
                 //console.log("error parrentNull", node, url);
                 return;
             }
@@ -75,6 +76,7 @@
                 return;
             }
 
+
             // request content
             let r = await fetch(url, { "method": "GET" });
             let htmlcontent = await r.text();
@@ -85,7 +87,6 @@
             console.log(url);
 
             if (node == null || node.parentElement == null) return;
-
 
             // replace node
             Dom.replace(node, template.getElement());
@@ -168,6 +169,10 @@
          */
         CURRENT_URL_MATCH: function (urlpattern, tests = {}) {
             return !!URLrooter.parseURL(urlpattern, tests);
+        },
+
+        ADDLISTENER: function (_this, eventname, listener) {
+            Dom.addListener(_this.currentNode, eventname, listener);
         }
     });
 })(uTemplate);

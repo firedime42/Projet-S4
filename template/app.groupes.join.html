@@ -8,28 +8,27 @@
             <div class="info-items"><em class="icon icon-chat"></em>{{ groupe.nb_messages }} messages</div>
             <div class="info-items"><em class="icon icon-file-text"></em>{{ groupe.nb_files }} documents</div>
         </div>
-        <p class="text-justify scrollable">{{ groupe.descr }}</p>
+        <p class="text-justify scrollable">{{ groupe.description }}</p>
     </div>
-    <div class="btn-box text-center" data-visible="{{ IN groupe.status 'left' 'invite' }}">
+    <div class="btn-box text-center" data-visible="{{ IN groupe.status 'left' }}" data-loading="{{ processing }}">
         <button class="btn btn-primary">{{ MARK this 'btn-join' }}Rejoindre</button>
     </div>
-    <div class="btn-box text-center" data-visible="{{ EQUALS groupe.status 'candidat' }}">
+    <div class="btn-box text-center" data-visible="{{ EQUALS groupe.status 'pending' }}" data-loading="{{ processing }}">
         <button class="btn btn-primary">{{ MARK this 'btn-giveup' }}Abandoner la candidature</button>
     </div>
-    <div class="btn-box text-center" data-visible="{{ EQUALS groupe.status 'membre' }}">
+    <div class="btn-box text-center" data-visible="{{ EQUALS groupe.status 'accepted' }}" data-loading="{{ processing }}">
         <a class="btn btn-primary" href="/app/groupes/{{ groupe.id }}/{{ groupe.root }}/">{{ MARK this 'btn-enter' }}Entrer</a>
-
     </div>
 </div>
 
 <script>
     doc.update({
         groupe: {
-            nom: "Super groupe test",
-            descr: "Lorem ipsum dolor sit amet, consectetur adip ",
-            status: "ex",
-
-        }
+            nom: "",
+            descr: "",
+            status: ""
+        },
+        processing: false
     });
 
     URLrooter.addListener('/app/groupes/$id/join', async function ({ id }) {
@@ -37,6 +36,18 @@
         doc.update({ groupe });
     }, null, { id : /^[0-9]+$/ });
 
-    /* TO DO : connect buttons */
+    /* TODO : connect buttons */
+    Dom.addListener(doc.ctx.markedElement, 'click', async function () {
+        if (doc.ctx.processing) return; // ne pas agir : requete en cours
+        doc.update({ processing: true });
+
+        let req = await doc.ctx.groupe.join();
+
+        if (req instanceof Error) { // TODO : traiter les erreurs
+            console.log(req.code);
+        } else ListGroupe.update();
+
+        doc.update({ processing: false });
+    });
 
 </script>

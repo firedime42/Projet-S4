@@ -66,4 +66,10 @@ body section .subpage {
   background-image: -webkit-gradient(linear, left bottom, left top, from(#00d2ff), to(#3a7bd5));
   background-image: linear-gradient(to top, #00d2ff 0%, #3a7bd5 100%);
 }
+
+*[data-loading]:before {
+  content: "\e91d";
+  -webkit-animation: fa-spin 2s infinite linear;
+          animation: fa-spin 2s infinite linear;
+}
 /*# sourceMappingURL=main.css.map */

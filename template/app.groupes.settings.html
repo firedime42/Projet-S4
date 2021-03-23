@@ -1,3 +1,44 @@
 <div class="content">
-    <h1>Rien ici pour le moment</h1>
+    <h1>{{ groupe.nom }}</h1>
+    <h2>Paramètre du groupe</h2>
+    <div>
+        <h2></h2>
+        <button class="btn btn-warning">{{ MARK this "leave" }}Quitter le groupe</button>
+    </div>
 </div>
+<script>
+    let groupe = null;
+
+    await doc.update({ groupe: {} });
+
+    console.log(doc.ctx);
+    
+    async function onOpenSettings({ id }) {
+        groupe = await GROUPES.get(id);
+
+        if (groupe instanceof Error) { // TODO : affichage erreur / redirection sur groupe 404
+            console.error(r);
+            groupe = null;
+            setURL(`/app/groupes/error/404`);
+        } else if (groupe.status != 'accepted') { // TODO : redirection accès refusé
+            console.log("accès refusé : ne fait pas parti du groupe");
+            setURL(`/app/groupes/${groupe.id}/join`);
+        } else {
+            doc.update({ groupe });
+        }
+    }
+
+    Dom.addListener(doc.ctx.markedElement["leave"], "click", async function () {
+        console.log("ok");
+
+        if (groupe) {
+            let r = await groupe.leave();
+            ListGroupe.update();
+
+            if (r instanceof Error) console.error(r);
+            else setURL(`/app/groupes/${groupe.id}/`);
+        }
+    });
+
+    URLrooter.addListener("/app/groupes/$id/settings", onOpenSettings, null, { id: /^[0-9]+$/})
+</script>

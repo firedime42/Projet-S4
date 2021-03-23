@@ -1,21 +1,43 @@
-recup_groups_user_modified($id_user,$time) //Renvoie un tableau associatif avec les groupes de l'Utilisateur modifiés depuis le temps en parametres
+Finis :
 
-recup_file_filename($filename) //Renvoie un tableau associatif avec les attributs du fichier 
-recup_file_id($id) //Renvoie un tableau associatif avec les attributs du fichier
-recup_files_modified($id_folder,$time) //Renvoie un tableau associatif avec les fichiers modifiés depuis le temps en parametres dans le dossier concerné
+Quitter un groupe
 
-supprime_fichier($id)
-create_file($folder,$filename,$content_type,$size,$descr)//Crée un fichier avec les parametres
-modifie_file($id,$nom,$description) // Modifie le fichier avec un nouveua nom et description
+A implementer :
 
-recup_folder_id($id) //Renvoie un tableau associatif avec les attributs du dossier 
-create_folder($nom,$parent,$description) //Crée le dossier puis renvoyer un bool
-recup_folder_nom_descr($nom,$description) // Renvoie l'id du folder, null sinon
+GROUPES :
+DashBoard du groupe : pour le proprietaire
+Nommer des Admins
+Retirer des fichiers
+Renommer des fichiers
+Rechercher un fichier
+Exclure des membres
+Envoyer un message dans le tchat d'un fichier
+Envoyer un message dans le tchat d'un groupe
+Permissions Read-only/Ecrire dans un tchat
+Permissions Preview/Liste des fichiers/Telechargements/Upload dans un groupe
+Rewards Membres Actifs
 
-Penser a modifier les lastUpdates !!!
-Time/lastUpdates : fixer une valeur ?
+Noter un fichier (1 a 5 etoiles)
+Mettre un fichier en Favoris
+Retirer un fichier des Favoris
 
-Retour Utilisateur :
-Inscription -> aucune validation
-Si session demarre vide, Erreur
-pas de seconde tentative
+PAGES FAVORIS :
+Fichier notés Favoris
+
+PARAMETRES USER :
+Modifier mot de passe
+Modifier username
+Modifier Adresse Mail
+Choisir un theme
+
+Entrée passe au champ suivant : inscription/Connexion
+
+
+
+PHP :
+
+HTML :
+
+CSS :
+
+JS :

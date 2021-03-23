@@ -1,18 +1,8 @@
-<!-- fenetre centrale -->
-<div class="">
-    {{ INCLUDE this.currentNode "/template/app.explorer.html" }}
-    <!---->
-    {{ INCLUDE this.currentNode "/template/app.preview.html" }}
-</div>
-
-<!-- fenetre chatbox -->
-{{ INCLUDE this.currentNode "/template/app.chatbox.html" }}
-
-
 <div class="groupe-header">
     <!-- Information sur le groupe  -->
     <h1>{{ groupe.nom }}</h1>
     <p class="descr">{{ groupe.description }}</p>
+    <a href="/app/groupes/{{ groupe.id }}/settings" class="settings-btn icon icon-cog"></a>
 </div>
 <div class="groupe-main">
     <div class="column scrollable" style="width:calc(100% - {{ chat_width }});">
@@ -31,21 +21,27 @@
 </div>
 
 <script>
-    doc.update({ chat_width: '40%' });
+    let groupe = null;
 
-    window.setChatSize= function (w) {
+    doc.update({ groupe: {}, chat_width: '0%' });
+
+    window.setChatSize = function (w) {
         doc.update({ chat_width: w });
     };
 
-    async function checkGroupe({ id, dir }) {
-        let groupe = await GROUPES.get(id);
+    URLrooter.addListener("/app/groupes/$id/*",
+        async function ({ id }) {
+            if (groupe != null) {
+                if (groupe.id == id) return;
+                else groupe.removeListener(Groupe.EVENT_UPDATE, doc.update);
+            }
+            
+            groupe = await GROUPES.get(id);
 
-        if (dir != "join" && groupe.status != "membre") {
-            console.log(dir)
-            setURL(`/app/groupes/${id}/join`);
-        }
-    }
-
-    URLrooter.addListener("/app/groupes/$id/$dir", checkGroupe, null, { id : /^[0-9]+$/, dir: /^(?:[0-9]+)?$/ });
-
+            if (groupe instanceof Groupe) {
+                groupe.addListener(Groupe.EVENT_UPDATE, doc.update);
+                doc.update({ groupe });
+            }
+        },
+    null, { id : /^[0-9]+$/ });
 </script>

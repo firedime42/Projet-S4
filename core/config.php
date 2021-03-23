@@ -4,10 +4,10 @@
         "sitename" => "Shared",
 
         # base de données
-        "db_host" => "localhost",//"51.178.54.52",
-        "db_name" => "id16419041_wazap",
-        "db_user" => "id16419041_info406",
-        "db_password" => "^YE#>RNuaIGe_1@(",
+        "db_host" => "51.254.223.143:3306", //"localhost",//"51.178.54.52",
+        "db_name" => "lcmc_116714",//"share",//"id16419041_wazap",
+        "db_user" => "lcmc_116714",//"root",//"id16419041_info406",
+        "db_password" => "2bde19f5",//"",//"^YE#>RNuaIGe_1@(",
         
         # session
         "session_keepalive" => 365 * 24 * 3600, # seconds

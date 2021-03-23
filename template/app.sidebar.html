@@ -1,12 +1,14 @@
 <nav class="sidebar">
     <div class="scrollable">
         <a href="/app/groupes/add" class="btn btn-primary">Ajouter un groupe</a>
+        <!--
         <h6 class="sidebar-header mt-4 mb-1 px-3">
             <span>Invitations</span>
         </h6>
         <ul>
             {{ MARK this "groupsInvited" }}
         </ul>
+        -->
         <h6 class="sidebar-header mt-4 mb-1 px-3">
             <span>Mes demandes</span>
         </h6>
@@ -30,14 +32,15 @@
     let r = await fetch("/template/app.sidebar.groupeItem.html");
     let html = await r.text();
 
-    let listGroup = new ListGroupe();
+    let listGroup = ListGroupe;
 
     groupeItem = new uTemplate.parser(html);
-
     let htmllist = {};
-    htmllist["membre"] = doc.ctx.markedElement.groups;
-    htmllist["candidat"] = doc.ctx.markedElement.groupsAsked;
-    htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
+    htmllist["accepted"] = doc.ctx.markedElement.groups;
+    htmllist["pending"] = doc.ctx.markedElement.groupsAsked;
+    htmllist["rejected"] = doc.ctx.markedElement.groupsAsked;
+    htmllist["excluded"] = doc.ctx.markedElement.groupsAsked;
+    //htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
 
 
     function _toggleSelected({ id }) {
@@ -69,6 +72,8 @@
     listGroup.addListener("append", function (l, groupe) {
         let container = htmllist[groupe.status];
         let element = groupeItem.parse(groupe);
+
+        console.log(l, groupe, container, element);
 
         Dom.append(container, element);
     });
