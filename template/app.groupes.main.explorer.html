@@ -174,12 +174,14 @@
             removeFile(null, Dom.attribute(files[i], 'data-file-id'));
     }
 
+    function onFolderUpdate() { doc.update(); }
+
     /**
      * retire les listeners du dossier courant
      */
     function removeListeners() {
         if (!(folder instanceof Folder)) return;
-        folder.removeListener(Folder.EVENT_UPDATE, doc.update);
+        folder.removeListener(Folder.EVENT_UPDATE, onFolderUpdate);
         folder.removeListener(Folder.EVENT_NEW_FILE, addFile);
         folder.removeListener(Folder.EVENT_REMOVE_FILE, removeFile);
     }
@@ -189,7 +191,7 @@
      */
     function addListeners() {
         if (!(folder instanceof Folder)) return;
-        folder.addListener(Folder.EVENT_UPDATE, doc.update);
+        folder.addListener(Folder.EVENT_UPDATE, onFolderUpdate);
         folder.addListener(Folder.EVENT_NEW_FILE, addFile);
         folder.addListener(Folder.EVENT_REMOVE_FILE, removeFile);
     }

@@ -13,10 +13,12 @@
     {{ INCLUDE this.currentNode "/template/app.groupes.create.html" }}
 </div>
 <div class="groupe-browse" data-visible="{{ CURRENT_URL_MATCH BROWSEDIR VARTESTS }}">
-    {{ INCLUDE this.currentNode "/template/app.groupes.main.html" }}
+    {{ INCLUDE this.currentNode "/template/app.groupes.main.html" transmitted }}
 </div>
 
 <script>
+    let ctx = { groupe: null, folder: null, change: new Listenable() };
+
     doc.update({
         VARTESTS: {
             id : /^[0-9]+$/,
@@ -26,7 +28,9 @@
         CREATE : "/app/groupes/create",
         BROWSEDIR : "/app/groupes/$id/$dir/*",
         SETTINGS :  "/app/groupes/$id/settings",
-        JOIN:       "/app/groupes/$id/join"
+        JOIN:       "/app/groupes/$id/join",
+
+        transmitted: { ctx }
     });
 
     async function onurlchange({ id }) {
@@ -35,7 +39,6 @@
         //if (groupe != null && groupe.id == id) return;
 
         let groupe = await GROUPES.get(id);
-
 
         let { dir } = URLrooter.parseURL("/app/groupes/$id/$dir/*");
 

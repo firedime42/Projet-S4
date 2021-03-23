@@ -2,6 +2,7 @@
 header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
+require_once dirname(__FILE__)."/../roleFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
@@ -50,9 +51,9 @@ switch ($_post->action) {
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???
-                    "nb_membres" => $group["nb_membres"],
-                    "nb_messages" => $group["nb_messages"],
-                    "nb_files" => $group["nb_files"],
+                    "nb_membres" => nb_members($group["id"]),
+                    "nb_messages" => 0,//(int) $group["nb_messages"],
+                    "nb_files" => 0,//(int) $group["nb_files"],
                     "lastUpdate" => $group["last_update"]
                 );
                 }
@@ -72,8 +73,8 @@ switch ($_post->action) {
                     "nom" => $group["name"],
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
-                    "nb_membres"=> $group["nb_membres"],
-                    "nb_messages" => $group["nb_messages"]
+                    "nb_membres"=> nb_members($group["id"]),//$group["nb_membres"],
+                    "nb_messages" => 0,//$group["nb_messages"]
                 );
             }
             $res["results"] = $groups; 
@@ -85,15 +86,15 @@ switch ($_post->action) {
         if($_post->id==NULL){
             $res["error"]=0001;
         }else{
-            $res["success"]=join_group($_post->id,$_SESSION["user"]["id"]);
-            $res["status"]="accepted";
+            $res["success"]=apply_group($_post->id,$_SESSION["user"]["id"]);//apply ?
+            $res["status"]="pending";
         }
         break;
     case "leave":
         if($_post->id==NULL){
             $res["error"]=0001;
         }else{
-            $res["success"]=leave_group($_post->id,$_SESSION["user"]["id"]);
+            $res["success"]=quit_group($_post->id,$_SESSION["user"]["id"]);
         }
         break;
     case "create":
@@ -109,16 +110,93 @@ switch ($_post->action) {
 
         break;
     case "remove-user":
+        if($_post->id==NULL){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_owner($_session["user"]["id"],$_post->group)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=quit_group($_post->id,$_post->group);
+        }
         break;
-    case "validate-user":
+    case "accept-user":
+        if($_post->id==NULL){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_owner($_session["user"]["id"],$_post->group)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=join_group($_post->id,$_post->group);
+        }
+        break;
+    case "create-role":
+        if($_post->group==NULL){
+            $res["error"]=2000; 
+        }elseif ($_post->name==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }else{
+            if($_post->color==NULL){
+                $res["success"]=create_role($_post->group,$_post->name);
+            }elseif (format_color($_post->color)){
+                $res["success"]=create_role_color($_post->group,$_post->name,$_post->color);
+            }else{
+                $res["error"]=2000;
+            }
+        }
         break;
     case "add-role":
+        if($_post->user==NULL){
+            $res["error"]=2000;
+        }elseif(empty(recup_user_id($_post->id))){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_RENAME_FILE)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=add_role($_post->group,$_post->user,$_post->role);
+        }
         break;
     case "remove-role":
+        if($_post->user==NULL){
+            $res["error"]=2000;
+        }elseif(empty(recup_user_id($_post->id))){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_RENAME_FILE)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=remove_role($_post->group,$_post->user,$_post->role);
+        }
         break;
     case "delete-role":
+        if($_post->role==NULL){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_RENAME_FILE)) {
+            $res["error"]=2000;
+        }elseif (nb_roles_group($_post->role)) {
+            $res["success"]=2000;
+        }else{
+            $res["success"]=delete_role($_post->role);
+        }
         break;
-        
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;
 }

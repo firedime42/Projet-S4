@@ -58,7 +58,7 @@
          * Récupère les informations depuis le serveur et les actualise si elles ont changées
          */
         async pull() {
-            if (Date.now() - this.#lastCheck < 5000) return this;
+            //if (Date.now() - this.#lastCheck < 1000) return this;
 
             //let r = await __getGroupeInfo(this.#id, this.#lastUpdate);
             let r = await request("/core/controller/groupe.php", {
@@ -67,7 +67,7 @@
                 time: this.#lastUpdate
             });
 
-            this.lastCheck = Date.now();
+            this.#lastCheck = Date.now();
     
             if (r instanceof Error) return r;
 
@@ -136,6 +136,8 @@
         get nb_files() { return this.#nb_files; }
         get nb_membres() { return this.#nb_membres; }
         get nb_messages() { return this.#nb_messages; }
+
+        get lastPullRequest() { return this.#lastCheck; }
     }
 
     class GroupeManager {
@@ -155,9 +157,12 @@
             let _this = this;
 
             // creer ou récuperer le groupe
-            this.#groupes[id] = this.#groupes[id] || new Groupe(id);
+            if (!this.#groupes[id]) this.#groupes[id] = new Groupe(id);
 
-            this.#waiting[id] = this.#groupes[id].pull();
+            // on compare à la version sur la db si la derniere mise à jour était il y a plus de 5s
+            if ( Date.now() - this.#groupes[id].lastPullRequest > 5000 )
+                this.#waiting[id] = this.#groupes[id].pull();
+                
             this.#waiting[id].then(function () { _this.#waiting[id] = null; });
 
             // verifier/recuperer les infos sur le serveur

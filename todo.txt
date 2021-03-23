@@ -35,6 +35,9 @@ Entrée passe au champ suivant : inscription/Connexion
 
 
 PHP :
+delete_role - verifier si le role n'est pas role par defaut du groupe / traiter le cas ou un utilisateur possède le role ?
+
+
 
 HTML :
 
