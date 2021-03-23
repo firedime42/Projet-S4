@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/assets/lib/Dom.js"></script>
+    <script src="/assets/js/models/wazapfile.js"></script>
+</head>
+<body>
+    <input type="file" id="files">
+    <input type="button" id="upload">
+    <script>
+        
+        async function _sendPacket(id, partnum, packetsize, blob) {
+            data = new Uint32Array([ id, blob.size ]);
+
+            let r = await fetch("upload.php", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/octet-stream'
+                },
+                body: new Blob([ new Blob([ data.buffer ]), blob ])
+            });
+        }
+    
+        async function _sendFile(id, file, packetSize=10) {
+            let totalSize = file.size;
+            let nb_packets = Math.ceil(totalSize / packetSize);
+
+            for (let i = 0; i < nb_packets; i++) {
+                let packet = file.slice(i * packetSize, (i + 1) * packetSize);
+
+                console.log(`Envoi du packet ${i + 1} / ${nb_packets}`);
+                await _sendPacket(id, i, packetSize, packet);
+            }
+        }
+        
+        Dom.onClick(Dom.id("upload"), async function () {
+            let file = Dom.id('files').files[0];
+            let start = performance.now();
+            await _sendFile(Math.floor(new Date().getTime() / 1000), file, 16 * 1024);
+            let end = performance.now();
+
+            let speed = 1000 * file.size / ( 1024 * 1024 * (end - start));
+
+            console.log(speed + " Mio/s");
+        });
+    </script>
+</body>
+</html>

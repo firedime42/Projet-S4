@@ -1,0 +1,19 @@
+<div class="folder item" data-folder-id="{{ folder.id }}">
+    <div>
+        <div class="data">
+            <div class="name clip">{{ folder.nom }}</div>
+            <div class="description clip">{{ folder.description }}</div>
+        </div>
+        <div class="optional-data">
+            <div class="nb_files">{{ folder.nb_files }}</div>
+            <div class="nb_messages" data-new-messages="{{ folder.new_messages }}">{{ folder.nb_messages }}</div>
+        </div>
+        <div class="action dropstart dropdown">
+            <em class="icon icon-menu"></em>
+            <div class="dropdown-menu dropdown-menu-right">
+                <!--<a class="dropdown-item">Renommer</a>-->
+                <a class="dropdown-item">Supprimer</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="file item" data-file-id="{{ file.id }}">
+    <div>
+        <div class="data">
+            <div class="name clip">{{ file.nom }}</div>
+            <div class="description clip">{{ file.description }}</div>
+        </div>
+        <div class="optional-data">
+            <div class="nb_likes" data-liked="{{ file.is_liked }}">{{ file.nb_likes }}</div>
+            <div class="nb_messages" data-new-messages="{{ file.new_messages }}">{{ file.nb_comments }}</div>
+        </div>
+        <div class="action dropstart dropdown">
+            <em class="icon icon-menu"></em>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item download">telecharger</a>
+                <!--<a class="dropdown-item rename">Renommer</a>-->
+                <a class="dropdown-item delete" data-visible="{{ file.canRemove }}">Supprimer</a>
+            </div>
+        </div>
+    </div>
+</div>
