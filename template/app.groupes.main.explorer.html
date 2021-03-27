@@ -33,6 +33,8 @@
     </div>
 </div>
 <script>
+    let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete à changer lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages, on commence à charger une page mais on change d'avis entre temp.
+
     let groupe = null;
     let folder = null;
     let uploads = {}; // id => Upload
@@ -64,9 +66,14 @@
         } else { // change folder
             removeAllFiles();
             removeListeners();
+
+            let req = ++current_request_num;
             folder = await FOLDERS.get(folder_id);
-            addListeners();
-            addAllFiles();
+
+            if (req == current_request_num) {
+                addListeners();
+                addAllFiles();
+            }
         }
     }
 
@@ -114,8 +121,11 @@
     }
 
     async function addFile(fold, file_id) {
+        let req = current_request_num;
         console.log(file_id);
-        let file = await WFILES.get(file_id);
+        let file = await WFILES.get(file_id * 1);
+        if (req != current_request_num) return;
+
         let fhtml = fileParser.parse({ groupe, parentFolder: folder, file });
         let file_item = Dom.find('.file.item', fhtml)[0];
         let download_btn = Dom.find('a.download', fhtml)[0];
@@ -164,7 +174,7 @@
     async function removeFile(fold, file_id) {
         Dom.remove(Dom.find(`.file[data-file-id="${file_id}"]`)[0]);
         let file = await WFILES.get(file_id);
-        //file.removeListener(WFile.EVENT_UPDATE, onFileChange);
+        file.removeListener(WFile.EVENT_UPDATE, onFileChange);
     }
 
     function removeAllFiles() {

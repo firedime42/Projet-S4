@@ -1,0 +1,12 @@
+.groupe-settings {
+
+    .text-zone {
+        background-color: #fff;
+        border-radius: 20px;
+        min-height: 2em;
+    }
+
+    .text-zone:empty::before {
+        content: "Description du site";
+    }
+}

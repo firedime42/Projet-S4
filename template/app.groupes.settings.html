@@ -1,15 +1,45 @@
 <div class="content">
     <h1>{{ groupe.nom }}</h1>
-    <h2>Paramètre du groupe</h2>
+    <h2>Paramètres</h2>
     <div>
-        <h2></h2>
-        <button class="btn btn-warning">{{ MARK this "leave" }}Quitter le groupe</button>
+        <h2>Appartenance au groupe</h2>
+        <div>
+            <button class="btn btn-warning">{{ MARK this "leave" }}Quitter le groupe</button>
+        </div>
+
+        <h2>Information sur le groupe</h2>
+        <div><!-- Debug : {{ groupe.creator_id }} {{ user.id }} -->
+            <div>Nom du groupe : <input type="text" data-visible="{{ EQUALS groupe.creator_id user.id }}" placeholder="{{ groupe.nom }}" value="{{ groupe.nom }}"></div>
+            <div>Description du groupe : <div class="text-zone" contentEditable="{{ EQUALS groupe.creator_id user.id }}">{{ groupe.description }}</div></div>
+            <button data-visible="{{ EQUALS groupe.creator_id user.id }}" class="btn btn-primary">{{ MARK this "valid-modif" }} Valider les modifications</button>
+        </div>
+
+        <h2>Roles</h2>
+        <div>
+            List des Roles
+            <div>
+                <div>
+
+                </div>
+                <div>
+                    {{ MARK this "roles" }}
+                </div>
+            </div>
+        </div>
+
+        <h2>Membres</h2>
+        <div>
+            <input type="text" placeholder="nom">
+            <div class="row-container">
+                <div class="row"></div>
+            </div>
+        </div>
     </div>
 </div>
 <script>
     let groupe = null;
 
-    await doc.update({ groupe: {} });
+    await doc.update({ groupe: {}, user });
 
     console.log(doc.ctx);
     
@@ -28,16 +58,23 @@
         }
     }
 
+    /* Permettre à l'utilisateur de quitter le groupe */
     Dom.addListener(doc.ctx.markedElement["leave"], "click", async function () {
-        console.log("ok");
-
         if (groupe) {
-            let r = await groupe.leave();
-            ListGroupe.update();
+            let c = await confirmeAction("Êtes-vous sûr de vouloir quitter ce groupe ?");
+            if (c) {
+                let r = await groupe.leave();
+                ListGroupe.update();
 
-            if (r instanceof Error) console.error(r);
-            else setURL(`/app/groupes/${groupe.id}/`);
+                if (r instanceof Error) console.error(r);
+                else setURL(`/app/groupes/${groupe.id}/`);
+            }
         }
+    });
+
+    /* Permettre à l'utilisateur de modifier les informations sur le groupe */
+    Dom.addListener(doc.ctx.markedElement["valid-modif"], "click", async function () {
+
     });
 
     URLrooter.addListener("/app/groupes/$id/settings", onOpenSettings, null, { id: /^[0-9]+$/})

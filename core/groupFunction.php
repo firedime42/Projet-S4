@@ -9,12 +9,14 @@ function create_group($nom, $description, $id_proprietaire) {
 	$id=mysqli_insert_id($database);
 	$query = "INSERT INTO `group` (name, description, root, id_creator) VALUES ('$nom', '$description', $id, $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
+	$id_group=mysqli_insert_id($database);
+	apply_group($id_group,$id_proprietaire);
+	join_group($id_group,$id_proprietaire,$id_proprietaire);
+	create_role($id_group,"Membre");
+	create_role_color($id_group,"Fondateur","dc3545");
 	$id=mysqli_insert_id($database);
-	create_role($id,"Membre");
-	create_role_color($id,"Fondateur","dc3545");
-	apply_group($id,$id_proprietaire);
-	join_group($id,$id_proprietaire);
-	return $id;
+	add_role($id_group,$id_proprietaire,$id);
+	return $id_group;
 }
 
 function recup_group_id($id) {
@@ -52,19 +54,19 @@ function recup_status_by_user_and_group($id_user, $id_group){
 	$query = "SELECT status FROM groupUser WHERE user_id = $id_user AND group_id = $id_group ";
 	$resq = mysqli_query($database, $query);
 	$res = mysqli_fetch_assoc($resq)["status"];
-	if($res==NULL) 
+	if($res==NULL)
 		$res="left";
 	return $res;	
 }
 
 function recup_groups_since ($id_user,$time){
 	global $database;
-		$query = "SELECT g.id,g.name,g.last_update,g.description FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
+		$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
 		$resq = mysqli_query($database, $query);
 		$grouplist=array();
-			while($row = mysqli_fetch_assoc($resq)) {
-				$grouplist[] = $row;
-			}
+		while($row = mysqli_fetch_assoc($resq)) {
+			$grouplist[] = $row;
+		}
 		return $grouplist;
 }
 
@@ -75,14 +77,14 @@ function apply_group($id_group,$id_user){
 	return $res;
 }
 
-function join_group($group_id,$user_id){
+function join_group($group_id,$user_id,$id_proprietaire){
 	global $database;
-	$query="UPDATE groupUser SET gu.status='accepted' WHERE gu.group_id=$group_id AND gu.user_id=$user_id";
+	$query="UPDATE groupUser SET status='accepted' WHERE group_id=$group_id AND user_id=$user_id AND EXISTS(SELECT * FROM `group` WHERE id_creator=$id_proprietaire AND id=$group_id)";
 	$res=mysqli_query($database,$query);
 	return $res;
 }
 
-function quit_group($group_id,$user_id){
+function leave_group($group_id,$user_id){
 	global $database;
 	$query = "DELETE FROM groupUser WHERE user_id=$user_id AND group_id=$group_id";
 	$res=mysqli_query($database,$query);
@@ -91,8 +93,16 @@ function quit_group($group_id,$user_id){
 
 function nb_members($group_id){
 	global $database;
-	$query = "SELECT COUNT(user_id) FROM groupUser WHERE group_id=$group_id";
+	$query = "SELECT * FROM groupUser WHERE group_id=$group_id";
 	$res = mysqli_query($database,$query);
+	$res=mysqli_num_rows($res);
+	return $res;
+}
+
+function modif_groupe($id,$nom,$description){
+	global $database;
+	$query="UPDATE `group` SET name = '$nom',description='$description' WHERE id=$id";
+	$res=mysqli_query($database,$query);
 	return $res;
 }
 ?>

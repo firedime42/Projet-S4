@@ -25,7 +25,7 @@ switch ($_post->action) {
             $res["error"] = 3004; //un fichier a le meme nom*/
         }else{
             $res["success"]=true;
-            $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_SESSION["user"]["id"]);
+            $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_session["user"]["id"]);
         }
         break;
     case "end-upload":

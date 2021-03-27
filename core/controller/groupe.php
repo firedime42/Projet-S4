@@ -1,4 +1,4 @@
-<?php
+*<?php
 header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
@@ -12,20 +12,22 @@ $res = array(
 
 switch ($_post->action) {
     case "list":
-        if ($_post->time===NULL) $res["error"]=0003; //temps invalide
+        if ($_post->time===NULL)
+            $res["error"]=0003; //temps invalide
         else{
             $res["success"]=true;
-            $group_data=recup_groups_since($_SESSION["user"]["id"],$_post->time);
+            $group_data=recup_groups_since($_session["user"]["id"],$_post->time);
             $groups=array();
             foreach($group_data as $group){
                 $groups[]=array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$group["id"]),
+                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
                     "new_docs" => 0,
                     "unread_docs" => 0,
                     "new_messages" => 0,
                     "description" => $group["description"],
+                    "creator_id" => $group["id_creator"],
                     "lastUpdate" => $group["last_update"]
                 );
             }
@@ -47,13 +49,14 @@ switch ($_post->action) {
                 $res["groupe"]= array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$group["id"]),
+                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???
                     "nb_membres" => nb_members($group["id"]),
                     "nb_messages" => 0,//(int) $group["nb_messages"],
                     "nb_files" => 0,//(int) $group["nb_files"],
+                    "creator_id" => $group["id_creator"],
                     "lastUpdate" => $group["last_update"]
                 );
                 }
@@ -85,16 +88,22 @@ switch ($_post->action) {
     case "join":
         if($_post->id==NULL){
             $res["error"]=0001;
+        }elseif(!empty(recup_group_id($_post->id))){
+            $res["error"]=0001;
         }else{
-            $res["success"]=apply_group($_post->id,$_SESSION["user"]["id"]);//apply ?
+            $res["success"]=apply_group($_post->id,$_session["user"]["id"]);
             $res["status"]="pending";
         }
         break;
     case "leave":
         if($_post->id==NULL){
             $res["error"]=0001;
+        }elseif (empty(recup_group_id($_post->id))){
+            $res["error"]=0001;
+        }elseif(is_owner($_session["user"]["id"],$_post->id)) {
+            $res["error"]=0001;
         }else{
-            $res["success"]=quit_group($_post->id,$_SESSION["user"]["id"]);
+            $res["success"]=leave_group($_post->id,$_session["user"]["id"]);
         }
         break;
     case "create":
@@ -105,21 +114,24 @@ switch ($_post->action) {
             $res["error"]=2100;
         }else{
             $res["success"]=true;
-            $res["groupe"]= create_group($_post->nom, $_post->description, $_SESSION["user"]["id"]);
+            $res["groupe"]= create_group($_post->nom, $_post->description, $_session["user"]["id"]);
         }
-
         break;
     case "remove-user":
         if($_post->id==NULL){
             $res["error"]=2000;
         }elseif ($_post->group==NULL) {
             $res["error"]=2000;
+        }elseif(empty(recup_user_id($_post->id))){
+            $res["error"]=0001;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
-        }elseif (!is_owner($_session["user"]["id"],$_post->group)) {
+        }elseif(is_owner($_post->id,$_post->group)){
+            $res["error"]=0001;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_REMOVE_USER)) {
             $res["error"]=2000;
         }else{
-            $res["success"]=quit_group($_post->id,$_post->group);
+            $res["success"]=leave_group($_post->id,$_post->group);
         }
         break;
     case "accept-user":
@@ -129,10 +141,10 @@ switch ($_post->action) {
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
-        }elseif (!is_owner($_session["user"]["id"],$_post->group)) {
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_VALIDATE_USER)) {
             $res["error"]=2000;
         }else{
-            $res["success"]=join_group($_post->id,$_post->group);
+            $res["success"]=join_group($_post->group,$_session["user"]["id"],$_post->id);
         }
         break;
     case "create-role":
@@ -195,6 +207,21 @@ switch ($_post->action) {
             $res["success"]=2000;
         }else{
             $res["success"]=delete_role($_post->role);
+        }
+        break;
+    case "push":
+        if($_post->id == NULL){
+            $res["error"]=0001;
+        }elseif (empty(recup_group_id($_post->id))) {
+            $res["error"]=0001;
+        }elseif ($_post->nom == NULL) {
+            $res["error"]=0001;
+        }elseif ($_post->description == NULL) {
+            $res["error"]=0001;
+        }elseif (is_allowed($_session["user"]["id"],$_post->id,ROLE_REWRITE_DESCRIPTION_GROUP) && is_allowed($_session["user"]["id"],$_post->id,ROLE_RENAME_GROUP)) {
+            $res["error"]=0001;
+        }else {
+            $res["success"]=modif_groupe($_post->id,$_post->nom,$_post->description);
         }
         break;
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe

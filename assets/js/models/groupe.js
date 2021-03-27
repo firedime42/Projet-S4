@@ -32,12 +32,20 @@
     }
 
     class Groupe extends Listenable {
+        static FORMAT_NOM = /^[\w ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûüÂÊÁËÈÍÎÏÌÓÔÒÚÛÙ]{3,50}$/;
+        static FORMAT_DESCRIPTION = /^.{0,255}$/;
+
         static EVENT_UPDATE = "update";
 
         #id;
         #lastUpdate;
         #nom;
         #description;
+
+        #newNom;
+        #newDescription;
+
+        #creator_id;
         #status;
         #root;
         #nb_membres;
@@ -76,6 +84,32 @@
             return this;
         }
 
+
+        async push() {
+            let nom = this.#newNom || this.#nom;
+            let description = this.#newDescription || this.#description;
+
+            if (!Groupe.FORMAT_NOM.test(nom)) return _error(2301);
+            if (!Groupe.FORMAT_DESCRIPTION.test(description)) return _error(2302);
+
+            let r = await request("/core/controller/groupe.php", {
+                action: 'push',
+                id: this.#id,
+                nom: nom,
+                description: description
+            });
+
+            this.#newNom = null;
+            this.#newDescription = null;
+
+            if (r instanceof Error) return r;
+
+            this.#nom = nom;
+            this.#description = description;
+
+            return this;
+        }
+
         /**
          * envoi une requete pour rejoindre un groupe
          */
@@ -99,7 +133,7 @@
          * quitter le groupe
          */
         async leave() {
-            if (this.#status != 'accepted') return _error(-1);
+            if (this.#status != 'accepted' && this.#status != 'pending') return _error(-1);
 
             let r = await request("/core/controller/groupe.php", {
                 action: "leave",
@@ -118,6 +152,7 @@
             let exists = (a, b) => (a != null && a != undefined) ? a : b;
             this.#nom = exists(groupe['nom'], this.#nom);
             this.#description = exists(groupe['description'], this.#description);
+            this.#creator_id = exists(groupe['creator_id'], this.#creator_id);
             this.#root = exists(groupe['root'], this.#root);
             this.#status = exists(groupe['status'], this.#status);
             this.#nb_membres = exists(groupe['nb_membres'], this.#nb_membres);
@@ -129,8 +164,9 @@
         }
 
         get id() { return this.#id; }
-        get nom() { return this.#nom; }
-        get description() { return this.#description; }
+        get nom() { return this.#newNom || this.#nom; }
+        get description() { return this.#newDescription || this.#description; }
+        get creator_id() { return this.#creator_id; }
         get root() { return this.#root; }
         get status() { return this.#status; }
         get nb_files() { return this.#nb_files; }
@@ -138,6 +174,9 @@
         get nb_messages() { return this.#nb_messages; }
 
         get lastPullRequest() { return this.#lastCheck; }
+
+        set nom(nom) { this.#newNom = nom; }
+        set description(descr) { this.#newDescription = descr; }
     }
 
     class GroupeManager {
@@ -160,13 +199,13 @@
             if (!this.#groupes[id]) this.#groupes[id] = new Groupe(id);
 
             // on compare à la version sur la db si la derniere mise à jour était il y a plus de 5s
-            if ( Date.now() - this.#groupes[id].lastPullRequest > 5000 )
+            if ( Date.now() - this.#groupes[id].lastPullRequest > 5000 ) {
                 this.#waiting[id] = this.#groupes[id].pull();
-                
-            this.#waiting[id].then(function () { _this.#waiting[id] = null; });
+                this.#waiting[id].then(function () { _this.#waiting[id] = null; });
+            }
 
             // verifier/recuperer les infos sur le serveur
-            return this.#waiting[id];
+            return this.#waiting[id] || this.#groupes[id];
         }
 
         /**
@@ -175,20 +214,19 @@
          * @param {*} description 
          */
         async create(nom, description) {
-            if (!/^\w{3,25}$/.test(nom)) return _error(2301);
-            else if (!/^.{1,500}$/.test(description)) return _error(2302);
-            else {
-                console.log(nom, description);
-                let r = await request("/core/controller/groupe.php", {
-                    action: 'create',
-                    nom: nom,
-                    description: description
-                });
+            if (!Groupe.FORMAT_NOM.test(nom)) return _error(2301);
+            if (!Groupe.FORMAT_DESCRIPTION.test(description)) return _error(2302);
 
-                if (r instanceof Error) return r;
+            console.log(nom, description);
+            let r = await request("/core/controller/groupe.php", {
+                action: 'create',
+                nom: nom,
+                description: description
+            });
 
-                return r.groupe;
-            }
+            if (r instanceof Error) return r;
+
+            return r.groupe;
         }
     }
 

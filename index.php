@@ -104,6 +104,9 @@
 
         <!-- 404 page -->
         <div class="page" data-visible="{{ URLLIKE url '/404' }}"></div>
+
+        <!-- confirmation -->
+        {{ INCLUDE this.currentNode "/template/confirme.html" }}
     </section>
 
     <script src="/assets/js/main.js"></script>
