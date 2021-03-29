@@ -1,3 +1,234 @@
 <div class="content">
-    <h1>Rien ici pour le moment</h1>
+    <h1>{{ groupe.nom }} — Paramètres</h1>
+    <div>
+        <h2>Appartenance au groupe</h2>
+        <div>
+            <button class="btn btn-warning">{{ MARK this "leave" }}Quitter le groupe</button>
+        </div>
+
+        <h2>Information sur le groupe</h2>
+        <div><!-- Debug : {{ groupe.creator_id }} {{ user.id }} -->
+            <div>Nom du groupe : <input type="text" data-visible="{{ EQUALS groupe.creator_id user.id }}" placeholder="{{ groupe.nom }}" value="{{ groupe.nom }}"></div>
+            <div>Description du groupe : <div class="text-zone" contentEditable="{{ EQUALS groupe.creator_id user.id }}">{{ groupe.description }}</div></div>
+            <button data-visible="{{ EQUALS groupe.creator_id user.id }}" class="btn btn-primary">{{ MARK this "valid-modif" }} Valider les modifications</button>
+        </div>
+
+        <h2>Candidature</h2>
+        <div>
+            <div class="row-container scrollable candidatures">
+                {{ MARK this "candidatures" }}
+                <div class="t-row">
+                    <div class="nom">test1</div>
+                    <div class="accept">
+                        <button class="btn btn-danger">Reject</button>
+                    </div>
+                    <div class="reject">
+                        <button class="btn btn-primary">Accept</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Roles</h2>
+        <div>
+            <div class="roles scrollable">
+                <div class="header">
+                    <div class="nom">Nom</div>
+                    <div>
+                        <div class="categ">Messages</div>
+                        <div class="spec">
+                            <div>Lire</div>
+                            <div>Ecrire</div>
+                            <div>Supprimer</div>
+                            <div>Gerer</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="categ">fichier</div>
+                        <div class="spec">
+                            <div>Telecharger</div>
+                            <div>Creer</div>
+                            <div>Renommer</div>
+                            <div>Supprimer</div>
+                            <div>Gerer</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="categ">dossier</div>
+                        <div class="spec">
+                            <div>Creer</div>
+                            <div>Renommer</div>
+                            <div>Supprimer</div>
+                            <div>Gerer</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="categ">Membres</div>
+                        <div class="spec">
+                            <div>accepter</div>
+                            <div>kick</div>
+                            <div>role</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="categ">Role</div>
+                        <div class="spec">
+                            <div>gerer</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="categ">Groupe</div>
+                        <div class="spec">
+                            <div>renommer</div>
+                            <div>decrire</div>
+                        </div>
+                    </div>
+                    <div class="remove">Supprimer</div>
+                </div>
+                <div class="row-container scrollable">
+                    {{ MARK this "roles" }}
+                </div>
+                <div class="append">
+                    {{ MARK this "roles_new" }}
+                    <input type="text" placeholder="Nom du role"> <button class="btn btn-primary">Ajouter</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <button class="btn btn-default">{{ MARK this "roles_cancel" }}Annuler</button>
+                <button class="btn btn-primary">{{ MARK this "roles_save" }}Sauvegarder</button>
+            </div>
+        </div>
+
+        <h2>Membres</h2>
+        <div>
+            <input type="text" placeholder="filtrer par nom">
+            <div class="row-container scrollable membres">
+                {{ MARK this "membres" }}
+                <div class="t-row">
+                    <div class="nom">test1</div>
+                    <div class="role">
+                        <select class="form-select" aria-label="Default select example">
+                            {{ INPUT_SELECT this.currentNode "2" }}
+                            <option value="0">Zero</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                    <div class="kick">
+                        <button class="btn btn-primary">Kick</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    var groupe = null;
+    var roles = [];
+    var listRoles = null;
+    var listMembres = null;
+
+    await doc.update({ groupe: {}, user });
+
+    console.log(doc.ctx);
+    
+    async function onOpenSettings({ id }) {
+        groupe = await GROUPES.get(id);
+
+        if (groupe instanceof Error) { // TODO : affichage erreur / redirection sur groupe 404
+            console.error(r);
+            groupe = null;
+            setURL(`/app/groupes/error/404`);
+        } else if (groupe.status != 'accepted') { // TODO : redirection accès refusé
+            console.log("accès refusé : ne fait pas parti du groupe");
+            setURL(`/app/groupes/${groupe.id}/join`);
+        } else {
+            doc.update({ groupe });
+            roles = await groupe.getRoles();
+            if (roles instanceof Error) { // TODO : affichage erreur 
+            } else showRoles();
+        }
+    }
+
+    /* Permettre à l'utilisateur de quitter le groupe */
+    Dom.addListener(doc.ctx.markedElement["leave"], "click", async function () {
+        if (groupe) {
+            let c = await confirmeAction("Êtes-vous sûr de vouloir quitter ce groupe ?");
+            if (c) {
+                let r = await groupe.leave();
+                ListGroupe.update();
+
+                if (r instanceof Error) console.error(r);
+                else setURL(`/app/groupes/${groupe.id}/`);
+            }
+        }
+    });
+
+    /* Permettre à l'utilisateur de modifier les informations sur le groupe */
+    Dom.addListener(doc.ctx.markedElement["valid-modif"], "click", async function () {
+
+    });
+
+    /* Affichage des roles */
+    function removeRole(role) {
+        console.log(role);
+    }
+
+    async function showRoles() {
+        listRoles.clear();
+
+        let nb_roles = roles.length;
+        for (let i = 0; i < nb_roles; i++)
+            listRoles.add(role[i].id, roles[i], { remove : () => console.log(this) });
+    }
+
+    function createRole(nom) {
+        listRoles.add('new_'+Date.now(), {
+            "id": "",
+            "nom": nom,
+            // chat
+            "read_message": false,
+            "write_message": false,
+            "remove_message": false,
+            "remove_any_message": false,
+            // file
+            "download_file": false,
+            "create_file": false,
+            "rename_file": false,
+            "remove_file": false,
+            "remove_any_file": false,
+            // folder
+            "create_folder": false,
+            "rename_folder": false,
+            "remove_folder": false,
+            "remove_any_folder": false,
+            // user
+            "accept_user": false,
+            "kick_user": false,
+            "manage_role": false,
+            // role
+            "edit_role": false,
+            // groupe
+            "edit_name": false,
+            "edit_description": false
+        }, { remove:  () => console.log(this) });
+    }
+
+    Dom.addListener(doc.ctx.markedElement['roles_new'].children[1], 'click', function () {
+        let nom = doc.ctx.markedElement['roles_new'].children[0].value;
+
+        if (nom == '') return; // exception on sort
+
+        createRole(nom);
+    });
+
+    let rolesHTML = fetch("/template/app.groupes.settings.roleitem.html");
+    rolesHTML = await rolesHTML;
+    rolesHTML = await rolesHTML.text();
+
+    listRoles = new HTMLList(doc.ctx.markedElement['roles'], new uTemplate.parser(rolesHTML));
+
+    URLrooter.addListener("/app/groupes/$id/settings", onOpenSettings, null, { id: /^[0-9]+$/})
+</script>

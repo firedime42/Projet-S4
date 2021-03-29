@@ -17,6 +17,8 @@
 </div>
 
 <script>
+    let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete à changer lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages, on commence à charger une page mais on change d'avis entre temp.
+
     doc.update({
         VARTESTS: {
             id : /^[0-9]+$/,
@@ -26,16 +28,19 @@
         CREATE : "/app/groupes/create",
         BROWSEDIR : "/app/groupes/$id/$dir/*",
         SETTINGS :  "/app/groupes/$id/settings",
-        JOIN:       "/app/groupes/$id/join"
+        JOIN:       "/app/groupes/$id/join",
     });
 
     async function onurlchange({ id }) {
 
         //console.log(groupe, id);
-        //if (groupe != null && groupe.id == id) return;
+
+        let req_id = ++current_request_num;
 
         let groupe = await GROUPES.get(id);
 
+        // gestion de l'abandon de requete
+        if (req_id != current_request_num) return;
 
         let { dir } = URLrooter.parseURL("/app/groupes/$id/$dir/*");
 

@@ -1,22 +1,14 @@
 <?php
-
-$time_start = microtime(true);
-session_start();
 header("Content-Type: application/json");
-$time_session_start = microtime(true) - $time_start;
 
-$time_start = microtime(true);
 require_once dirname(__FILE__)."/../folderFunction.php";
-$time_for_get_db = microtime(true) - $time_start;
+require_once dirname(__FILE__) . "/../session.php";
 
-$time_start = microtime(true);
 $_post = json_decode(file_get_contents("php://input"));
-$time_parse_data = microtime(true) - $time_start;
 
-$_SESSION["folder"]=array();
+$res["folder"]=array();
 $res = array(
-    "success" => false,
-    "error" => 4000
+    "success" => false
 );
 
 switch($_post->action){
@@ -24,9 +16,7 @@ switch($_post->action){
         if ($_post->id == NULL) {
             $res["error"] = 0002; //id vide
         } else {
-            $time_start = microtime(true);
             $folder = recup_folder_id($_post->id);
-            $time_recup_folder = microtime(true) - $time_start;
 
             if (empty($folder)){
                 $res["error"] = 4002; //dossier inexistant
@@ -38,7 +28,6 @@ switch($_post->action){
                 $res["success"] = true;
                 $res["groupe"] = NULL;
             } else {
-                $time_start = microtime(true);
                 $res["success"] = true;
                 $res["folder"] = array(
                     //"id" => $folder["id"],
@@ -48,14 +37,7 @@ switch($_post->action){
                     "files" => recupere_fichiers_dans_dossier($_post->id),
                     "lastUpdate" => $folder["last_update"]
                 );
-                $time_for_iterate = microtime(true) - $time_start;
             }
-
-            $res["time_for_get_db"] = $time_for_get_db;
-            $res["time_parse_data"] = $time_parse_data;
-            $res["time_recup_folder"] = $time_recup_folder;
-            $res["time_session_start"] = $time_session_start;
-            $res["time_for_iterate"] = $time_for_iterate;
         }
         break;
     case "create":
@@ -71,7 +53,7 @@ switch($_post->action){
         }
         break;
     default:
-    $res["error"]=4000; //Erreur inconnu généré par folder
+        $res["error"]=4000; //Erreur inconnu généré par folder
     break;
 }
 

@@ -5,8 +5,7 @@ require_once dirname(__FILE__)."/../accountFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
-    "success" => false,
-    "error" => 1000
+    "success" => false
 );
 
 switch ($_post->action) {
@@ -26,7 +25,7 @@ switch ($_post->action) {
                 else{
                     $res["success"]=true;
                     $res["user"] = array(
-                        "id" => $user["id"],//$_SESSION["user"]["id"],
+                        "id" => $user["id"],
                         "email" => $_post->email,
                         "username" => $user["username"]
                     );
@@ -75,7 +74,7 @@ switch ($_post->action) {
         $res["success"] = creation_utilisateur($_post->username, $_post->email, $_post->password);
         $_SESSION["user"] = recup_user_username($_post->username);
         $res["user"] = array(
-            "id" => $_SESSION["user"]["id"],//recup_user_email($_post->email)["id"],
+            "id" => $_SESSION["user"]["id"],
             "email" => $_post->email,
             "username" => $_post->username
         );

@@ -71,7 +71,7 @@
 
     listGroup.addListener("append", function (l, groupe) {
         let container = htmllist[groupe.status];
-        let element = groupeItem.parse(groupe);
+        let element = groupeItem.parse({ groupe, user });
 
         console.log(l, groupe, container, element);
 
@@ -86,7 +86,7 @@
 
     listGroup.addListener("change", function (l, prev, groupe) {
         let container = htmllist[groupe.status];
-        let element = groupeItem.parse(groupe);
+        let element = groupeItem.parse({ groupe, user });
         let oldElement = Dom.find(`[data-gid="${groupe.id}"]`, container)[0];
 
         if (Dom.isElement(oldElement)) oldElement.remove();

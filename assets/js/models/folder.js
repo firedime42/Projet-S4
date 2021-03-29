@@ -1,6 +1,5 @@
 (function () {
 
-
     class Folder extends Listenable {
         static EVENT_UPDATE = "update";
         static EVENT_NEW_FILE = "newFile";

@@ -1,0 +1,30 @@
+<div class="t-row" data-role-id="{{ element.id }}">
+    <div class="nom" contentEditable="true" name="nom" default-value="{{ element.nom }}">{{ element.nom }}</div>
+    <!-- chat -->
+    <div class="opt">{{ CHECKBOX this "read_message" element.read_message }}</div>
+    <div class="opt">{{ CHECKBOX this "write_message" element.write_message }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_message" element.remove_message }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_any_message" element.remove_any_message }}</div>
+    <!-- file -->
+    <div class="opt">{{ CHECKBOX this "download_file" element.download_file }}</div>
+    <div class="opt">{{ CHECKBOX this "create_file" element.create_file }}</div>
+    <div class="opt">{{ CHECKBOX this "rename_file" element.rename_file }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_file" element.remove_file }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_any_file" element.remove_any_file }}</div>
+    <!-- folder -->
+    <div class="opt">{{ CHECKBOX this "create_folder" element.create_folder }}</div>
+    <div class="opt">{{ CHECKBOX this "rename_folder" element.rename_folder }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_folder" element.remove_folder }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_any_folder" element.remove_any_folder }}</div>
+    <!-- user -->
+    <div class="opt">{{ CHECKBOX this "accept_user" element.accept_user }}</div>
+    <div class="opt">{{ CHECKBOX this "kick_user" element.kick_user }}</div>
+    <div class="opt">{{ CHECKBOX this "manage_role" element.manage_role }}</div>
+    <!-- role -->
+    <div class="opt">{{ CHECKBOX this "edit_role" element.edit_role }}</div>
+    <!-- groupe -->
+    <div class="opt">{{ CHECKBOX this "edit_name" element.edit_name }}</div>
+    <div class="opt">{{ CHECKBOX this "edit_description" element.edit_description }}</div>
+    <!-- delete the role -->
+    <div class="remove">{{ ADDLISTENER this.currentNode "click" remove }}<em class="icon icon-trash-2"></em></div>
+</div>

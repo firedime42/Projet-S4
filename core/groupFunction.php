@@ -3,45 +3,24 @@
 require_once("sql.php");
 
 function create_group($nom, $description, $id_proprietaire) {
-
 	global $database;
 	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom',$id_proprietaire)";
 	mysqli_query($database,$query);
 	$id=mysqli_insert_id($database);
 	$query = "INSERT INTO `group` (name, description, root, id_creator) VALUES ('$nom', '$description', $id, $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
+	$id_group=mysqli_insert_id($database);
+	apply_group($id_group,$id_proprietaire);
+	join_group($id_group,$id_proprietaire,$id_proprietaire);
+	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	create_role_color($id_group,"Fondateur","dc3545",1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 	$id=mysqli_insert_id($database);
-	join_group($id,$id_proprietaire);
-	return $id;
-}
-
-function recupere_id_group_par_proprietaire($id_proprietaire) {
-
-}
-
-
-function recupere_id_group_par_membre($id_utilisateur) {
-
-}
-
-
-function supprime_group($id_proprietaire, $id_group) {
-
-}
-
-function valide_membre($id_utilisateur, $id_proprietaire, $id_group) {
-
-}
-
-
-function supprime_membre($id_utilisateur, $id_group) {
-
+	add_role($id_group,$id_proprietaire,$id);
+	return $id_group;
 }
 
 function recup_group_id($id) {
-
     // retourne les info du group passé en paramètre sous forme d'un tableau
-    
     global $database;
     $query = "SELECT * FROM `group` WHERE id = $id";
     $res = mysqli_query($database, $query);
@@ -49,78 +28,81 @@ function recup_group_id($id) {
     return $group_data;
 }
 
-function recup_group_nom($nom) {
-
-    // retourne les info du group passé en paramètre sous forme d'un tableau
-    
-    global $database;
-    $query = "SELECT * FROM `group` WHERE name = '$nom'";
-    $resq = mysqli_query($database, $query);
-    $grouplist = array();
-    while($row = mysqli_fetch_assoc($resq)) {
-        $grouplist[] = $row;
-    }
-    return $grouplist;
-}
-	function recherche_par_nom_ou_description($needle, $page, $nb_element_page){
-		global $database;
-		$offset = $nb_element_page * $page;
-	
-		$query = "SELECT * FROM `group` WHERE name LIKE '%$needle%' OR description LIKE '%$needle%' LIMIT $nb_element_page OFFSET $offset";
-		$resq = mysqli_query($database, $query);
-		$grouplist=array();
+function recherche_par_nom_ou_description($needle, $page, $nb_element_page){
+	global $database;
+	$offset = $nb_element_page * $page;
+	$query = "SELECT * FROM `group` WHERE name LIKE '%$needle%' OR description LIKE '%$needle%' LIMIT $nb_element_page OFFSET $offset";
+	$resq = mysqli_query($database, $query);
+	$grouplist=array();
 			while($row = mysqli_fetch_assoc($resq)) {
-				$grouplist[] = $row;
-			}
-		return $grouplist;
-	} 
+			$grouplist[] = $row;
+		}
+	return $grouplist;
+} 
 
-	function nb_group(){
-
-		global $database;
-		$query = "SELECT COUNT(*) FROM group";
-		$resq = mysqli_query($database, $query);
-		
-		return mysqli_fetch_assoc($resq)["COUNT"];
-		
-	}
-
-	function recup_status_by_user_and_group($id_user, $id_group){
-
-		global $database;
-		$query = "SELECT status FROM groupUser WHERE user_id = $id_user AND group_id = $id_group ";
-	
-		$resq = mysqli_query($database, $query);
-		
-		$res = mysqli_fetch_assoc($resq)["status"];
-		if($res==NULL) $res="left";
-		return $res;
-		
-	}
-
-function recup_id_dossier_racine($id_group){
-
+function nb_group(){
 	global $database;
-    $query = "SELECT id FROM folder WHERE group_id = $id_group";
-    $resq = mysqli_query($database, $query);
-    return mysqli_fetch_assoc($resq)["id"];
+	$query = "SELECT COUNT(*) FROM group";
+	$resq = mysqli_query($database, $query);
+	return mysqli_fetch_assoc($resq)["COUNT"];
+		
 }
 
-function join_group($id_group,$id_user){
+function recup_status_by_user_and_group($id_user, $id_group){
+
 	global $database;
-	$query = "INSERT INTO groupUser SET group_id = $id_group,user_id=$id_user,status='accepted'";
-	$res=mysqli_query($database,$query);
-	return $res;
+	$query = "SELECT status FROM groupUser WHERE user_id = $id_user AND group_id = $id_group ";
+	$resq = mysqli_query($database, $query);
+	$res = mysqli_fetch_assoc($resq)["status"];
+	if($res==NULL)
+		$res="left";
+	return $res;	
 }
 
 function recup_groups_since ($id_user,$time){
 	global $database;
-		$query = "SELECT g.id,g.name,g.last_update,g.description FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
+		$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
 		$resq = mysqli_query($database, $query);
 		$grouplist=array();
-			while($row = mysqli_fetch_assoc($resq)) {
-				$grouplist[] = $row;
-			}
+		while($row = mysqli_fetch_assoc($resq)) {
+			$grouplist[] = $row;
+		}
 		return $grouplist;
+}
+
+function apply_group($id_group,$id_user){
+	global $database;
+	$query = "INSERT INTO groupUser SET group_id = $id_group,user_id=$id_user,status='pending'";
+	$res=mysqli_query($database,$query);
+	return $res;
+}
+
+function join_group($group_id,$user_id,$id_proprietaire){
+	global $database;
+	$query="UPDATE groupUser SET status='accepted' WHERE group_id=$group_id AND user_id=$user_id AND EXISTS(SELECT * FROM `group` WHERE id_creator=$id_proprietaire AND id=$group_id)";
+	$res=mysqli_query($database,$query);
+	return $res;
+}
+
+function leave_group($group_id,$user_id){
+	global $database;
+	$query = "DELETE FROM groupUser WHERE user_id=$user_id AND group_id=$group_id";
+	$res=mysqli_query($database,$query);
+	return $res;
+}
+
+function nb_members($group_id){
+	global $database;
+	$query = "SELECT * FROM groupUser WHERE group_id=$group_id";
+	$res = mysqli_query($database,$query);
+	$res=mysqli_num_rows($res);
+	return $res;
+}
+
+function modif_groupe($id,$nom,$description){
+	global $database;
+	$query="UPDATE `group` SET name = '$nom',description='$description' WHERE id=$id";
+	$res=mysqli_query($database,$query);
+	return $res;
 }
 ?>

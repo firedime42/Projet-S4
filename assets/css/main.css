@@ -54,6 +54,7 @@ body section .subpage {
 
 .scrollable::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 
 .scrollable::-webkit-scrollbar-track {

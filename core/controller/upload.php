@@ -1,8 +1,8 @@
 <?php
 
-session_start();
 require_once dirname(__FILE__)."/../uploadFunction.php";
 require_once dirname(__FILE__)."/../fileFunction.php";
+require_once dirname(__FILE__) . "/../session.php";
 
 # on parse les données de la requete
 $_post = getUploadRequestData();

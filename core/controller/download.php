@@ -1,9 +1,9 @@
 <?php
-session_start();
 $_post = json_decode(file_get_contents("php://input"));
 
 require_once dirname(__FILE__)."/../downloadFunction.php";
 require_once dirname(__FILE__)."/../fileFunction.php";
+require_once dirname(__FILE__) . "/../session.php";
 
 if($_post->id != NULL){
     $file_bdd= recup_file_id($_post->id);

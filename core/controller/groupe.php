@@ -1,101 +1,33 @@
 <?php
-session_start();
 header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
+require_once dirname(__FILE__) . "/../session.php";
+require_once dirname(__FILE__)."/../roleFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
-    "success" => false,
-    "error" => 2000
+    "success" => false
 );
-
-/*$groups = [
-    array("id" =>  0, "nom" => "CCG",                            "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation gouvernementale d'enquêtes dans les cas de crimes liés aux goules."),
-    array("id" =>  1, "nom" => "NERV",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation privée. Notre mission est de défendre l'humanité face à la menace liée aux anges."),
-    array("id" =>  2, "nom" => "Systeme Sibyl",                  "lastUpdate" => 1613954609, "root" => 0, "nb_membres" => 10, "description" => "Organisation privée de gestion de la criminalité au Japon."),
-    array("id" =>  3, "nom" => "Future Gadget Lab",              "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Founded by Rintaro Okabe in the year 2010. Our main objective is the creation of Future Gadget that are to be used to plunge the world into chaos !"),
-    array("id" =>  4, "nom" => "SERN",                           "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Global research organization secretly controlled by the Committee of 300."),
-    array("id" =>  5, "nom" => "Dark Reunion",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "A secret society which plans to weed out unnecessary elements from humankind."),
-    array("id" =>  6, "nom" => "Groupama",                       "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Toujours là pour toi."),
-    array("id" =>  7, "nom" => "Le coté obscure de la force",    "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Rejoins nous on a des cookies."),
-    array("id" =>  8, "nom" => "L'espada",                       "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 13, "description" => ""),
-    array("id" =>  9, "nom" => "La brigade fantome",             "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 13, "description" => "Spécialisé dans diverses activités illicites : assassinats, trafics, corruption etc... "),
-    array("id" => 10, "nom" => "SOS fantome",                    "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Ghostbuster! If there's something strange in your neighborhood.. Who you gonna call? Ghostbusters!"),
-    array("id" => 11, "nom" => "L'Alliance des super-vilains",   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" =>  5, "description" => ""),
-    array("id" => 12, "nom" => "L'Akatsuki",                     "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation criminelle la plus activement recherchée dans le monde ninja. Le but initial du groupe créé par Yahiko, Pain et Konan était d'apporter la paix par le dialogue et non par la force. "),
-    array("id" => 13, "nom" => "Ordre des Capitaines Corsaires", "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Pirates très puissants ayant fait un marché avec les autorités."),
-    array("id" => 14, "nom" => "Homonculus",                     "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Humains artificiels qui portent les noms des sept péchés capitaux. Mission : assurer son plan de suprématie sur la race humaine."),
-    array("id" => 15, "nom" => "L'Armée du Ruban Rouge",         "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation militaire souhaitant acquérir les Sept Boules de Cristal."),
-    array("id" => 16, "nom" => "Pourfendeurs",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Organisation qui a pour mission de protéger les hommes des démons et les guerriers qui la compose."),
-    array("id" => 17, "nom" => "arbre aogiri",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => ""),
-    array("id" => 18, "nom" => "phamtom lord",                   "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Fairy Tail"),
-    array("id" => 19, "nom" => "les taureaux noir",              "lastUpdate" => 1613909869, "root" => 0, "nb_membres" => 10, "description" => "Black clover")
-];
-
-$groupeJoin = [
-    array("id" => 0, "user_id" => 0, "groupe_id" =>  0, "status" =>   "membre"),
-    array("id" => 1, "user_id" => 0, "groupe_id" =>  1, "status" =>   "membre"),
-    array("id" => 2, "user_id" => 0, "groupe_id" =>  5, "status" =>   "membre"),
-    array("id" => 3, "user_id" => 0, "groupe_id" =>  6, "status" =>   "membre"),
-    array("id" => 4, "user_id" => 0, "groupe_id" => 14, "status" =>   "membre"),
-    array("id" => 5, "user_id" => 0, "groupe_id" => 13, "status" =>   "invite"),
-    array("id" => 6, "user_id" => 0, "groupe_id" =>  7, "status" => "candidat")
-];
-
-function emulateJoin($tableA, $tableB, $propertyA, $propertyB, $propsA, $propsB) {
-    $result = [];
-    foreach ($tableA as $a) {
-        foreach ($tableB as $b) {
-            if ($a[$propertyA] == $b[$propertyB]) {
-                $newrow = array();
-                foreach ($propsA as $prop => $name) $newrow[$name] = $a[$prop];
-                foreach ($propsB as $prop => $name) $newrow[$name] = $b[$prop];
-                $result[] = $newrow;
-            }
-        }
-    }
-    return $result;
-}
-
-function scoreQuery($query, $data) {
-    $score = 0.0;
-
-    $nb_mot_query = count($query);
-    $nb_mot_data = count($data);
-
-    for ($i = 0; $i < $nb_mot_query; $i++) {
-        $mot_score = 0.0;
-
-        for ($j = 0; $j < $nb_mot_data && $mot_score < 2.0; $j++)
-            if ($query[$i] == $data[$j])
-                $mot_score += 1.0;
-            else if (stripos($data[$j], $query[$i]) !== false || stripos($query[$i], $data[$j]) !== false )
-                $mot_score += 0.25;
-
-        $score += $mot_score;
-    }
-
-    return $score;
-}*/
-
 
 
 switch ($_post->action) {
     case "list":
-        if ($_post->time===NULL) $res["error"]=0003; //temps invalide
+        if ($_post->time===NULL)
+            $res["error"]=0003; //temps invalide
         else{
             $res["success"]=true;
-            $group_data=recup_groups_since($_SESSION["user"]["id"],$_post->time);
+            $group_data=recup_groups_since($_session["user"]["id"],$_post->time);
             $groups=array();
             foreach($group_data as $group){
                 $groups[]=array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$group["id"]),
+                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
                     "new_docs" => 0,
                     "unread_docs" => 0,
                     "new_messages" => 0,
                     "description" => $group["description"],
+                    "creator_id" => $group["id_creator"],
                     "lastUpdate" => $group["last_update"]
                 );
             }
@@ -117,13 +49,14 @@ switch ($_post->action) {
                 $res["groupe"]= array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_SESSION["user"]["id"],$group["id"]),
+                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???
-                    "nb_membres" => $group["nb_membres"],
-                    "nb_messages" => $group["nb_messages"],
-                    "nb_files" => $group["nb_files"],
+                    "nb_membres" => nb_members($group["id"]),
+                    "nb_messages" => 0,//(int) $group["nb_messages"],
+                    "nb_files" => 0,//(int) $group["nb_files"],
+                    "creator_id" => $group["id_creator"],
                     "lastUpdate" => $group["last_update"]
                 );
                 }
@@ -143,7 +76,8 @@ switch ($_post->action) {
                     "nom" => $group["name"],
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
-                    "nb_membres"=> $group["nb_membres"]
+                    "nb_membres"=> nb_members($group["id"]),//$group["nb_membres"],
+                    "nb_messages" => 0,//$group["nb_messages"]
                 );
             }
             $res["results"] = $groups; 
@@ -154,9 +88,22 @@ switch ($_post->action) {
     case "join":
         if($_post->id==NULL){
             $res["error"]=0001;
+        }elseif(!empty(recup_group_id($_post->id))){
+            $res["error"]=0001;
         }else{
-            $res["success"]=join_group($_post->id,$_SESSION["user"]["id"]);
-            $res["status"]="accepted";
+            $res["success"]=apply_group($_post->id,$_session["user"]["id"]);
+            $res["status"]="pending";
+        }
+        break;
+    case "leave":
+        if($_post->id==NULL){
+            $res["error"]=0001;
+        }elseif (empty(recup_group_id($_post->id))){
+            $res["error"]=0001;
+        }elseif(is_owner($_session["user"]["id"],$_post->id)) {
+            $res["error"]=0001;
+        }else{
+            $res["success"]=leave_group($_post->id,$_session["user"]["id"]);
         }
         break;
     case "create":
@@ -167,78 +114,157 @@ switch ($_post->action) {
             $res["error"]=2100;
         }else{
             $res["success"]=true;
-            $res["groupe"]= create_group($_post->nom, $_post->description, $_SESSION["user"]["id"]);
+            $res["groupe"]= create_group($_post->nom, $_post->description, $_session["user"]["id"]);
         }
-
         break;
-    /*case "list":
-        $res["success"] = true;
-
-        $mesgroupes = array_filter($groupeJoin, function ($e) { return $e['user_id'] == 0; });
-        $mesgroupes = emulateJoin(
-            $mesgroupes, $groups, // les deux tables
-            "groupe_id", "id",    // les deux propriétés à comparer
-            array("status" => "status"), // les propriétés de la table A
-            array("id" => "id", "nom" => "nom", "lastUpdate" => "lastUpdate") // les propriétés de la table B
-        );
-
-        $res["groups"] = array_filter($mesgroupes, function($v) {
-            global $_post;
-            return $v["lastUpdate"] > $_post->time;
-        });
-    break;
-    case "search":
-        $res["success"] = true;
-
-        $query = explode(" ", strtolower($_post->query));
-        
-        $scores = array_map(function ($g) {
-            global $query;
-            return scoreQuery(
-                $query,
-                explode(" ", strtolower($g["nom"]." ".$g["description"]))
-            );
-        }, $groups);
-
-        array_multisort($scores, SORT_DESC, $groups);
-
-        $res["results"] = array_slice(array_filter($groups, function ($pos) {
-            global $scores;
-            return $scores[$pos] > 0;
-        }, ARRAY_FILTER_USE_KEY), $_post->page_first, $_post->nb_results);
-
-        // faire simple recherche avec un "like" et un "or" ou quelque chose pour compter le nombre d'occurence...
-
-        //$res["scores"] = $scores; // debug
-    break;
-    case "info":
-        $r_groupe = array_values(array_filter($groups, function ($g) {
-            global $_post;
-            return $g['id'] == $_post->id;
-        }));
-
-        $r_groupejoin = array_values(array_filter($groupeJoin, function ($g) {
-            global $_post;
-            return $g['groupe_id'] == $_post->id;
-        }));
-
-
-        if (empty($r_groupe)) {
-            $res["error"] = 2100;
-        } else {
-            $res["success"] = true;
-            $groupe = $r_groupe[0];
-
-            if ($groupe["lastUpdate"] > $_post->time) {// si la version cliente est plus vielle que la version sur le serveur
-                $res["groupe"] = $groupe;
-                if (empty($r_groupejoin)) $res["groupe"]["status"] = "left";
-                else $res["groupe"]["status"] = $r_groupejoin[0]["status"];
-            } else 
-                $res["groupe"] = null;
-
+    case "remove-user":
+        if($_post->id==NULL){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif(empty(recup_user_id($_post->id))){
+            $res["error"]=0001;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif(is_owner($_post->id,$_post->group)){
+            $res["error"]=0001;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_REMOVE_USER)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=leave_group($_post->id,$_post->group);
         }
-
-    break;*/
+        break;
+    case "accept-user":
+        if($_post->id==NULL){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_VALIDATE_USER)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=join_group($_post->group,$_session["user"]["id"],$_post->id);
+        }
+        break;
+    case "getRoles":
+        if($_post->group_id==NULL){
+            $res["error"]=0001;
+        }elseif (empty(recup_group_id($_post->group_id))) {
+            $res["error"]=0001;
+        }else{
+            $res["success"]=true;
+            $res["roles"]=recup_roles($_post->group_id);
+        }
+    case "editRoles":
+        if($_post->group_id==NULL){
+            $res["error"]=2000;
+        }elseif(empty(recup_group_id($_post->group_id))){
+            $res["error"]=2000; 
+        }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
+            $res["error"]=2000;
+        }else{
+            if($_post->edited==NULL){
+                $res["error"]=2000;
+            }else{
+                foreach($_post->edited as $value){
+                    edit_role($value);
+                }
+            }
+            if($_post->removed==NULL){
+                $res["error"]=2000;
+            }else{
+                delete_role_tab($_post->group_id,$_post->removed);
+            }
+            if($_post->added==NULL){
+                $res["error"]=2000;
+            }else{
+                foreach($_post->added as $value){
+                    create_role($value["nom"],$_post->group_id,$value["read_message"],$value["write_message"],$value["remove_message"],$value["remove_any_message"],$value["download_file"],
+                    $value["create_file"],$value["rename_file"],$value["remove_file"],$value["remove_any_file"],$value["create_folder"],$value["rename_folder"],$value["remove_folder"],$value["remove_any_folder"],
+                    $value["accept_user"],$value["kick_user"],$value["manage_role"],$value["edit_role"],$value["edit_name"],$value["edit_description"]);
+                }
+            }
+            $res["success"]=true;
+        }
+        break;
+    case "create-role":
+        if($_post->group==NULL){
+            $res["error"]=2000; 
+        }elseif ($_post->name==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }else{
+            if($_post->color==NULL){
+                $res["success"]=create_role($_post->group,$_post->name);
+            }elseif (format_color($_post->color)){
+                $res["success"]=create_role_color($_post->group,$_post->name,$_post->color);
+            }else{
+                $res["error"]=2000;
+            }
+        }
+        break;
+    case "add-role":
+        if($_post->user==NULL){
+            $res["error"]=2000;
+        }elseif(empty(recup_user_id($_post->id))){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_RENAME_FILE)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=add_role($_post->group,$_post->user,$_post->role);
+        }
+        break;
+    case "remove-role":
+        if($_post->user==NULL){
+            $res["error"]=2000;
+        }elseif(empty(recup_user_id($_post->id))){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_RENAME_FILE)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=remove_role($_post->group,$_post->user,$_post->role);
+        }
+        break;
+    case "delete-role":
+        if($_post->role==NULL){
+            $res["error"]=2000;
+        }elseif ($_post->group==NULL) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_RENAME_FILE)) {
+            $res["error"]=2000;
+        }elseif (nb_roles_group($_post->role)) {
+            $res["success"]=2000;
+        }else{
+            $res["success"]=delete_role($_post->role);
+        }
+        break;
+    case "push":
+        if($_post->id == NULL){
+            $res["error"]=0001;
+        }elseif (empty(recup_group_id($_post->id))) {
+            $res["error"]=0001;
+        }elseif ($_post->nom == NULL) {
+            $res["error"]=0001;
+        }elseif ($_post->description == NULL) {
+            $res["error"]=0001;
+        }elseif (is_allowed($_session["user"]["id"],$_post->id,ROLE_REWRITE_DESCRIPTION_GROUP) && is_allowed($_session["user"]["id"],$_post->id,ROLE_RENAME_GROUP)) {
+            $res["error"]=0001;
+        }else {
+            $res["success"]=modif_groupe($_post->id,$_post->nom,$_post->description);
+        }
+        break;
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;
 }

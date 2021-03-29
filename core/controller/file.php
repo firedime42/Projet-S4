@@ -1,16 +1,16 @@
 <?php
-session_start();
 header("Content-Type: application/json");
 require_once dirname(__FILE__) . "/../fileFunction.php";
 require_once dirname(__FILE__) . "/../folderFunction.php";
+require_once dirname(__FILE__) . "/../session.php";
+
 $_post = json_decode(file_get_contents("php://input"));
 
 $_SESSION["file"]=array(
 
 );
 $res = array(
-    "success" => false,
-    "error" => 3000
+    "success" => false
 );
 
 switch ($_post->action) {
@@ -25,7 +25,7 @@ switch ($_post->action) {
             $res["error"] = 3004; //un fichier a le meme nom*/
         }else{
             $res["success"]=true;
-            $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_SESSION["user"]["id"]);
+            $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_session["user"]["id"]);
         }
         break;
     case "end-upload":
@@ -104,7 +104,22 @@ switch ($_post->action) {
         }else{
             $res["error"]=2005; //Recherche invalide(champ vide)
         }
-        break;    
+        break;
+    case "rename":
+        if($_post->id == NULL)
+            $res["error"]=0001;
+        elseif (empty(recup_file_id($_post->id))) {
+            $res["error"]=0001;
+        }elseif ($_post->name==NULL) {
+            $res["error"]=0001;
+        }elseif (!is_allowed()) {
+            
+        }else {
+            $res["success"]=rename_file($_post->id,$post->);
+        }
+        break;
+    case "like":
+        break;
     default:
         $ers["error"] = 3000; //Erreur inconnu généré par file
         break;

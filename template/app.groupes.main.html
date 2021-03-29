@@ -2,6 +2,7 @@
     <!-- Information sur le groupe  -->
     <h1>{{ groupe.nom }}</h1>
     <p class="descr">{{ groupe.description }}</p>
+    <a href="/app/groupes/{{ groupe.id }}/settings" class="settings-btn icon icon-cog"></a>
 </div>
 <div class="groupe-main">
     <div class="column scrollable" style="width:calc(100% - {{ chat_width }});">
