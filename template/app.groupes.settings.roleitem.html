@@ -1,5 +1,5 @@
-<div class="t-row" data-role-id="{{ element.id }}">
-    <div class="nom" contentEditable="true" name="nom" default-value="{{ element.nom }}">{{ element.nom }}</div>
+<div class="t-row" data-role-id="{{ element.id }}" data-role-state="{{ state }}">
+    <div class="nom" contentEditable="true" default-value="{{ element.nom }}">{{ ADDLISTENER this.currentNode.parentElement 'onkeyup' checkPossible }}{{ element.nom }}</div>
     <!-- chat -->
     <div class="opt">{{ CHECKBOX this "read_message" element.read_message }}</div>
     <div class="opt">{{ CHECKBOX this "write_message" element.write_message }}</div>

@@ -177,6 +177,7 @@
 
             let r = await request("/core/controller/groupe.php", {
                 action: 'editRoles',
+                group_id: this.#id,
                 edited,
                 removed,
                 added
@@ -187,6 +188,52 @@
             return true;
         }
 
+        /**
+         * Recupère la liste des candidats au groupe
+         */
+        async getCandidates() {
+            return [];
+        }
+
+        /**
+         * Accepte un utilisateur dans le groupe
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         */
+        async accept(user_id) {
+
+        }
+
+        /**
+         * Refuse un utilisateur dans le groupe
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         */
+        async refuse(user_id) {
+
+        }
+
+        /**
+         * Recupère la liste des membres du groupe.
+         */
+        async getMembres() {
+            return [];
+        }
+
+        /**
+         * Eject un utilisateur du serveur.
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         */
+        async kick(user_id) {
+
+        }
+
+        /**
+         * Affect un role à l'Utilisateur
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         * @param {Number} role_id l'identifiant du role à affecté à l'utilisateur
+         */
+        async setRole(user_id, role_id) {
+
+        }
 
         setData(groupe) {
             let exists = (a, b) => (a != null && a != undefined) ? a : b;

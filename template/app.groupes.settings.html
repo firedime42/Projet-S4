@@ -8,24 +8,21 @@
 
         <h2>Information sur le groupe</h2>
         <div><!-- Debug : {{ groupe.creator_id }} {{ user.id }} -->
-            <div>Nom du groupe : <input type="text" data-visible="{{ EQUALS groupe.creator_id user.id }}" placeholder="{{ groupe.nom }}" value="{{ groupe.nom }}"></div>
-            <div>Description du groupe : <div class="text-zone" contentEditable="{{ EQUALS groupe.creator_id user.id }}">{{ groupe.description }}</div></div>
-            <button data-visible="{{ EQUALS groupe.creator_id user.id }}" class="btn btn-primary">{{ MARK this "valid-modif" }} Valider les modifications</button>
+            <div data-visible="{{ EQUALS groupe.creator_id user.id }}">
+                <div>Nom du groupe : <input type="text" placeholder="{{ groupe.nom }}" value="{{ groupe.nom }}">{{ MARK this 'group_name' }}</div>
+                <div>Description du groupe : <div class="text-zone" contentEditable="true">{{ MARK this "group_description" }}{{ groupe.description }}</div></div>
+                <button data-visible="{{ EQUALS groupe.creator_id user.id }}" class="btn btn-primary">{{ MARK this "valid-modif" }} Valider les modifications</button>
+            </div>
+            <div data-visible="{{ NOT EQUALS groupe.creator_id user.id }}">
+                <div>Nom du groupe :{{ groupe.nom }}
+                <div>Description du groupe : <div class="text-zone">{{ groupe.description }}</div></div>
+            </div>
         </div>
 
         <h2>Candidature</h2>
         <div>
             <div class="row-container scrollable candidatures">
-                {{ MARK this "candidatures" }}
-                <div class="t-row">
-                    <div class="nom">test1</div>
-                    <div class="accept">
-                        <button class="btn btn-danger">Reject</button>
-                    </div>
-                    <div class="reject">
-                        <button class="btn btn-primary">Accept</button>
-                    </div>
-                </div>
+                {{ MARK this "candidates" }}
             </div>
         </div>
 
@@ -105,21 +102,6 @@
             <input type="text" placeholder="filtrer par nom">
             <div class="row-container scrollable membres">
                 {{ MARK this "membres" }}
-                <div class="t-row">
-                    <div class="nom">test1</div>
-                    <div class="role">
-                        <select class="form-select" aria-label="Default select example">
-                            {{ INPUT_SELECT this.currentNode "2" }}
-                            <option value="0">Zero</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
-                    </div>
-                    <div class="kick">
-                        <button class="btn btn-primary">Kick</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -127,12 +109,13 @@
 <script>
     var groupe = null;
     var roles = [];
+    var candidates = [];
+    var membres = [];
     var listRoles = null;
+    var listCandidates = null;
     var listMembres = null;
 
     await doc.update({ groupe: {}, user });
-
-    console.log(doc.ctx);
     
     async function onOpenSettings({ id }) {
         groupe = await GROUPES.get(id);
@@ -146,9 +129,21 @@
             setURL(`/app/groupes/${groupe.id}/join`);
         } else {
             doc.update({ groupe });
-            roles = await groupe.getRoles();
+            roles = groupe.getRoles();
+            candidates = groupe.getCandidates();
+            membres = groupe.getMembres();
+
+            roles = await roles;
             if (roles instanceof Error) { // TODO : affichage erreur 
             } else showRoles();
+
+            candidates = await candidates;
+            if (candidates instanceof Error) { // TODO : affichage erreur 
+            } else showCandidates();
+
+            membres = await membres;
+            if (membres instanceof Error) { // TODO : affichage erreur 
+            } else showMembres();
         }
     }
 
@@ -168,24 +163,73 @@
 
     /* Permettre à l'utilisateur de modifier les informations sur le groupe */
     Dom.addListener(doc.ctx.markedElement["valid-modif"], "click", async function () {
+        if (groupe) {
+            let new_name = doc.ctx.markedElement["group_name"].children[0].value;
+            let new_description = Dom.text(doc.ctx.markedElement["group_description"]);
 
+            // affecte les valeurs au groupe
+            groupe.nom = new_name;
+            groupe.description = new_description;
+
+            // puuuUUUUSHHHHHH !!!!!!!!!!!!!!!!
+            let success = await groupe.push();
+            if (success instanceof Error) {
+                console.log("Oh non !! le groupe n'a pas été rename ");
+            } else {
+                ListGroupe.update();
+            }
+        }
     });
 
-    /* Affichage des roles */
-    function removeRole(role) {
-        console.log(role);
+
+    /* FONCTIONNALITE : Candidatures */
+
+    async function showCandidates() {
+        listCandidates.clear();
+
+        let nb_candidates = candidates.length;
+        for (let i = 0; i < nb_candidates; i++) {
+            let id = candidates[i].id;
+            let processing = false;
+            listCandidates.add(id, candidates[i], {
+                accept: async function () {
+                    if (processing) return;
+                    processing = true;
+
+                    await groupe.accept(id);
+
+                    processing = false;
+                },
+                reject: async function () {
+                    if (processing) return;
+                    processing = true;
+
+                    await groupe.refuse(id);
+
+                    processing = false;
+                }
+            });
+        }
     }
+    
+
+
+
+    /* FONCTIONNALITE : Roles */
 
     async function showRoles() {
         listRoles.clear();
 
         let nb_roles = roles.length;
-        for (let i = 0; i < nb_roles; i++)
-            listRoles.add(role[i].id, roles[i], { remove : () => console.log(this) });
+        for (let i = 0; i < nb_roles; i++) {
+            let id = roles[i].id;
+            listRoles.add(id, roles[i], { state: 'original', remove : () => Dom.attribute( file_item, 'data-role-state', 'deleted') });
+        }
     }
 
     function createRole(nom) {
-        listRoles.add('new_'+Date.now(), {
+        let id = `new_${Date.now()}`;
+        listRoles.add(id, {
             "id": "",
             "nom": nom,
             // chat
@@ -213,7 +257,7 @@
             // groupe
             "edit_name": false,
             "edit_description": false
-        }, { remove:  () => console.log(this) });
+        }, { state: 'added', remove:  () => listRoles.remove( file_item ) });
     }
 
     Dom.addListener(doc.ctx.markedElement['roles_new'].children[1], 'click', function () {
@@ -224,11 +268,84 @@
         createRole(nom);
     });
 
+    function extractDataFromRole(dom_element) {
+        let id = Dom.attribute(dom_element, 'data-role-id');
+        let nom = Dom.text(Dom.find('.nom', dom_element)[0]);
+        let opts = Dom.find('.opt', dom_element);
+        let nb_opts = opts.length;
+
+        let data = { id, nom };
+
+        for (let i = 0; i < nb_opts; i++) {
+            let checkbox = opts[i].children[0];
+            data[checkbox.name] = checkbox.checked;
+        }
+
+        return data;
+    }
+
+    Dom.addListener(doc.ctx.markedElement['roles_save'], 'click', async function () {
+        let dom_elements = listRoles.getElements();
+        let nb_elements = dom_elements.length;
+
+        let edited = [];
+        let added = [];
+        let deleted = [];
+
+        for (let i = 0; i < nb_elements; i++) {
+            let dom_element = dom_elements[i];
+            let data = extractDataFromRole(dom_element);
+            let state = Dom.attribute(dom_element, 'data-role-state');
+
+            if (state == 'added') {
+                data['id'] = null;
+                added.push(data);
+            } else if (state == 'deleted') {
+                let id = data['id'];
+                deleted.push(id);
+            } else if (!objectCompare(data, roles[i])) {
+                edited.push(data);
+            }
+        }
+
+        // envoi de la requete au serveur.
+        let r = await groupe.setRoles(edited, deleted, added);
+
+        if (r instanceof Error) console.error(r);
+
+        showRoles();
+        showMembres();
+    });
+
+    Dom.addListener(doc.ctx.markedElement['roles_cancel'], 'click', showRoles);
+
+
+    /* FONCTIONNALITE : Membres */
+    
+    async function showMembres() {
+
+    }
+
+
+
+
+    /* reste */
+
     let rolesHTML = fetch("/template/app.groupes.settings.roleitem.html");
+    let candidatHTML = fetch("/template/app.groupes.settings.candidatitem.html");
+    let membreHTML = fetch("/template/app.groupes.settings.membreitem.html");
+
     rolesHTML = await rolesHTML;
+    candidatHTML = await candidatHTML;
+    membreHTML = await membreHTML;
+
     rolesHTML = await rolesHTML.text();
+    candidatHTML = await candidatHTML.text();
+    membreHTML = await membreHTML.text();
 
     listRoles = new HTMLList(doc.ctx.markedElement['roles'], new uTemplate.parser(rolesHTML));
+    listCandidates = new HTMLList(doc.ctx.markedElement['candidates'], new uTemplate.parser(candidatHTML));
+    listMembres = new HTMLList(doc.ctx.markedElement['membres'], new uTemplate.parser(membreHTML));
 
     URLrooter.addListener("/app/groupes/$id/settings", onOpenSettings, null, { id: /^[0-9]+$/})
 </script>
