@@ -105,6 +105,20 @@ function arrayMutations(arr1, arr2) {
 }
 
 /**
+ * Compare deux objets :
+ * verifie que toutes les valeurs de a sont identique aux valeurs correspondantes dans b
+ * @param {Object} a
+ * @param {Object} b
+ */
+function objectCompare(a, b) {
+    let keys = Object.keys(a);
+    let nb_keys = keys.length;
+    let i = 0;
+    while (i < nb_keys && a[keys[i]] == b[keys[i]]) i++;
+    return i == nb_keys;
+}
+
+/**
  * defined AsyncFunction constructor if not defined
  */
 var AsyncFunction = AsyncFunction || (async function () {}).constructor;

@@ -105,4 +105,33 @@ function modif_groupe($id,$nom,$description){
 	$res=mysqli_query($database,$query);
 	return $res;
 }
+
+function recup_membres($group){
+	global $database;
+	$query="SELECT g.user_id,u.username,g.role_id FROM groupUser g JOIN user u ON u.id=g.user_id WHERE g.group_id=$group AND g.status='accepted'";
+	$res=mysqli_query($database,$query);
+	$list_membres = array();
+	while($row=mysqli_fetch_assoc($res)){
+		$list_membres[]=array(
+			"id" => $row["user_id"],
+			"name" => $row["name"],
+			"role_id" => $row["role_id"]
+		);
+	}
+	return $list_membres;
+}
+
+function recup_applications($group){
+	global $database;
+	$query="SELECT g.user_id,u.username FROM groupUser g JOIN user u ON u.id=g.user_id WHERE g.group_id=$group AND g.status='pending'";
+	$res=mysqli_query($database,$query);
+	$list_applications = array();
+	while($row=mysqli_fetch_assoc($res)){
+		$list_applications[]=array(
+			"id" => $row["user_id"],
+			"name" => $row["name"]
+		);
+	}
+	return $list_applications;
+}
 ?>

@@ -200,7 +200,6 @@
          */
         ADDLISTENER: function (node, eventname, listener) {
             if (!(node instanceof HTMLElement)) node = node.parentElement;
-            console.log(node, eventname, listener);
             Dom.addListener(node, eventname, listener);
             return "";
         },

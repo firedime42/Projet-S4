@@ -93,10 +93,23 @@
             let upload = await wfile.create(folder.id, file);
             if (upload instanceof Error) console.error(upload);
             else {
-                // envoi termine
                 WFILES.add(wfile);
-                uploads[wfile.id] = upload;
-                upload.addListener(Upload.EVENT_END, () => console.log("Envoi terminé !"));
+                upload.addListener(Upload.EVENT_PROGRESS, function (upload) {
+                    let file_item = listFiles.getElement(wfile.id);
+                    if (file_item) {
+                        let progress = 100 * upload.getNbPartsSended() / upload.nb_parts;
+                        Dom.attribute(file_item, {'style':`--progress:${progress}%;`})
+                        Dom.addClass(file_item, "uploading");
+                    }
+                });
+                upload.addListener(Upload.EVENT_END, async function (upload) {
+                    let file_item = listFiles.getElement(wfile.id);
+                    if (file_item) {
+                        await sleep(500);
+                        Dom.attribute(file_item, {'style':'--progress:0%;'})
+                        Dom.removeClass(file_item, "uploading");
+                    }
+                });
                 folder.addFile(wfile);
             }
         }
@@ -209,7 +222,7 @@
 
                     // on telecharge le fichier
                     let link = document.createElement('a'); // creation d'un lien
-                    link.download = file.nom;               // nom du fichier
+                    link.download = f.nom;               // nom du fichier
                     link.href = blob_url;                   // lien du fichier
                     Dom.append(Dom.body, link);             // ajout de l'element dans le dom
                     link.click();                           // fait cliquer l'utilisateur pour demarrer le telechargement

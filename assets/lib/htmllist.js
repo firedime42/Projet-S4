@@ -21,16 +21,26 @@
             this.#version = 0;
             this.#container = container;
             this.#parser = parser;
-            console.log(parser);
             this.#updateFunction = function (element) { _this.update(element); };
             this.#elements = {};
         }
 
-        async add(id, element, data) {
+        /**
+         * Ajoute un element à la liste
+         * @param {Number} id 
+         * @param {Object} element element à ajouter
+         * @param {Object} data données additionnels
+         * @param {Boolean} prepend boolean indiquant si l'element doit être ajouté à la fin
+         * @returns 
+         */
+        async add(id, element, data, prepend = false) {
             if (this.#elements[id]) return;
 
             let dom_element = Dom.create(`<div></div>`).children[0];
-            Dom.append(this.#container, dom_element);
+            
+            if (prepend) Dom.prepend(this.#container, dom_element);
+            else Dom.append(this.#container, dom_element);
+            
             this.#elements[id] = { dom_element, element: null, data };
 
             let r = this.#version;
@@ -39,7 +49,6 @@
             if (r != this.#version) return;
 
             this.#elements[id].element = element;
-            console.log(this.#parser);
             this.#elements[id].dom_element = this.#parser.parse({ element, ...data }).children[0];
             Dom.replace(dom_element, this.#elements[id].dom_element);
 
@@ -47,6 +56,36 @@
                 element.addListener('upload', this.#updateFunction);
         }
 
+
+        /**
+         * 
+         * @param {Number} id 
+         * @returns {HTMLElement} le noeud associé à l'element
+         */
+        getElement(id) {
+            return (this.#elements[id]) ? this.#elements[id].dom_element : null;
+        }
+
+        /**
+         * 
+         * @returns {Array<HTMLElement>} listes des elements
+         */
+        getElements() {
+            let ids = Object.keys(this.#elements);
+            let nb_ids = ids.length;
+            var dom_elements = new Array(nb_ids);
+
+            for (let i = 0; i < nb_ids; i++)
+                dom_elements[i] = this.#elements[ids[i]].dom_element;
+            
+            return dom_elements;
+        }
+
+        /**
+         * Met à jour un element
+         * @param {Object} element 
+         * @returns 
+         */
         update(element) {
             if (!this.#elements[element.id]) return;
 
@@ -56,6 +95,11 @@
             Dom.replace(dom_element, this.#elements[element.id].dom_element);
         }
 
+        /**
+         * retire un element de la liste
+         * @param {*} element_id 
+         * @returns 
+         */
         remove(element_id) {
             if (!this.#elements[element_id]) return;
 
@@ -69,6 +113,9 @@
             Dom.remove(dom_element);
         }
 
+        /**
+         * Enleve tous les elements de la liste
+         */
         clear() {
             let ids = Object.keys(this.#elements);
             let nb_ids = ids.length;
@@ -81,6 +128,4 @@
 
     window.HTMLList = HTMLList;
 
-    console.log('oh oh');
-
-})(window, Dom);
+})(window, Dom);    

@@ -73,8 +73,6 @@
         let container = htmllist[groupe.status];
         let element = groupeItem.parse({ groupe, user });
 
-        console.log(l, groupe, container, element);
-
         Dom.append(container, element);
     });
 
@@ -93,17 +91,18 @@
         Dom.append(container, element);
     });
 
+    listGroup.addListener("update", function () {
+        let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
+        if (r) _toggleSelected(r);
+        else {
+            r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
+            if (r) _toggleSelected(r);
+        }
+    });
+
 
     if (user.isLoggedIn)
-        listGroup.update().then(function () {
-
-            let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
-            if (r) _toggleSelected(r);
-            else {
-                r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
-                if (r) _toggleSelected(r);
-            }
-        })
+        listGroup.update();
 
     user.addListener(MainUser.EVENT_STATE_CHANGE, async function () {
         if (user.isLoggedIn) {
@@ -119,8 +118,6 @@
             }
         }
     });
-
-
 
     window.LG = listGroup;
     URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });

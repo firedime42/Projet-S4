@@ -123,7 +123,7 @@ function nb_roles_group($role){
 
 function recup_roles($group_id){
 	global $database;
-	$query="SELECT *, name AS nom FROM `role` WHERE group_id=$group_id";
+	$query="SELECT * FROM `role` WHERE group_id=$group_id";
 	$res=mysqli_query($database,$query);
 	$list_roles=array();
 	while($row=mysqli_fetch_assoc($res))

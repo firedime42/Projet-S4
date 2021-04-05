@@ -112,10 +112,14 @@ switch ($_post->action) {
             $res["error"]=0001;
         }elseif ($_post->name==NULL) {
             $res["error"]=0001;
-        }elseif (!is_allowed()) {
-            
+        }elseif ($_post->group=NULL) {
+            $res["error"]=0001;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=0001;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_RENAME_FILE)) {
+            $res["error"]=0001;
         }else {
-            $res["success"]=rename_file($_post->id,$post->);
+            $res["success"]=rename_file($_post->id,$post->name);
         }
         break;
     case "like":
