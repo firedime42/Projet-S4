@@ -1,8 +1,8 @@
 /**
  * 
  * @author Mattéo Mezzasalma
- * @required Dom.js
- * @required pattern.js
+ * @requires Dom.js
+ * @requires pattern.js
  */
 
 (function (window, Dom) {
@@ -313,13 +313,14 @@
         }
     }
 
+    /*
     class TemplateParser {
         #parsingCodes;
 
         /**
          * Permet de creer un parseur specifique au code html passé en paramètre
          * @param {String} html 
-         */
+         *_/
         constructor (html) {
             this.#parsingCodes = _extractParsingCodes(html);
             this.ctx = Object.assign({}, uTemplate.BASIC_DATA);
@@ -328,11 +329,59 @@
         /**
          * génère un nouvelle element contenant à partir du template et des données passés en paramètres
          * @param {Object} data
-         */
+         *_/
         parse (data) {
             Object.assign(this.ctx, data);
             let html = _parseCodes(this.#parsingCodes, this.ctx);
             return Dom.create(html);
+        }
+    }*/
+    class TemplateParser {
+        #html;
+        #parsingCodes;
+
+        /**
+         * Permet de creer un parseur specifique au code html passé en paramètres
+         * @param {String} html 
+         */
+        constructor (html) {
+            this.#html = (typeof html == 'string') ? html : Dom.html();
+            this.#parsingCodes = null;
+            this.ctx = Object.assign({}, uTemplate.BASIC_DATA);
+        }
+
+        /**
+         * génère un nouvelle element contenant à partir du template et des données passés en paramètres
+         * @param {Object} data
+         */
+        parse (data) {
+            // assign data to ctx
+
+            if (data) Object.assign(this.ctx, data);
+
+            // create element
+            let elements = Dom.create(this.#html);
+            
+            // on recupère les noeuds importants (qui contiennent du code)
+            let impNodes = _getParsableNode(elements);
+            let nb_nodes = impNodes.length;
+
+            // on extraits et precompiles les codes
+            if (this.#parsingCodes == null) {
+                this.#parsingCodes = new Array(nb_nodes);
+                for (let i = 0; i < nb_nodes; i++)
+                    this.#parsingCodes[i] = _extractParsingCodes(impNodes[i].nodeValue);
+            }
+
+            // on parse les codes
+            for (let i = 0; i < nb_nodes; i++) {
+                impNodes[i].nodeValue = _parseCodes(this.#parsingCodes[i], this.ctx, {
+                    template: this,
+                    currentNode: impNodes[i]
+                });
+            }
+
+            return elements;
         }
     }
 

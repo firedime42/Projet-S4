@@ -12,8 +12,8 @@ function create_group($nom, $description, $id_proprietaire) {
 	$id_group=mysqli_insert_id($database);
 	apply_group($id_group,$id_proprietaire);
 	join_group($id_group,$id_proprietaire,$id_proprietaire);
-	create_role($id_group,"Membre");
-	create_role_color($id_group,"Fondateur","dc3545");
+	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	create_role_color($id_group,"Fondateur","dc3545",1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 	$id=mysqli_insert_id($database);
 	add_role($id_group,$id_proprietaire,$id);
 	return $id_group;
@@ -104,5 +104,34 @@ function modif_groupe($id,$nom,$description){
 	$query="UPDATE `group` SET name = '$nom',description='$description' WHERE id=$id";
 	$res=mysqli_query($database,$query);
 	return $res;
+}
+
+function recup_membres($group){
+	global $database;
+	$query="SELECT g.user_id,u.username,g.role_id FROM groupUser g JOIN user u ON u.id=g.user_id WHERE g.group_id=$group AND g.status='accepted'";
+	$res=mysqli_query($database,$query);
+	$list_membres = array();
+	while($row=mysqli_fetch_assoc($res)){
+		$list_membres[]=array(
+			"id" => $row["user_id"],
+			"name" => $row["name"],
+			"role_id" => $row["role_id"]
+		);
+	}
+	return $list_membres;
+}
+
+function recup_applications($group){
+	global $database;
+	$query="SELECT g.user_id,u.username FROM groupUser g JOIN user u ON u.id=g.user_id WHERE g.group_id=$group AND g.status='pending'";
+	$res=mysqli_query($database,$query);
+	$list_applications = array();
+	while($row=mysqli_fetch_assoc($res)){
+		$list_applications[]=array(
+			"id" => $row["user_id"],
+			"name" => $row["name"]
+		);
+	}
+	return $list_applications;
 }
 ?>

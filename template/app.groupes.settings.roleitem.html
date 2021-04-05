@@ -1,31 +1,30 @@
-<div class="t-row" data-role-id="{{ role.id }}">
-    <div>{{ role.nom }}</div>
+<div class="t-row" data-role-id="{{ element.id }}" data-role-state="{{ state }}">
+    <div class="nom" contentEditable="true" default-value="{{ element.nom }}">{{ ADDLISTENER this.currentNode.parentElement 'onkeyup' checkPossible }}{{ element.nom }}</div>
     <!-- chat -->
-    <div>{{ role.read_message }}</div>
-    <div>{{ role.write_message }}</div>
-    <div>{{ role.remove_message }}</div>
-    <div>{{ role.remove_any_message }}</div>
+    <div class="opt">{{ CHECKBOX this "read_message" element.read_message }}</div>
+    <div class="opt">{{ CHECKBOX this "write_message" element.write_message }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_message" element.remove_message }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_any_message" element.remove_any_message }}</div>
     <!-- file -->
-    <div>{{ role.create_file }}</div>
-    <div>{{ role.rename_file }}</div>
-    <div>{{ role.remove_file }}</div>
-    <div>{{ role.remove_any_file }}</div>
-    <div>{{ role.download_file }}</div>
+    <div class="opt">{{ CHECKBOX this "download_file" element.download_file }}</div>
+    <div class="opt">{{ CHECKBOX this "create_file" element.create_file }}</div>
+    <div class="opt">{{ CHECKBOX this "rename_file" element.rename_file }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_file" element.remove_file }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_any_file" element.remove_any_file }}</div>
     <!-- folder -->
-    <div>{{ role.create_folder }}</div>
-    <div>{{ role.rename_folder }}</div>
-    <div>{{ role.remove_folder }}</div>
-    <div>{{ role.remove_any_folder }}</div>
+    <div class="opt">{{ CHECKBOX this "create_folder" element.create_folder }}</div>
+    <div class="opt">{{ CHECKBOX this "rename_folder" element.rename_folder }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_folder" element.remove_folder }}</div>
+    <div class="opt">{{ CHECKBOX this "remove_any_folder" element.remove_any_folder }}</div>
     <!-- user -->
-    <div>{{ role.accept_user }}</div>
-    <div>{{ role.kick_user }}</div>
-    <div>{{ role.add_role }}</div>
-    <div>{{ role.remove_role }}</div>
-    <!-- groupe -->
-    <div>{{ role.edit_name }}</div>
-    <div>{{ role.edit_description }}</div>
+    <div class="opt">{{ CHECKBOX this "accept_user" element.accept_user }}</div>
+    <div class="opt">{{ CHECKBOX this "kick_user" element.kick_user }}</div>
+    <div class="opt">{{ CHECKBOX this "manage_role" element.manage_role }}</div>
     <!-- role -->
-    <div>{{ role.create_role }}</div>
-    <div>{{ role.delete_role }}</div>
-    <div>{{ role.edit_role }}</div>
+    <div class="opt">{{ CHECKBOX this "edit_role" element.edit_role }}</div>
+    <!-- groupe -->
+    <div class="opt">{{ CHECKBOX this "edit_name" element.edit_name }}</div>
+    <div class="opt">{{ CHECKBOX this "edit_description" element.edit_description }}</div>
+    <!-- delete the role -->
+    <div class="remove">{{ ADDLISTENER this.currentNode "click" remove }}<em class="icon icon-trash-2"></em></div>
 </div>

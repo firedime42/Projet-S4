@@ -22,13 +22,14 @@
     <script src="/assets/lib/pattern.js"></script>
     <script src="/assets/lib/uTemplate.js"></script>
     <script src="/assets/lib/urlmanager.js"></script>
+    <script src="/assets/lib/listenable.js"></script>
+    <script src="/assets/lib/htmllist.js"></script>
 
     <!-- script -->
     <script src="/assets/js/utils.js"></script>
     <script src="/assets/js/utemplate.func.js"></script>
 
     <!-- models -->
-    <script src="/assets/js/models/listenable.js"></script>
     <script src="/assets/js/models/mainuser.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
     <script src="/assets/js/models/folder.js"></script>
@@ -47,6 +48,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/explorer.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/chat.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/group.settings.css"></link>
 
 </head>
 <body data-theme="light">

@@ -148,6 +148,93 @@
             return this;
         }
 
+
+        /**
+         * Renvoi la liste des roles
+         * @returns 
+         */
+        async getRoles() {
+            if (this.#status != 'accepted') return _error(-1);
+
+            let r = await request("/core/controller/groupe.php", {
+                action: 'getRoles',
+                group_id: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            return r.roles;
+        }
+
+        /**
+         * modifie les roles
+         * @param {Array} edited
+         * @param {Array} removed
+         * @param {Array} added
+         */
+        async setRoles(edited, removed, added) {
+            if (this.#status != 'accepted') return _error(-1);
+
+            let r = await request("/core/controller/groupe.php", {
+                action: 'editRoles',
+                group_id: this.#id,
+                edited,
+                removed,
+                added
+            });
+
+            if (r instanceof Error) return r;
+
+            return true;
+        }
+
+        /**
+         * Recupère la liste des candidats au groupe
+         */
+        async getCandidates() {
+            return [];
+        }
+
+        /**
+         * Accepte un utilisateur dans le groupe
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         */
+        async accept(user_id) {
+
+        }
+
+        /**
+         * Refuse un utilisateur dans le groupe
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         */
+        async refuse(user_id) {
+
+        }
+
+        /**
+         * Recupère la liste des membres du groupe.
+         */
+        async getMembres() {
+            return [];
+        }
+
+        /**
+         * Eject un utilisateur du serveur.
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         */
+        async kick(user_id) {
+
+        }
+
+        /**
+         * Affect un role à l'Utilisateur
+         * @param {Number} user_id l'identifiant de l'utilisateur
+         * @param {Number} role_id l'identifiant du role à affecté à l'utilisateur
+         */
+        async setRole(user_id, role_id) {
+
+        }
+
         setData(groupe) {
             let exists = (a, b) => (a != null && a != undefined) ? a : b;
             this.#nom = exists(groupe['nom'], this.#nom);

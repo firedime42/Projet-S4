@@ -90,7 +90,6 @@
             for (let i = 0, l = event.path.length - 1; i <= l && !activedlink; i++) {
                 let element = event.path[i];
                 if (element.attributes && element.attributes['href'] && !element.attributes['download']) {
-                    console.log('click');
                     activedlink = true;
                     goTo(element.attributes['href'].value);
                 }

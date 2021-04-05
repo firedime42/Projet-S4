@@ -289,6 +289,10 @@
             return u;
         }
 
+        /**
+         * Averti le serveur que le fichier a été envoyé
+         * @returns 
+         */
         async __upload_end() {
             let r = await request("/core/controller/file.php", {
                 action: 'end-upload',

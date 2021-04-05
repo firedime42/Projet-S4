@@ -132,12 +132,26 @@
             if (typeof _this.template.ctx.markedElement != "object")
                 _this.template.ctx.markedElement = {};
 
-            _this.template.ctx.markedElement[nom] = _this.currentNode.parentNode;
+            let path = nom.split('.');
+
+            let node = _this.template.ctx.markedElement;
+            let deep = path.length
+            for (let i = 0; i < deep - 1; i++) {
+                let node_name = path[i];
+
+                if (!node[node_name])
+                    node[node_name] = {};
+
+                node = node[node_name];
+            }
+
+            node[path[deep - 1]] = _this.currentNode.parentNode;
 
             return "";
         },
 
         /**
+         * (préférez CURRENT_URL_MATCH)
          * Compare une url et un pattern
          * @param {String} url l'url de la page
          * @param {String} urlpattern le pattern de l'url
@@ -155,6 +169,13 @@
             return (last == '*' && url.substr(0, len - 1) == urlpattern.substr(0, len - 1)) || url == urlpattern;
         },
 
+        /**
+         * (préférez CURRENT_URL_MATCH)
+         * test si l'url respect l'un des patterns propose
+         * @param {String} url 
+         * @param  {...String} urlpatterns 
+         * @return {Boolean} 
+         */
         URLIN(url, ...urlpatterns) {
             let i = 0;
             let nb_patterns = urlpatterns.length;
@@ -171,8 +192,39 @@
             return !!URLrooter.parseURL(urlpattern, tests);
         },
 
-        ADDLISTENER: function (_this, eventname, listener) {
-            Dom.addListener(_this.currentNode, eventname, listener);
+        /**
+         * Ajoute un listener à un element html
+         * @param {Node} node 
+         * @param {String} eventname 
+         * @param {Function} listener 
+         */
+        ADDLISTENER: function (node, eventname, listener) {
+            if (!(node instanceof HTMLElement)) node = node.parentElement;
+            Dom.addListener(node, eventname, listener);
+            return "";
+        },
+
+        /**
+         * Selection un champs de la balise <selection>
+         * @param {*} node 
+         * @param {*} value 
+         */
+        INPUT_SELECT: function(node, value) {
+            let selector = Dom.parent(node);
+            selector.value = value;
+            return '';
+        },
+
+        /**
+         * Insert un element checkbox
+         * @param {*} _this 
+         * @param {String} name le nom de la checkbox
+         * @param {Boolean} checked indique si la case est cochée
+         */
+        CHECKBOX: function (_this, name, checked, readonly=false) {
+            let element = `<input type="checkbox" name="${name}" ${checked ? 'checked' : ''} ${readonly ? 'disabled' : ''}/>`;
+            Dom.before(_this.currentNode, element);
+            return '';
         }
     });
 })(uTemplate);

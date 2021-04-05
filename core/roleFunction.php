@@ -1,27 +1,29 @@
 <?php
 
-define('ROLE_ADD_MESSAGE', "add_message");
-define('ROLE_REMOVE_MESSAGE', "remove_message");
-define('ROLE_ADD_FILE', "add_file");
-define('ROLE_REMOVE_FILE', "remove_file");
-define('ROLE_REMOVE_FILE_OTHERS', "remove_file_others");
-define('ROLE_DOWNLOAD_FILES', "download_files");
-define('ROLE_RENAME_FILES_OTHERS', "rename_files_others");
-define('ROLE_DELETE_GROUP', "delete_group");
-define('ROLE_SEE_MESSAGES', "see_messages");
-define('ROLE_ADD_ROLES', "add_roles");
-define('ROLE_DELETE_ROLE', "delete_role");
-define('ROLE_SUPPR_ROLE', "suppr_role");
-define('ROLE_INVITE_USER', "invite_user");
-define('ROLE_REMOVE_USER', "remove_user");
-define('ROLE_VALIDATE_USER', "validate_user");
-define('ROLE_ADD_FOLDER', "add_folder");
-define('ROLE_REMOVE_FOLDER', "remove_folder");
-define('ROLE_DELETE_FOLDER', "delete_folder");
-define('ROLE_RENAME_FILE', "rename_file");
-define('ROLE_RENAME_FOLDER', "rename_folder");
-define('ROLE_RENAME_GROUP', "rename_group");
-define('ROLE_REWRITE_DESCRIPTION_GROUP', "rewrite_description_group");
+define('ROLE_READ_MESSAGE',"read_message");
+define('ROLE_WRITE_MESSAGE',"write_message");
+define('ROLE_REMOVE_MESSAGE',"remove_message");
+define('ROLE_REMOVE_ANY_MESSAGE',"remove_any_message");
+// file
+define('ROLE_DOWNLOAD_FILE',"download_file");
+define('ROLE_CREATE_FILE',"create_file");
+define('ROLE_RENAME_FILE',"rename_file");
+define('ROLE_REMOVE_FILE',"remove_file");
+define('ROLE_REMOVE_ANY_FILE',"remove_any_file");
+// folder
+define('ROLE_CREATE_FOLDER',"create_folder");
+define('ROLE_RENAME_FOLDER',"rename_folder");
+define('ROLE_REMOVE_FOLDER',"remove_folder");
+define('ROLE_REMOVE_ANY_FOLDER',"remove_any_folder");
+// user
+define('ROLE_ACCEPT_USER',"accept_user");
+define('ROLE_KICK_USER',"kick_user");
+define('ROLE_MANAGE_ROLE',"manage_role");
+// role
+define('ROLE_EDIT_ROLE',"edit_role");
+// groupe
+define('ROLE_EDIT_NAME',"edit_name");
+define('ROLE_EDIT_DESCRIPTION',"edit_description");
 
 
 function is_owner($user_id,$group_id){
@@ -34,22 +36,34 @@ function is_owner($user_id,$group_id){
 
 function is_allowed($user_id, $group_id, $action){
     global $database;
-    $query = "SELECT `$action` FROM `groupUser` gj JOIN `role` r ON gj.role = r.id WHERE gj.id = $user_id AND gj.group_id = $group_id";
+    $query = "SELECT $action FROM `groupUser` gj JOIN `role` r ON gj.id = r.group_id WHERE gj.user_id = $user_id AND r.group_id = $group_id";
     $res = mysqli_query($database, $query);
     $res = mysqli_fetch_array($res);
     return ($res == null) ? null : ($res[0] == '1');
 }
 
-function create_role_color($group_id,$nom_role,$couleur){
+function create_role_color($group_id,$nom_role,$couleur,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
+$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	global $database;
-	$query = "INSERT INTO `role` group_id,name,couleur VALUES('$group_id','$nom_role','$couleur')";
+	$query = "INSERT INTO `role` (group_id,name,color,read_message,write_message,remove_message,remove_any_message,download_file,
+	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
+	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($group_id,'$nom_role','$couleur',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+	$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
+	$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description)";
 	$res=mysqli_query($database,$query);
 	return $res;
 }
 
-function create_role($group_id,$nom_role){
+function create_role($group_id,$nom_role,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
+$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	global $database;
-	$query = "INSERT INTO `role` group_id,name VALUES('$group_id','$nom_role')";
+	$query = "INSERT INTO `role` (group_id,name,read_message,write_message,remove_message,remove_any_message,download_file,
+	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
+	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($group_id,'$nom_role',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+	$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
+	$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description)";
 	$res=mysqli_query($database,$query);
 	return $res;
 }
@@ -61,20 +75,20 @@ function add_role($group_id,$user_id,$role_id){
 	return $res;
 }
 
-function edit_role($id,$name,$color,$perms){
+function edit_role($id,$name,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
+$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	global $database;
-	$query = "UPDATE `role` SET name='$name', color = '$color'";
-	foreach($perms as $key => $value){
-		$query.=", $key='$value'";
-	}
-	$query.=" WHERE id = $id";
+	$query = "UPDATE `role` SET name='$name',read_message=$read_message,write_message=$write_message,remove_message=$remove_message,remove_any_message=$remove_any_message,download_file=$download_file,
+	create_file=$create_file,rename_file=$rename_file,remove_file=$remove_file,remove_any_file=$remove_any_file,create_folder=$create_folder,rename_folder=$rename_folder,remove_folder=$remove_folder,remove_any_folder=$remove_any_folder,
+	accept_user=$accept_user,kick_user=$kick_user,manage_role=$manage_role,edit_role=$edit_role,edit_name=$edit_name,edit_description=$edit_description WHERE id = $id";
 	$res=mysqli_query($database,$query);
 	return $res;
 }
 
 function default_role($group_id) {
     global $database;
-    $query="SELECT default_role FROM groupe WHERE id= $group_id";
+    $query="SELECT default_role FROM `group` WHERE id= $group_id";
     $result=mysqli_query($database,$query);
     $res=mysqli_fetch_array($result);
     return $res[0];
@@ -82,6 +96,13 @@ function default_role($group_id) {
 
 function remove_role($group_id,$user_id){
     $res= add_role($group_id,$user_id,default_role($group_id));
+	return $res;
+}
+
+function delete_role_tab($group_id,$ids){
+	global $database;
+	$query="DELETE FROM role WHERE id IN ($ids)";
+	$res=mysqli_query($database,$query);
 	return $res;
 }
 
@@ -98,6 +119,16 @@ function nb_roles_group($role){
     $result=mysqli_query($database,$query);
     $res=mysqli_num_rows($result);
     return $res;
+}
+
+function recup_roles($group_id){
+	global $database;
+	$query="SELECT * FROM `role` WHERE group_id=$group_id";
+	$res=mysqli_query($database,$query);
+	$list_roles=array();
+	while($row=mysqli_fetch_assoc($res))
+		$list_roles[]=$row;
+	return $list_roles;
 }
 
 function format_color($color) {

@@ -23,6 +23,7 @@
         static EVENT_APPEND = 'append';
         static EVENT_CHANGE = 'change';
         static EVENT_REMOVE = 'remove';
+        static EVENT_UPDATE = 'update';
 
         static STATUS_MEMBRE = 'accepted';
         static STATUS_INVITE = 'invite';
@@ -84,6 +85,8 @@
 
             for (let i = 0; i < nb_updates; i++)
                 this.__update(rdata.groups[i]);
+
+            this.emit(ListGroupe.EVENT_UPDATE);
         }
 
         /**

@@ -1,7 +1,5 @@
 Finis :
 
-Quitter un groupe
-
 A implementer :
 
 GROUPES :
@@ -31,13 +29,22 @@ Modifier Adresse Mail
 Choisir un theme
 
 Entrée passe au champ suivant : inscription/Connexion
+Logs des modification : Roles/Fichiers/Messages
 
-
+Roles :
+Gerer creation couleur
 
 PHP :
+isset() à la place de ==NULL ?
 
 HTML :
-
+Integration des modifs de parametres
+DashBoard des groupes avec tableau de gestions des roles
+Bouton pour Renommer un fichier
+Affichage d'un bouton de chat par fichier
+Fenetre de chat
+Fenetre de preview d'un document
 CSS :
 
 JS :
+Sauvegarder roles

@@ -2,11 +2,102 @@
 
     .text-zone {
         background-color: #fff;
-        border-radius: 20px;
+        border-radius: 5px;
+        padding: 5px 20px;
         min-height: 2em;
     }
 
-    .text-zone:empty::before {
+    .text-zone:empty {
         content: "Description du site";
+    }
+
+    .row-container {
+        max-height: 300px;
+
+        .t-row {
+            display: flex;
+            padding: 0.5em;
+            background-color: #fff;
+            border-top: 1px solid rgb(108, 117, 125);
+
+            div {
+                flex: 0 0 auto;
+                padding: 0.1em;
+                
+                .btn {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    .candidatures {
+        .t-row {
+            .accept, .reject {
+                width: 10em;
+            }
+            .nom {
+                width: calc(100% - 20em);
+            }
+        }
+    }
+
+    .roles {
+        width: 100%;
+
+        .t-row {
+            .nom {
+                width: 15em;
+            }
+            .opt {
+                width: 5em;
+                text-align: center;
+            }
+        }
+
+        .header {
+            display: flex;
+            padding: 0.5em;
+
+            .nom {
+                width: 15em;
+            }
+
+            > div {
+                flex: 0 0 auto;
+                border-left: 1px solid #aaa;
+            }
+            > div:first-child {
+                border-left: none;
+            }
+
+            .categ {
+                text-align: center;
+            }
+
+            .spec {
+                display: flex;
+                > div {
+                    flex: 0 0 auto;
+                    width: 5em;
+                    text-align: center;
+                }
+            }
+        }
+
+        .row-container {
+            width: fit-content;
+        }
+    }
+
+    .membres {
+        .t-row {
+            .kick {
+                width: 10em;
+            }
+            .nom, .role {
+                width: calc(50% - 5em);
+            }
+        }
     }
 }
