@@ -195,21 +195,17 @@ switch ($_post->action) {
         }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
             $res["error"]=2000;
         }else{
-            if($_post->edited==NULL){
-                $res["error"]=2000;
-            }else{
+            if($_post->edited!=NULL){
                 foreach($_post->edited as $value){
-                    edit_role($value);
+                    edit_role($value["id"],$value["nom"],$value["read_message"],$value["write_message"],$value["remove_message"],$value["remove_any_message"],$value["download_file"],
+                    $value["create_file"],$value["rename_file"],$value["remove_file"],$value["remove_any_file"],$value["create_folder"],$value["rename_folder"],$value["remove_folder"],$value["remove_any_folder"],
+                    $value["accept_user"],$value["kick_user"],$value["manage_role"],$value["edit_role"],$value["edit_name"],$value["edit_description"]);
                 }
             }
-            if($_post->removed==NULL){
-                $res["error"]=2000;
-            }else{
+            if($_post->removed!=NULL){
                 delete_role_tab($_post->group_id,$_post->removed);
             }
-            if($_post->added==NULL){
-                $res["error"]=2000;
-            }else{
+            if($_post->added!=NULL){
                 foreach($_post->added as $value){
                     create_role($value["nom"],$_post->group_id,$value["read_message"],$value["write_message"],$value["remove_message"],$value["remove_any_message"],$value["download_file"],
                     $value["create_file"],$value["rename_file"],$value["remove_file"],$value["remove_any_file"],$value["create_folder"],$value["rename_folder"],$value["remove_folder"],$value["remove_any_folder"],

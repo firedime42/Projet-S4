@@ -75,7 +75,7 @@ function add_role($group_id,$user_id,$role_id){
 	return $res;
 }
 
-function edit_role($name,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+function edit_role($id,$name,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
 $create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
 $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	global $database;
