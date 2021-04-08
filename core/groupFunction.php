@@ -42,9 +42,9 @@ function recherche_par_nom_ou_description($needle, $page, $nb_element_page){
 
 function nb_group(){
 	global $database;
-	$query = "SELECT COUNT(*) FROM group";
-	$resq = mysqli_query($database, $query);
-	return mysqli_fetch_assoc($resq)["COUNT"];
+	$query = "SELECT * FROM group";
+	$res = mysqli_query($database, $query);
+	return mysqli_num_rows($res);
 		
 }
 
