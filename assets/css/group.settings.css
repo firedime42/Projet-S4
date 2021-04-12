@@ -58,6 +58,12 @@
   text-align: center;
 }
 
+.groupe-settings .roles .t-row .sep {
+  width: 1px;
+  background: #aaa;
+  padding: 0px !important;
+}
+
 .groupe-settings .roles .t-row .remove {
   cursor: pointer;
 }

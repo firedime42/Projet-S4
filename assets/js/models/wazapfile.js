@@ -332,10 +332,39 @@
         set description(descr) { this.#newDescription = descr; }
 
         async like() {
+            if (this.#liked) return _error(-1);
 
+            let r = await request('/core/controller/file.php', {
+                action: 'like',
+                id: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            this.#liked = true;
+            this.emit(WazapFile.EVENT_UPDATE);
+
+            return this;
         }
+
+        /**
+         * Fonction pour ne plus aimer un fichier
+         * @returns 
+         */
         async unlike() {
-            
+            if (!this.#liked) return _error(-1);
+
+            let r = await request('/core/controller/file.php', {
+                action: 'unlike',
+                id: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            this.#liked = false;
+            this.emit(WazapFile.EVENT_UPDATE);
+
+            return this;
         }
 
         getChat() { return null; }

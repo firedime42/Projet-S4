@@ -344,7 +344,31 @@
     /* FONCTIONNALITE : Membres */
     
     async function showMembres() {
+        listMembres.clear();
+        let r = await groupe.getMembres();
+        let roles = await groupe.getRoles();
 
+        //if (r instanceof Error) console.error(r);
+        r = [
+            { id: 7, name: "matteo", role: 6 }
+        ];
+        
+        membres = r;
+
+        let nb_roles = roles.length;
+        var _roles = new Array(nb_roles);
+        for (let i = 0; i < nb_roles; i++)
+            _roles[i] = { value: roles[i].id, html: roles[i].nom };
+
+        let nb_membres = membres.length;
+        for (let i = 0; i < nb_membres; i++) {
+            let id = membres[i].id;
+            listMembres.add(id, membres[i], {
+                roles: _roles,
+                change_role: () => console.log("change_role"),
+                kick: () => console.log("kick")
+            });
+        }
     }
 
 
