@@ -230,7 +230,14 @@
          * Recupère la liste des membres du groupe.
          */
         async getMembres() {
-            return [];
+            let r = await request('/core/controller/groupe.php', {
+                action: 'getMembers',
+                group: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            return r.members;
         }
 
         /**

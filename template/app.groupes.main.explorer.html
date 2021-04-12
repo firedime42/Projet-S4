@@ -233,9 +233,16 @@
                     let f = await file;
                     let result = await f.remove();
                     if (result instanceof Error) {
-                        console.log('le fichier ne peut pas être supprimer');
+                        console.log('le fichier ne peut pas être supprimé');
                     }
                     else listFiles.remove(file_id);
+                },
+                like: async function () {
+                    let f = await file;
+                    let result = await f.like();
+                    if (result instanceof Error) {
+                        console.log('le fichier ne peut pas être apprécié');
+                    }
                 }
             }
         );

@@ -331,8 +331,12 @@
         set nom(nom) { this.#newNom = nom; }
         set description(descr) { this.#newDescription = descr; }
 
-        async like() {}
-        async unlike() {}
+        async like() {
+
+        }
+        async unlike() {
+            
+        }
 
         getChat() { return null; }
 

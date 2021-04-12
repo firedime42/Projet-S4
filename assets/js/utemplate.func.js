@@ -215,6 +215,8 @@
             return '';
         },
 
+        // todo : faire un truc pour le menu selectionner
+
         /**
          * Insert un element checkbox
          * @param {*} _this 
