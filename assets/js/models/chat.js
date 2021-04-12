@@ -180,14 +180,14 @@
                 return r;
             }
 
-            this.__updateFromData();
+            this.__updateFromData(r);
 
             return this.#messages[r.id];
         }
 
         goToHead() {
             this.unloaddisplayed();
-            
+
             let nb_messages = this.#head.length;
             this.#disp = new Array(nb_messages);
 

@@ -129,7 +129,7 @@ function recup_applications($group){
 	while($row=mysqli_fetch_assoc($res)){
 		$list_applications[]=array(
 			"id" => $row["user_id"],
-			"name" => $row["name"]
+			"nom" => $row["username"]
 		);
 	}
 	return $list_applications;

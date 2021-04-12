@@ -195,17 +195,23 @@
                     if (processing) return;
                     processing = true;
 
-                    await groupe.accept(id);
+                    let r = await groupe.accept(id);
 
                     processing = false;
+
+                    if (r instanceof Error) console.error(r);
+                    else listCandidates.remove(id);
                 },
                 reject: async function () {
                     if (processing) return;
                     processing = true;
 
-                    await groupe.refuse(id);
+                    let r = await groupe.refuse(id);
 
                     processing = false;
+
+                    if (r instanceof Error) console.error(r);
+                    else listCandidates.remove(id);
                 }
             });
         }
@@ -271,7 +277,7 @@
             // groupe
             "edit_name": false,
             "edit_description": false
-        }, { state: 'added', remove:  () => listRoles.remove( file_item ) });
+        }, { state: 'added', remove: () => listRoles.remove( id ) });
     }
 
     Dom.addListener(doc.ctx.markedElement['roles_new'].children[1], 'click', function () {

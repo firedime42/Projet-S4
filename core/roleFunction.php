@@ -101,8 +101,8 @@ function remove_role($group_id,$user_id){
 
 function delete_role_tab($group_id,$ids){
 	global $database;
-	$idslist=explode(','$ids);
-	$query="DELETE FROM role WHERE id IN ($ids)";
+	$idslist=implode(',',$ids);
+	$query="DELETE FROM role WHERE id IN ($idslist)";
 	$res=mysqli_query($database,$query);
 	return $res;
 }
