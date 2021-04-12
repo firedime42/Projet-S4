@@ -4,10 +4,10 @@
 [ DONE ]        register(email, username, password) -> Error/this
 [ DONE ]        logout() -> this
 
-[ DONE ]    User
+[ TODO ]    User
 
-[ DONE ]    UserManager
-[ DONE ]        -> getById(id) -> User
+[ TODO ]    UserManager
+[ TODO ]        -> getById(id) -> User
 
 [ TODO ]    Groupe
 [ CHEK ]        pull() -> Error / this

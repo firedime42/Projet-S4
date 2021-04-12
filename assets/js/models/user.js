@@ -1,4 +1,11 @@
+/**
+ * Mezzasalma Mattéo
+ * 
+ * à refaire
+ */
+
 (function () {
+
 
     async function _getUsersById(id, time) {
         let r = await fetch("/core/controller/profil.php", {

@@ -1,3 +1,10 @@
+/**
+ * Gère les fichiers / entre le serveur et l'interface
+ * @author Mezzasalma Mattéo
+ * @required Listenable.js
+ * @required utils.js
+ */
+
 (function() {
 
     class Upload extends Listenable {

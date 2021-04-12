@@ -61,7 +61,7 @@ $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	global $database;
 	$query = "INSERT INTO `role` (group_id,name,read_message,write_message,remove_message,remove_any_message,download_file,
 	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
-	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($group_id,'$nom_role',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($nom_role,'$group_id',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
 	$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
 	$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description)";
 	$res=mysqli_query($database,$query);
@@ -101,6 +101,7 @@ function remove_role($group_id,$user_id){
 
 function delete_role_tab($group_id,$ids){
 	global $database;
+	$idslist=explode(','$ids);
 	$query="DELETE FROM role WHERE id IN ($ids)";
 	$res=mysqli_query($database,$query);
 	return $res;

@@ -121,7 +121,7 @@
         groupe = await GROUPES.get(id);
 
         if (groupe instanceof Error) { // TODO : affichage erreur / redirection sur groupe 404
-            console.error(r);
+            console.error(groupe);
             groupe = null;
             setURL(`/app/groupes/error/404`);
         } else if (groupe.status != 'accepted') { // TODO : redirection accès refusé
@@ -129,21 +129,12 @@
             setURL(`/app/groupes/${groupe.id}/join`);
         } else {
             doc.update({ groupe });
-            roles = groupe.getRoles();
-            candidates = groupe.getCandidates();
-            membres = groupe.getMembres();
 
-            roles = await roles;
-            if (roles instanceof Error) { // TODO : affichage erreur 
-            } else showRoles();
+            showRoles();
 
-            candidates = await candidates;
-            if (candidates instanceof Error) { // TODO : affichage erreur 
-            } else showCandidates();
+            showCandidates();
 
-            membres = await membres;
-            if (membres instanceof Error) { // TODO : affichage erreur 
-            } else showMembres();
+            showMembres();
         }
     }
 
@@ -187,6 +178,14 @@
     async function showCandidates() {
         listCandidates.clear();
 
+        candidates = await groupe.getCandidates();
+
+        if (candidates instanceof Error) {
+            console.error(candidates);
+            candidates = null;
+            return;
+        }
+
         let nb_candidates = candidates.length;
         for (let i = 0; i < nb_candidates; i++) {
             let id = candidates[i].id;
@@ -219,11 +218,26 @@
 
     async function showRoles() {
         listRoles.clear();
+        roles = await groupe.getRoles();
 
-        let nb_roles = roles.length;
-        for (let i = 0; i < nb_roles; i++) {
-            let id = roles[i].id;
-            listRoles.add(id, roles[i], { state: 'original', remove : () => Dom.attribute( file_item, 'data-role-state', 'deleted') });
+        if (roles instanceof Error) {
+            console.error(roles);
+            roles = null;
+        } else {
+
+            let nb_roles = roles.length;
+            for (let i = 0; i < nb_roles; i++) {
+                let id = roles[i].id;
+                listRoles.add(id, roles[i], {
+                    state: 'original',
+                    remove : function () {
+                        console.log('click');
+                        console.log(id, listRoles.getElement(id));
+                        Dom.attribute(listRoles.getElement(id), { 'data-role-state': 'deleted'});
+                    }
+                });
+            }
+
         }
     }
 
@@ -305,6 +319,7 @@
                 deleted.push(id);
             } else if (!objectCompare(data, roles[i])) {
                 edited.push(data);
+                console.log(data);
             }
         }
 
