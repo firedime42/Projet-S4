@@ -215,6 +215,27 @@
             return '';
         },
 
+        // todo : faire un truc pour le menu "select"
+        SUPER_INPUT_SELECT: function (node, values, value) {
+            let selector = Dom.parent(node);
+
+            // on retire tous les anciens noeuds
+            Dom.html(selector, '');
+
+            console.log(node, values, value);
+
+            // on rajoutes les nouveau
+            let nb_values = values.length;
+            for (let i = 0; i < nb_values; i++) {
+                let e = document.createElement('option');
+                Dom.attribute(e, { value: values[i].value });
+                Dom.html(e, values[i].html);
+                Dom.append(selector, e);
+            }
+
+            selector.value = value;
+        },
+
         /**
          * Insert un element checkbox
          * @param {*} _this 

@@ -38,12 +38,14 @@ PHP :
 isset() à la place de ==NULL ?
 
 HTML :
-Integration des modifs de parametres
 DashBoard des groupes avec tableau de gestions des roles
-Bouton pour Renommer un fichier
-Affichage d'un bouton de chat par fichier
 Fenetre de chat
 Fenetre de preview d'un document
+parametres groupe
+notification groupe
+Groupe -> page interieure
+Page Profil
+
 CSS :
 
 JS :

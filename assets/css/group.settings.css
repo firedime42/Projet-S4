@@ -45,6 +45,10 @@
   width: 100%;
 }
 
+.groupe-settings .roles div[data-role-state="deleted"] {
+  display: none;
+}
+
 .groupe-settings .roles .t-row .nom {
   width: 15em;
 }
@@ -52,6 +56,20 @@
 .groupe-settings .roles .t-row .opt {
   width: 5em;
   text-align: center;
+}
+
+.groupe-settings .roles .t-row .sep {
+  width: 1px;
+  background: #aaa;
+  padding: 0px !important;
+}
+
+.groupe-settings .roles .t-row .remove {
+  cursor: pointer;
+}
+
+.groupe-settings .roles .t-row .remove:hover {
+  color: #f00;
 }
 
 .groupe-settings .roles .header {

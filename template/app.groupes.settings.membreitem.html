@@ -1,15 +1,12 @@
 <div class="t-row">
-    <div class="nom">test1</div>
+    <div class="nom">{{ element.name }}</div>
     <div class="role">
         <select class="form-select">
-            {{ INPUT_SELECT this.currentNode "2" }}
-            <option value="0">Zero</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            {{ ADDLISTENER this.currentNode "change" change_role }}
+            {{ SUPER_INPUT_SELECT this.currentNode roles element.role }}
         </select>
     </div>
     <div class="kick">
-        <button class="btn btn-primary">Kick</button>
+        <button class="btn btn-primary">{{ ADDLISTENER this.currentNode "click" kick }}Kick</button>
     </div>
 </div>

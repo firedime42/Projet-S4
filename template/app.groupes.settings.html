@@ -121,7 +121,7 @@
         groupe = await GROUPES.get(id);
 
         if (groupe instanceof Error) { // TODO : affichage erreur / redirection sur groupe 404
-            console.error(r);
+            console.error(groupe);
             groupe = null;
             setURL(`/app/groupes/error/404`);
         } else if (groupe.status != 'accepted') { // TODO : redirection accès refusé
@@ -129,21 +129,12 @@
             setURL(`/app/groupes/${groupe.id}/join`);
         } else {
             doc.update({ groupe });
-            roles = groupe.getRoles();
-            candidates = groupe.getCandidates();
-            membres = groupe.getMembres();
 
-            roles = await roles;
-            if (roles instanceof Error) { // TODO : affichage erreur 
-            } else showRoles();
+            showRoles();
 
-            candidates = await candidates;
-            if (candidates instanceof Error) { // TODO : affichage erreur 
-            } else showCandidates();
+            showCandidates();
 
-            membres = await membres;
-            if (membres instanceof Error) { // TODO : affichage erreur 
-            } else showMembres();
+            showMembres();
         }
     }
 
@@ -187,6 +178,14 @@
     async function showCandidates() {
         listCandidates.clear();
 
+        candidates = await groupe.getCandidates();
+
+        if (candidates instanceof Error) {
+            console.error(candidates);
+            candidates = null;
+            return;
+        }
+
         let nb_candidates = candidates.length;
         for (let i = 0; i < nb_candidates; i++) {
             let id = candidates[i].id;
@@ -196,17 +195,23 @@
                     if (processing) return;
                     processing = true;
 
-                    await groupe.accept(id);
+                    let r = await groupe.accept(id);
 
                     processing = false;
+
+                    if (r instanceof Error) console.error(r);
+                    else listCandidates.remove(id);
                 },
                 reject: async function () {
                     if (processing) return;
                     processing = true;
 
-                    await groupe.refuse(id);
+                    let r = await groupe.refuse(id);
 
                     processing = false;
+
+                    if (r instanceof Error) console.error(r);
+                    else listCandidates.remove(id);
                 }
             });
         }
@@ -219,11 +224,26 @@
 
     async function showRoles() {
         listRoles.clear();
+        roles = await groupe.getRoles();
 
-        let nb_roles = roles.length;
-        for (let i = 0; i < nb_roles; i++) {
-            let id = roles[i].id;
-            listRoles.add(id, roles[i], { state: 'original', remove : () => Dom.attribute( file_item, 'data-role-state', 'deleted') });
+        if (roles instanceof Error) {
+            console.error(roles);
+            roles = null;
+        } else {
+
+            let nb_roles = roles.length;
+            for (let i = 0; i < nb_roles; i++) {
+                let id = roles[i].id;
+                listRoles.add(id, roles[i], {
+                    state: 'original',
+                    remove : function () {
+                        console.log('click');
+                        console.log(id, listRoles.getElement(id));
+                        Dom.attribute(listRoles.getElement(id), { 'data-role-state': 'deleted'});
+                    }
+                });
+            }
+
         }
     }
 
@@ -257,7 +277,7 @@
             // groupe
             "edit_name": false,
             "edit_description": false
-        }, { state: 'added', remove:  () => listRoles.remove( file_item ) });
+        }, { state: 'added', remove: () => listRoles.remove( id ) });
     }
 
     Dom.addListener(doc.ctx.markedElement['roles_new'].children[1], 'click', function () {
@@ -305,6 +325,7 @@
                 deleted.push(id);
             } else if (!objectCompare(data, roles[i])) {
                 edited.push(data);
+                console.log(data);
             }
         }
 
@@ -323,7 +344,31 @@
     /* FONCTIONNALITE : Membres */
     
     async function showMembres() {
+        listMembres.clear();
+        let r = await groupe.getMembres();
+        let roles = await groupe.getRoles();
 
+        //if (r instanceof Error) console.error(r);
+        r = [
+            { id: 7, name: "matteo", role: 6 }
+        ];
+        
+        membres = r;
+
+        let nb_roles = roles.length;
+        var _roles = new Array(nb_roles);
+        for (let i = 0; i < nb_roles; i++)
+            _roles[i] = { value: roles[i].id, html: roles[i].nom };
+
+        let nb_membres = membres.length;
+        for (let i = 0; i < nb_membres; i++) {
+            let id = membres[i].id;
+            listMembres.add(id, membres[i], {
+                roles: _roles,
+                change_role: () => console.log("change_role"),
+                kick: () => console.log("kick")
+            });
+        }
     }
 
 

@@ -105,8 +105,15 @@ switch ($_post->action) {
             $res["error"]=2005; //Recherche invalide(champ vide)
         }
         break;
-    case "like":
-        break;
+    /*case "like":
+        if($_post->id==NULL){
+            $res["error"]=3000;
+        }elseif(empty(recup_file_id($_post->id)){
+            $res["error"]=3000;
+        }else{
+            $res["success"]=like_file($_post->id);
+        }
+        break;*/
     default:
         $ers["error"] = 3000; //Erreur inconnu généré par file
         break;

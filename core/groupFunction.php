@@ -42,9 +42,9 @@ function recherche_par_nom_ou_description($needle, $page, $nb_element_page){
 
 function nb_group(){
 	global $database;
-	$query = "SELECT * FROM group";
-	$res = mysqli_query($database, $query);
-	return mysqli_num_rows($res);
+	$query = "SELECT COUNT(*) FROM group";
+	$resq = mysqli_query($database, $query);
+	return mysqli_fetch_assoc($resq)["COUNT"];
 		
 }
 
@@ -129,7 +129,7 @@ function recup_applications($group){
 	while($row=mysqli_fetch_assoc($res)){
 		$list_applications[]=array(
 			"id" => $row["user_id"],
-			"name" => $row["name"]
+			"nom" => $row["username"]
 		);
 	}
 	return $list_applications;

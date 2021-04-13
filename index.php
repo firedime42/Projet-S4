@@ -49,6 +49,8 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/explorer.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/chat.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/group.settings.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/account.params.compte.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/profil.css"></link>
 
 </head>
 <body data-theme="light">

@@ -5,12 +5,14 @@
             <div class="description clip">{{ element.description }}</div>
         </div>
         <div class="optional-data">
-            <div class="nb_likes" data-liked="{{ element.is_liked }}">{{ element.nb_likes }}</div>
+            <div class="nb_likes" data-liked="{{ element.isLiked }}">{{ element.nb_likes }}</div>
             <div class="nb_messages" data-new-messages="{{ element.new_messages }}">{{ element.nb_comments }}</div>
         </div>
         <div class="action dropstart dropdown">
             <em class="icon icon-menu"></em>
             <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item like" data-visible="{{ NOT element.isLiked }}">{{ ADDLISTENER this.currentNode "click" like }}Aimer</a>
+                <a class="dropdown-item unlike" data-visible="{{ element.isLiked }}">{{ ADDLISTENER this.currentNode "click" unlike }}Ne plus aimer</a>
                 <a class="dropdown-item download">{{ ADDLISTENER this.currentNode "click" download }}telecharger</a>
                 <!--<a class="dropdown-item rename">Renommer</a>-->
                 <a class="dropdown-item delete" data-visible="{{ element.canRemove }}">{{ ADDLISTENER this.currentNode "click" delete }}Supprimer</a>

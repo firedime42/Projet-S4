@@ -3,6 +3,7 @@ header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 require_once dirname(__FILE__)."/../roleFunction.php";
+require_once dirname(__FILE__)."/../accountFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
@@ -88,7 +89,7 @@ switch ($_post->action) {
     case "join":
         if($_post->id==NULL){
             $res["error"]=0001;
-        }elseif(!empty(recup_group_id($_post->id))){
+        }elseif(empty(recup_group_id($_post->id))){
             $res["error"]=0001;
         }else{
             $res["success"]=apply_group($_post->id,$_session["user"]["id"]);
@@ -119,19 +120,25 @@ switch ($_post->action) {
         break;
     case "kickUser":
         if($_post->id==NULL){
-            $res["error"]=2000;
+            $res["error"]=2001;
         }elseif ($_post->group==NULL) {
-            $res["error"]=2000;
+            $res["error"]=2002;
         }elseif(empty(recup_user_id($_post->id))){
             $res["error"]=0001;
         }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
+            $res["error"]=2003;
         }elseif(is_owner($_post->id,$_post->group)){ //Si la personne est proprietaire du groupe
             $res["error"]=0001; //Il faut transferer la possesion du groupe avant de le retirer du groupe
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_KICK_USER)) {
-            $res["error"]=2000;
         }else{
-            $res["success"]=leave_group($_post->id,$_post->group);
+            if ($_session["user"]["id"]==$_post->id) {
+                $res["success"]=leave_group($_post->group,$_post->id);
+             } else{
+                /*if (!is_allowed($_session["user"]["id"],$_post->group,ROLE_KICK_USER)) {
+                    $res["error"]=2004;
+                }else{*/
+                    $res["success"]=leave_group($_post->group,$_post->id);
+                //}
+            }
         }
         break;
     case "acceptUser":
@@ -141,10 +148,10 @@ switch ($_post->action) {
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_ACCEPT_USER)) {
-            $res["error"]=2000;
+        /*}elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_ACCEPT_USER)) {
+            $res["error"]=2000;*/
         }else{
-            $res["success"]=join_group($_post->group,$_session["user"]["id"],$_post->id);
+            $res["success"]=join_group($_post->group,$_post->id,$_session["user"]["id"]);
         }
         break;
     case "getRoles":
@@ -187,19 +194,20 @@ switch ($_post->action) {
                );
             }
         }
+        break;
     case "editRoles":
         if($_post->group_id==NULL){
             $res["error"]=2000;
         }elseif(empty(recup_group_id($_post->group_id))){
             $res["error"]=2000; 
-        }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
-            $res["error"]=2000;
+       /* }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
+            $res["error"]=2000;*/
         }else{
             if($_post->edited!=NULL){
                 foreach($_post->edited as $value){
-                    edit_role($value["id"],$value["nom"],$value["read_message"],$value["write_message"],$value["remove_message"],$value["remove_any_message"],$value["download_file"],
-                    $value["create_file"],$value["rename_file"],$value["remove_file"],$value["remove_any_file"],$value["create_folder"],$value["rename_folder"],$value["remove_folder"],$value["remove_any_folder"],
-                    $value["accept_user"],$value["kick_user"],$value["manage_role"],$value["edit_role"],$value["edit_name"],$value["edit_description"]);
+                    edit_role($value->id,$value->nom,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
+                    (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
+                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
                 }
             }
             if($_post->removed!=NULL){
@@ -207,9 +215,9 @@ switch ($_post->action) {
             }
             if($_post->added!=NULL){
                 foreach($_post->added as $value){
-                    create_role($value["nom"],$_post->group_id,$value["read_message"],$value["write_message"],$value["remove_message"],$value["remove_any_message"],$value["download_file"],
-                    $value["create_file"],$value["rename_file"],$value["remove_file"],$value["remove_any_file"],$value["create_folder"],$value["rename_folder"],$value["remove_folder"],$value["remove_any_folder"],
-                    $value["accept_user"],$value["kick_user"],$value["manage_role"],$value["edit_role"],$value["edit_name"],$value["edit_description"]);
+                    create_role($value->nom,$_post->group_id,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
+                    (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
+                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
                 }
             }
             $res["success"]=true;
@@ -226,7 +234,7 @@ switch ($_post->action) {
         }
         break;
     case "getApplications":
-        if($_post->group){
+        if($_post->group==NULL){
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;

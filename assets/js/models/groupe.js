@@ -192,7 +192,14 @@
          * Recupère la liste des candidats au groupe
          */
         async getCandidates() {
-            return [];
+            let r = await request('/core/controller/groupe.php', {
+                action: 'getApplications',
+                group: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            return r.applications;
         }
 
         /**
@@ -200,7 +207,15 @@
          * @param {Number} user_id l'identifiant de l'utilisateur
          */
         async accept(user_id) {
+            let r = await request('/core/controller/groupe.php', {
+                action: 'acceptUser',
+                group: this.#id,
+                id: user_id
+            });
 
+            if (r instanceof Error) return r;
+
+            return true;
         }
 
         /**
@@ -208,14 +223,21 @@
          * @param {Number} user_id l'identifiant de l'utilisateur
          */
         async refuse(user_id) {
-
+            return await this.kick(user_id);
         }
 
         /**
          * Recupère la liste des membres du groupe.
          */
         async getMembres() {
-            return [];
+            let r = await request('/core/controller/groupe.php', {
+                action: 'getMembers',
+                group: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            return r.members;
         }
 
         /**
@@ -223,7 +245,15 @@
          * @param {Number} user_id l'identifiant de l'utilisateur
          */
         async kick(user_id) {
+            let r = await request('/core/controller/groupe.php', {
+                action: 'kickUser',
+                group: this.#id,
+                id: user_id
+            });
 
+            if (r instanceof Error) return r;
+
+            return true;
         }
 
         /**
