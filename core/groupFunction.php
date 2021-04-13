@@ -77,9 +77,9 @@ function apply_group($id_group,$id_user){
 	return $res;
 }
 
-function join_group($group_id,$user_id,$id_proprietaire){
+function join_group($group_id,$user_id){
 	global $database;
-	$query="UPDATE groupUser SET status='accepted' WHERE group_id=$group_id AND user_id=$user_id AND EXISTS(SELECT * FROM `group` WHERE id_creator=$id_proprietaire AND id=$group_id)";
+	$query="UPDATE groupUser SET status='accepted' AND role_id = (SELECT default_role FROM `group` WHERE id=$group_id) WHERE group_id=$group_id AND user_id=$user_id";
 	$res=mysqli_query($database,$query);
 	return $res;
 }
@@ -114,7 +114,7 @@ function recup_membres($group){
 	while($row=mysqli_fetch_assoc($res)){
 		$list_membres[]=array(
 			"id" => $row["user_id"],
-			"name" => $row["name"],
+			"name" => $row["username"],
 			"role_id" => $row["role_id"]
 		);
 	}

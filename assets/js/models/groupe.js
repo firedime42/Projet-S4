@@ -262,7 +262,16 @@
          * @param {Number} role_id l'identifiant du role à affecté à l'utilisateur
          */
         async setRole(user_id, role_id) {
+            let r = await request('/core/controller/groupe.php', {
+                action: 'setRole',
+                group: this.#id,
+                user: user_id,
+                role: role_id
+            });
 
+            if (r instanceof Error) return r;
+
+            return true;
         }
 
         setData(groupe) {

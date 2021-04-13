@@ -151,7 +151,7 @@ switch ($_post->action) {
         /*}elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_ACCEPT_USER)) {
             $res["error"]=2000;*/
         }else{
-            $res["success"]=join_group($_post->group,$_post->id,$_session["user"]["id"]);
+            $res["success"]=join_group($_post->group,$_post->id);
         }
         break;
     case "getRoles":
@@ -224,7 +224,7 @@ switch ($_post->action) {
         }
         break;
     case "getMembers":
-        if($_post->group){
+        if($_post->group==NULL){
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
