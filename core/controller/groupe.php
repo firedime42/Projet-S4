@@ -224,7 +224,7 @@ switch ($_post->action) {
         }
         break;
     case "getMembers":
-        if($_post->group){
+        if($_post->group==NULL){
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
