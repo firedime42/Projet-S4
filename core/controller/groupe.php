@@ -151,7 +151,7 @@ switch ($_post->action) {
         /*}elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_ACCEPT_USER)) {
             $res["error"]=2000;*/
         }else{
-            $res["success"]=join_group($_post->group,$_post->id,$_session["user"]["id"]);
+            $res["success"]=join_group($_post->group,$_post->id);
         }
         break;
     case "getRoles":
@@ -200,8 +200,8 @@ switch ($_post->action) {
             $res["error"]=2000;
         }elseif(empty(recup_group_id($_post->group_id))){
             $res["error"]=2000; 
-       /* }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
-            $res["error"]=2000;*/
+        }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
+            $res["error"]=2008;
         }else{
             if($_post->edited!=NULL){
                 foreach($_post->edited as $value){
@@ -215,10 +215,9 @@ switch ($_post->action) {
             }
             if($_post->added!=NULL){
                 foreach($_post->added as $value){
-                    create_role($value->nom,$_post->group_id,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
+                    create_role($_post->group_id,$value->nom,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
                     (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
-                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
-                }
+                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);}
             }
             $res["success"]=true;
         }
@@ -243,19 +242,6 @@ switch ($_post->action) {
             $res["applications"]=recup_applications($_post->group);
         }
         break;
-    case "add-role":
-        if($_post->user==NULL){
-            $res["error"]=2000;
-        }elseif ($_post->group==NULL) {
-            $res["error"]=2000;
-        }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_MANAGE_ROLE)) {
-            $res["error"]=2000;
-        }else{
-            $res["success"]=add_role($_post->group,$_post->user,$_post->role);
-        }
-        break;
     case "push":
         if($_post->id == NULL){
             $res["error"]=0001;
@@ -271,34 +257,6 @@ switch ($_post->action) {
             $res["success"]=modif_groupe($_post->id,$_post->nom,$_post->description);
         }
         break;
-   /* case "remove-role":
-        if($_post->user==NULL){
-            $res["error"]=2000;
-        }elseif ($_post->group==NULL) {
-            $res["error"]=2000;
-        }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_EDIT_ROLE)) {
-            $res["error"]=2000;
-        }else{
-            $res["success"]=remove_role($_post->group,$_post->user,$_post->role);
-        }
-        break;
-    case "delete-role":
-        if($_post->role==NULL){
-            $res["error"]=2000;
-        }elseif ($_post->group==NULL) {
-            $res["error"]=2000;
-        }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_EDIT_ROLE)) {
-            $res["error"]=2000;
-        }elseif (nb_roles_group($_post->role)) {
-            $res["success"]=2000;
-        }else{
-            $res["success"]=delete_role($_post->role);
-        }
-        break;*/
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;
 }

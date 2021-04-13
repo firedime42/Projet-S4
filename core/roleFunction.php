@@ -36,10 +36,10 @@ function is_owner($user_id,$group_id){
 
 function is_allowed($user_id, $group_id, $action){
     global $database;
-    $query = "SELECT $action FROM `groupUser` gj JOIN `role` r ON gj.id = r.group_id WHERE gj.user_id = $user_id AND r.group_id = $group_id";
+    $query = "SELECT r.$action FROM `groupUser` gj JOIN `role` r ON gj.role_id = r.id WHERE gj.user_id = $user_id AND gj.group_id = $group_id";
     $res = mysqli_query($database, $query);
     $res = mysqli_fetch_array($res);
-    return ($res == null) ? null : ($res[0] == '1');
+    return $res[0]== '1';
 }
 
 function create_role_color($group_id,$nom_role,$couleur,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
@@ -61,7 +61,7 @@ $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	global $database;
 	$query = "INSERT INTO `role` (group_id,name,read_message,write_message,remove_message,remove_any_message,download_file,
 	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
-	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($nom_role,'$group_id',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
+	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($group_id,'$nom_role',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
 	$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
 	$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description)";
 	$res=mysqli_query($database,$query);

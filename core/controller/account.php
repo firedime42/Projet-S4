@@ -10,7 +10,7 @@ $res = array(
 
 switch ($_post->action) {
     case "login":
-        
+        //session_destroy();
         if(($_post->time+10)<time()){
             $res["error"]=1102; //Le timestamp est trop vieux
         }
@@ -54,6 +54,7 @@ switch ($_post->action) {
         }
         break;
     case "register":
+    //session_destroy();
     if (!format_mail($_post->email)){
         $res["error"] = 1201; //email invalide (mauvais format)
     }
@@ -95,6 +96,7 @@ switch ($_post->action) {
     case "logout":
         $res["success"] = true;
         session_destroy();
+        //unset($_session);
         break;
     break;
     default:
