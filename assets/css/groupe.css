@@ -160,6 +160,12 @@
   border-bottom: 1px solid #000;
 }
 
+.groupe .groupe-browse .groupe-header .settings-btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
 .groupe .groupe-browse .groupe-main {
   width: 100%;
   height: calc(100% - 100px);

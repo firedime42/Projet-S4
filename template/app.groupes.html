@@ -9,22 +9,52 @@
 <div class="groupe-join scrollable" data-visible="{{ CURRENT_URL_MATCH JOIN VARTESTS }}">
     {{ INCLUDE this.currentNode "/template/app.groupes.join.html" }}
 </div>
+<div class="groupe-join scrollable" data-visible="{{ CURRENT_URL_MATCH CREATE VARTESTS }}">
+    {{ INCLUDE this.currentNode "/template/app.groupes.create.html" }}
+</div>
 <div class="groupe-browse" data-visible="{{ CURRENT_URL_MATCH BROWSEDIR VARTESTS }}">
     {{ INCLUDE this.currentNode "/template/app.groupes.main.html" }}
 </div>
 
 <script>
-    const $ctx = {
+    let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete à changer lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages, on commence à charger une page mais on change d'avis entre temp.
+
+    doc.update({
         VARTESTS: {
             id : /^[0-9]+$/,
-            dir: /^(?:[0-9]+\/.*)?$/
+            dir: /^[0-9]+$/
         },
         ADD : "/app/groupes/(add|search)/*",
-        BROWSEDIR : "/app/groupes/$id/$dir",
+        CREATE : "/app/groupes/create",
+        BROWSEDIR : "/app/groupes/$id/$dir/*",
         SETTINGS :  "/app/groupes/$id/settings",
         JOIN:       "/app/groupes/$id/join",
-    };
+    });
 
-    URLrooter.addListener("/app/groupes/*", function () { doc.update($ctx); }, null);
+    async function onurlchange({ id }) {
+
+        //console.log(groupe, id);
+
+        let req_id = ++current_request_num;
+
+        let groupe = await GROUPES.get(id);
+
+        // gestion de l'abandon de requete
+        if (req_id != current_request_num) return;
+
+        let { dir } = URLrooter.parseURL("/app/groupes/$id/$dir/*");
+
+        if (groupe instanceof Error) groupe = null;
+        else {
+            if (groupe.status == 'accepted') {
+                if (dir == undefined) 
+                    replaceURL(`/app/groupes/${id}/${groupe.root}`);
+            } else if (dir != 'join')
+                replaceURL(`/app/groupes/${id}/join`);
+        }
+    }
+
+    URLrooter.addListener("/app/groupes/$id/*", onurlchange, null, { id : /^[0-9]+$/ });
+    URLrooter.addListener("/app/groupes/*", function () { doc.update(); }, null);
 
 </script>

@@ -58,6 +58,7 @@ body {
 }
 .scrollable::-webkit-scrollbar {
     width: 5px;
+    height: 5px;
 }
 .scrollable::-webkit-scrollbar-track {
     background-color: #eee;
@@ -66,4 +67,9 @@ body {
     border-radius: 1rem;
     background-color: #00d2ff;
     background-image: linear-gradient(to top, #00d2ff 0%, #3a7bd5 100%);
+}
+
+*[data-loading]:before {
+    content: "\e91d";
+    animation: fa-spin 2s infinite linear;
 }

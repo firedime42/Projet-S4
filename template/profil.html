@@ -1,12 +1,11 @@
-<div>
-	<div style="width: 100%; height: 100px; background-image: url({{ user.banner }}); background-size: cover;"></div>
+<div class="profil">
 
 	<img src="{{ user.picture }}">
 	<h2> {{ user.nom }} </h2> 
 
 	<label for="biography">Modifier votre Biographie</label>
 
-	<textarea name="biography" rows="5" cols="33"> {{ user.biography }} </textarea>  <!-- Fonction modif bio -->
+	<textarea class="biography" rows="5" cols="33"> {{ user.biography }} </textarea>  <!-- Fonction modif bio -->
 
 	<div>	
 		<p>Derniers Messages </p><!-- Oscours, je sais pas quoi mettre --> 

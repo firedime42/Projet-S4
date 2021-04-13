@@ -1,12 +1,14 @@
 <nav class="sidebar">
     <div class="scrollable">
         <a href="/app/groupes/add" class="btn btn-primary">Ajouter un groupe</a>
+        <!--
         <h6 class="sidebar-header mt-4 mb-1 px-3">
             <span>Invitations</span>
         </h6>
         <ul>
             {{ MARK this "groupsInvited" }}
         </ul>
+        -->
         <h6 class="sidebar-header mt-4 mb-1 px-3">
             <span>Mes demandes</span>
         </h6>
@@ -30,14 +32,15 @@
     let r = await fetch("/template/app.sidebar.groupeItem.html");
     let html = await r.text();
 
-    let listGroup = new ListGroupe();
+    let listGroup = ListGroupe;
 
     groupeItem = new uTemplate.parser(html);
-
     let htmllist = {};
-    htmllist["membre"] = doc.ctx.markedElement.groups;
-    htmllist["candidat"] = doc.ctx.markedElement.groupsAsked;
-    htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
+    htmllist["accepted"] = doc.ctx.markedElement.groups;
+    htmllist["pending"] = doc.ctx.markedElement.groupsAsked;
+    htmllist["rejected"] = doc.ctx.markedElement.groupsAsked;
+    htmllist["excluded"] = doc.ctx.markedElement.groupsAsked;
+    //htmllist["invite"] = doc.ctx.markedElement.groupsInvited;
 
 
     function _toggleSelected({ id }) {
@@ -68,7 +71,7 @@
 
     listGroup.addListener("append", function (l, groupe) {
         let container = htmllist[groupe.status];
-        let element = groupeItem.parse(groupe);
+        let element = groupeItem.parse({ groupe, user });
 
         Dom.append(container, element);
     });
@@ -81,24 +84,25 @@
 
     listGroup.addListener("change", function (l, prev, groupe) {
         let container = htmllist[groupe.status];
-        let element = groupeItem.parse(groupe);
+        let element = groupeItem.parse({ groupe, user });
         let oldElement = Dom.find(`[data-gid="${groupe.id}"]`, container)[0];
 
         if (Dom.isElement(oldElement)) oldElement.remove();
         Dom.append(container, element);
     });
 
+    listGroup.addListener("update", function () {
+        let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
+        if (r) _toggleSelected(r);
+        else {
+            r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
+            if (r) _toggleSelected(r);
+        }
+    });
+
 
     if (user.isLoggedIn)
-        listGroup.update().then(function () {
-
-            let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
-            if (r) _toggleSelected(r);
-            else {
-                r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
-                if (r) _toggleSelected(r);
-            }
-        })
+        listGroup.update();
 
     user.addListener(MainUser.EVENT_STATE_CHANGE, async function () {
         if (user.isLoggedIn) {
@@ -114,8 +118,6 @@
             }
         }
     });
-
-
 
     window.LG = listGroup;
     URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });

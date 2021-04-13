@@ -1,9 +1,3 @@
-<?php
-
-//require_once dirname(__FILE__).'/core/modules/mainuser.php';
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,17 +22,18 @@
     <script src="/assets/lib/pattern.js"></script>
     <script src="/assets/lib/uTemplate.js"></script>
     <script src="/assets/lib/urlmanager.js"></script>
+    <script src="/assets/lib/listenable.js"></script>
+    <script src="/assets/lib/htmllist.js"></script>
 
     <!-- script -->
     <script src="/assets/js/utils.js"></script>
     <script src="/assets/js/utemplate.func.js"></script>
 
     <!-- models -->
-    <script src="/assets/js/models/listenable.js"></script>
-    <script src="/assets/js/models/user.js"></script>
+    <script src="/assets/js/models/mainuser.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
-    <script src="/assets/js/models/groupe.js"></script>
-    <script src="/assets/js/models/search.js"></script>
+    <script src="/assets/js/models/folder.js"></script>
+    <script src="/assets/js/models/wazapfile.js"></script>
 
     <script src="/assets/js/models/groupe.js"></script>
     <script src="/assets/js/models/search.js"></script>
@@ -51,7 +46,11 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/app.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/explorer.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/chat.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/group.settings.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/account.params.compte.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/profil.css"></link>
 
 </head>
 <body data-theme="light">
@@ -72,7 +71,7 @@
                         <li class="nav-item"><a class="nav-link" href="/account/register">Créer un compte</a></li>
                     </ul>
                     <div class="navbar-nav" data-visible="{{ user.isLoggedIn }}">
-                        <div class="nav-item dropdown" onclick="Dom.toggleClass(this.children[1], 'show');">
+                        <div class="nav-item dropdown">
                             <div class="profil"><div class="avatar" data-avatar=""></div><span class="px-2">{{ user.username }}</span></div>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item" href="/profil/">Mon Profil</a>
@@ -109,6 +108,9 @@
 
         <!-- 404 page -->
         <div class="page" data-visible="{{ URLLIKE url '/404' }}"></div>
+
+        <!-- confirmation -->
+        {{ INCLUDE this.currentNode "/template/confirme.html" }}
     </section>
 
     <script src="/assets/js/main.js"></script>

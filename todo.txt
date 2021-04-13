@@ -1,0 +1,52 @@
+Finis :
+
+A implementer :
+
+GROUPES :
+DashBoard du groupe : pour le proprietaire
+Nommer des Admins
+Retirer des fichiers
+Renommer des fichiers
+Rechercher un fichier
+Exclure des membres
+Envoyer un message dans le tchat d'un fichier
+Envoyer un message dans le tchat d'un groupe
+Permissions Read-only/Ecrire dans un tchat
+Permissions Preview/Liste des fichiers/Telechargements/Upload dans un groupe
+Rewards Membres Actifs
+
+Noter un fichier (1 a 5 etoiles)
+Mettre un fichier en Favoris
+Retirer un fichier des Favoris
+Afficher la version en memoire pours les fichiers
+PAGES FAVORIS :
+Fichier notés Favoris
+
+PARAMETRES USER :
+Modifier mot de passe
+Modifier username
+Modifier Adresse Mail
+Choisir un theme
+
+Entrée passe au champ suivant : inscription/Connexion
+Logs des modification : Roles/Fichiers/Messages
+
+Roles :
+Gerer creation couleur
+
+PHP :
+isset() à la place de ==NULL ?
+
+HTML :
+DashBoard des groupes avec tableau de gestions des roles
+Fenetre de chat
+Fenetre de preview d'un document
+parametres groupe
+notification groupe
+Groupe -> page interieure
+Page Profil
+
+CSS :
+
+JS :
+Sauvegarder roles

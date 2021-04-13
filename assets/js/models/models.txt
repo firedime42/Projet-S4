@@ -1,0 +1,62 @@
+[ TODO ]    MainUser
+[ DONE ]        retrieveSession() -> false/Error/this
+[ DONE ]        login(email/username, password) -> Error/this
+[ DONE ]        register(email, username, password) -> Error/this
+[ DONE ]        logout() -> this
+
+[ TODO ]    User
+
+[ TODO ]    UserManager
+[ TODO ]        -> getById(id) -> User
+
+[ TODO ]    Groupe
+[ CHEK ]        pull() -> Error / this
+[ TODO ]        push() -> Error / this
+
+[ DONE ]        get id() -> int
+[ DONE ]        get name() -> string
+[ DONE ]        get descr() -> string
+[ DONE ]        get proprietary() -> int
+[ DONE ]        get root() -> int
+[ DONE ]        get nb_members() -> int
+
+[ DONE ]        get status() -> String
+
+[ TODO ]        set descr(description) -> this
+[ TODO ]        set name(name) -> this
+
+[ TODO ]        quite() -> Error / this
+[ TODO ]        join() -> Error / this
+
+[ TODO ]        getMembers() -> MembersList
+
+[ TODO ]        getFolder(id) -> Error/Folder
+[ TODO ]        getFile(id) -> Error/File
+
+[ CHECK ]    ListGroupe
+[ CHECK ]        -> update() -> Error / this
+[ CHECK ]        -> list() -> []
+
+[ TODO ]    MembersList
+[ TODO ]        ...
+
+[ TODO ]    Folder(id, groupeParent)                      [ PRIO ]
+[ TODO ]        event handling
+[ TODO ]
+[ TODO ]        update() -> Error / this
+
+[ CHECK ]    WFile(id)                                     [ PRIO ]
+[ TODO ]        event handling
+[ DONE ]        pull()
+[ DONE ]        download()
+[ DONE ]        push()
+[ DONE ]        create()
+[ DONE ]        upload()
+[ DONE ]        __parseData()
+
+[ TODO ]    Chat(id)
+[ TODO ]        loadOlder() -> Error / this        // utiliser l'id pour récupérer avant l'id
+[ TODO ]        update() -> Error / this
+[ TODO ]        send(msg) -> Error / true
+
+[ TODO ]    Message()

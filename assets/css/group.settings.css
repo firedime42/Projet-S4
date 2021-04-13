@@ -1,0 +1,128 @@
+.groupe-settings .text-zone {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 5px 20px;
+  min-height: 2em;
+}
+
+.groupe-settings .text-zone:empty {
+  content: "Description du site";
+}
+
+.groupe-settings .row-container {
+  max-height: 300px;
+}
+
+.groupe-settings .row-container .t-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0.5em;
+  background-color: #fff;
+  border-top: 1px solid #6c757d;
+}
+
+.groupe-settings .row-container .t-row div {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  padding: 0.1em;
+}
+
+.groupe-settings .row-container .t-row div .btn {
+  width: 100%;
+}
+
+.groupe-settings .candidatures .t-row .accept, .groupe-settings .candidatures .t-row .reject {
+  width: 10em;
+}
+
+.groupe-settings .candidatures .t-row .nom {
+  width: calc(100% - 20em);
+}
+
+.groupe-settings .roles {
+  width: 100%;
+}
+
+.groupe-settings .roles div[data-role-state="deleted"] {
+  display: none;
+}
+
+.groupe-settings .roles .t-row .nom {
+  width: 15em;
+}
+
+.groupe-settings .roles .t-row .opt {
+  width: 5em;
+  text-align: center;
+}
+
+.groupe-settings .roles .t-row .sep {
+  width: 1px;
+  background: #aaa;
+  padding: 0px !important;
+}
+
+.groupe-settings .roles .t-row .remove {
+  cursor: pointer;
+}
+
+.groupe-settings .roles .t-row .remove:hover {
+  color: #f00;
+}
+
+.groupe-settings .roles .header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0.5em;
+}
+
+.groupe-settings .roles .header .nom {
+  width: 15em;
+}
+
+.groupe-settings .roles .header > div {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  border-left: 1px solid #aaa;
+}
+
+.groupe-settings .roles .header > div:first-child {
+  border-left: none;
+}
+
+.groupe-settings .roles .header .categ {
+  text-align: center;
+}
+
+.groupe-settings .roles .header .spec {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.groupe-settings .roles .header .spec > div {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+  width: 5em;
+  text-align: center;
+}
+
+.groupe-settings .roles .row-container {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.groupe-settings .membres .t-row .kick {
+  width: 10em;
+}
+
+.groupe-settings .membres .t-row .nom, .groupe-settings .membres .t-row .role {
+  width: calc(50% - 5em);
+}
+/*# sourceMappingURL=group.settings.css.map */

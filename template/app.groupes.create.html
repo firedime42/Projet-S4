@@ -1,0 +1,44 @@
+<div class="content">
+    <img class="avatar" src="" />
+    <h1 class="title text-center">Creer un groupe</h1>
+
+    <div class="descr">
+        {{ MARK this "form" }}
+        <input name="nom" type="text" placeholder="nom du groupe">
+        <div name="descr" type="text-area" contentEditable="true" placeholder="description"></div>
+    </div>
+    <div class="btn-box text-center">
+        <button class="btn btn-primary">{{ MARK this 'btn-giveup' }}Annuler</button>
+        <button class="btn btn-primary">{{ MARK this 'btn-valide' }}C'est partie !</button>
+    </div>
+</div>
+
+<script>
+    doc.update();
+
+    let input_nom = Dom.find('*[name="nom"]', doc.ctx.markedElement['form'])[0];
+    let input_descr = Dom.find('*[name="descr"]', doc.ctx.markedElement['form'])[0];
+
+    function goBack() {
+        input_nom.value = "";
+        input_descr.innerText = "";
+        setURL('/app/groupes/add');
+    }
+
+    async function valide() {
+        let nom = input_nom.value;
+        let description = input_descr.innerText;
+
+        let groupe_id = await GROUPES.create(nom, description);
+
+        if (groupe_id instanceof Error) {
+            console.error(groupe_id.code);
+        } else {
+            ListGroupe.update();
+            setURL(`/app/groupes/${groupe_id}`);
+        }
+    }
+
+    Dom.addListener(doc.ctx.markedElement['btn-giveup'], 'click', goBack);
+    Dom.addListener(doc.ctx.markedElement['btn-valide'], 'click', valide);
+</script>

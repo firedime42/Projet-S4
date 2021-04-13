@@ -1,17 +1,6 @@
 (function () {
     
-    const MAX_RESULTS = 40;
     const RESULTS_PER_PAGE = 10;
-
-    /**
-     * Génère une nouvelle instance d'{Erreur} avec le code entrée en paramètre
-     * @param {Number} errcode le code de l'erreur
-     */
-    function _error(errcode) {
-        let err = new Error();
-        err.code = errcode;
-        return err;
-    }
 
     async function _req(url, query, page_first, nb_results) {
         let r = await fetch(url, {
