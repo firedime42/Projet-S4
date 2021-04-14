@@ -13,7 +13,7 @@ $res = array(
 
 switch($_post->action){
     case "pull":
-        if ($_post->id == NULL) {
+        if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
         } else {
             $folder = recup_folder_id($_post->id);
@@ -41,12 +41,14 @@ switch($_post->action){
         }
         break;
     case "create":
-        if ($_post->nom == NULL) {
+        if (!isset($_post->nom)) {
             $res["error"] = 4001; //nom de dossier invalide
-        } elseif ($_post->parent == NULL) {
+        } elseif (!isset($_post->parent)) {
             $res["error"] = 4002; //dossier parent vide
         } elseif (!empty(recup_folder_id($_post->parent))){
             $res["error"] = 4004; //dossier parent inexistant
+        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FOLDER)) {
+            $res["error"] = 3004;*/
         }else{
             $res["success"]=create_folder($_post->nom,$_post->parent,$_post->description);
             $res["id"]=recup_folder_nom_descr($_post->nom,$_post->description);

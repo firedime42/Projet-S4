@@ -1,6 +1,6 @@
 <?php
 
-define('ROLE_READ_MESSAGE',"read_message");
+define('ROLE_READ_MESSAGE',"read_message"); //???
 define('ROLE_WRITE_MESSAGE',"write_message");
 define('ROLE_REMOVE_MESSAGE',"remove_message");
 define('ROLE_REMOVE_ANY_MESSAGE',"remove_any_message");
