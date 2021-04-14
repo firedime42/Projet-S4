@@ -64,4 +64,36 @@ function search_files($needle,$page,$nb_results){
 		}
 	return $grouplist;
 }
+
+function modif_nombre_like($id,$edit){
+    global $database;
+    $query = "UPDATE file SET nb_likes=nb_likes+$edit WHERE id=$id";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,$res);
+    return $res;
+}
+
+function like_file($file,$user){
+    global $database;
+    $query = "INSERT INTO file_liked (file_id,user_id) VALUES($file,$user)";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,$res);
+    return $res;
+}
+
+function unlike_file($file,$user){
+    global $database;
+    $query = "DELETE FROM file_liked WHERE file_id=$file AND user_id=$user";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,$res);
+    return $res;
+}
+
+function is_liked($file,$user){
+    global $database;
+    $query = "SELECT * FROM file_liked WHERE file_id=$file AND user_id=$user";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,"test",$res,(mysqli_num_rows($res) >= 1));
+    return (mysqli_num_rows($res) >= 1);
+}
 ?>

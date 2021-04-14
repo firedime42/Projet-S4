@@ -76,8 +76,9 @@ $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 
 function add_role($group_id,$user_id,$role_id){
 	global $database;
-	$query="UPDATE groupUser SET `role`=$role_id WHERE group_id=$group_id AND user_id=$user_id";
+	$query="UPDATE groupUser SET role_id=$role_id WHERE group_id=$group_id AND user_id=$user_id";
 	$res=mysqli_query($database,$query);
+	//var_dump("Bonjour Vous",$query,$res);
 	return $res;
 }
 

@@ -57,11 +57,11 @@ switch ($_post->action) {
                     
                     "etat" => $file["status"],
                     "nb_comments" => $file["nb_comments"],
-                    "nb_likes" => $file["nb_likes"],
+                    "nb_likes" => (int)$file["nb_likes"],
 
                     "renamed" => $file["rename"],
                     "delete" => $file["delete"],
-                    "liked" => $file["like"],
+                    "liked" => is_liked($_post->id,$_session["user"]["id"]),
                     "lastUpdate" => $file["last_update"]
                 );
             }
@@ -114,12 +114,27 @@ switch ($_post->action) {
             $res["error"]=3000;
         }elseif(empty(recup_file_id($_post->id))){
             $res["error"]=3000;
+        }elseif (is_liked($_post->id,$_session["user"]["id"])) {
+            $res["error"]=3008;
         }else{
-            $res["success"]=true;//=like_file($_post->id);
+            modif_nombre_like($_post->id,1);
+            $res["success"]=like_file($_post->id,$_session["user"]["id"]);
+        }
+        break;
+    case "unlike":
+        if(!isset($_post->id)){
+            $res["error"]=3000;
+        }elseif(empty(recup_file_id($_post->id))){
+            $res["error"]=3000;
+        }elseif (!is_liked($_post->id,$_session["user"]["id"])) {
+            $res["error"]=3008;
+        }else{
+            modif_nombre_like($_post->id,-1);
+            $res["success"]=unlike_file($_post->id,$_session["user"]["id"]);
         }
         break;
     default:
-        $ers["error"] = 3000; //Erreur inconnu généré par file
+        $res["error"] = 3000; //Erreur inconnu généré par file
         break;
 }
 

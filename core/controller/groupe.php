@@ -224,21 +224,21 @@ switch ($_post->action) {
         break;
     case "setRole":
         if(!isset($_post->group)){
-            $res["error"]=2000;
+            $res["error"]=2003;
         }elseif (!isset($_post->user)) {
-            $res["error"]=2000;
+            $res["error"]=2004;
         }elseif (!isset($_post->role)) {
-            $res["error"]=2000;
+            $res["error"]=2005;
         }elseif (empty(recup_user_id($_post->user))) {
-            $res["error"]=2000;
+            $res["error"]=2006;
         }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
+            $res["error"]=2007;
         }elseif (empty(recup_role_id($_post->role))) {
-            $res["error"]=2000;
-        }elseif (!is_allowed($_post->user,$_post->group,ROLE_MANAGE_ROLE)) {
-            $res["error"]=2000;
+            $res["error"]=2008;
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_MANAGE_ROLE)) {
+            $res["error"]=2002;
         }else{
-            $res["success"]=add_role($_post->user,$_post->group,$_post->role);
+            $res["success"]=add_role($_post->group,$_post->user,$_post->role);
         }
         break;
     case "getMembers":
