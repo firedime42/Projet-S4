@@ -4,6 +4,11 @@ var ERRCODES = null;
 var CACHECODES = null;
 
 var user = new MainUser();
+user.addListener(MainUser.EVENT_LOGGED_IN, function () {
+    console.log('coucou');
+    ListGroupe.__clear();
+    ListGroupe.update();
+});
 
 fetch("/assets/js/ErrCodes.json").then(async function (r) {
     ERRCODES = await r.json();

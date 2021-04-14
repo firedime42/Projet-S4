@@ -95,6 +95,17 @@
         list() {
             return this.#list;
         }
+
+
+        /**
+         * vide la liste des groupes de l'utilisateur
+         */
+        __clear() {
+            for (let i = 0; i < this.#list.length; i++)
+                this.emit(ListGroupe.EVENT_REMOVE, this.#list[i]);
+            this.#list = [];
+            this.#lasttime = 0;
+        }
     }
 
     window.ListGroupe = new ListGroupe();
