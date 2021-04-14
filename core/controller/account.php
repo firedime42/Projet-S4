@@ -10,11 +10,11 @@ $res = array(
 
 switch ($_post->action) {
     case "login":
-        
+        //session_destroy();
         if(($_post->time+10)<time()){
             $res["error"]=1102; //Le timestamp est trop vieux
         }
-        elseif ($_post->email != NULL) { //Connexion par mail   
+        elseif (isset($_post->email)) { //Connexion par mail   
                $user = recup_user_email($_post->email);
                 if(empty($user)){
                     $res["error"]=1104; //Erreur l'email ne correspond à aucun utilisateur
@@ -31,7 +31,7 @@ switch ($_post->action) {
                     );
                     $_SESSION["user"]=$user;
                }       
-        }elseif($_post->username != NULL) { //Connexion par username   
+        }elseif(isset($_post->username)) { //Connexion par username   
             $user = recup_user_username($_post->username);
             if(empty($user)){
                 $res["error"]=1103; //Erreur l'identifiant ne correspond à aucun utilisateur
@@ -54,6 +54,7 @@ switch ($_post->action) {
         }
         break;
     case "register":
+    //session_destroy();
     if (!format_mail($_post->email)){
         $res["error"] = 1201; //email invalide (mauvais format)
     }
@@ -67,7 +68,7 @@ switch ($_post->action) {
     elseif (!empty(recup_user_username($_post->username))) {
         $res["error"] = 1204; //username déjà utilisé par un autre compte
     }
-    elseif ($_post->password == NULL) {
+    elseif (!isset($_post->password)) {
         $res["error"] = 1205; //le mot de passe est vide
     } 
     else {
@@ -95,6 +96,7 @@ switch ($_post->action) {
     case "logout":
         $res["success"] = true;
         session_destroy();
+        //unset($_session);
         break;
     break;
     default:

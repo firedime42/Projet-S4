@@ -13,7 +13,7 @@ $res = array(
 
 switch ($_post->action) {
     case "list":
-        if ($_post->time===NULL)
+        if (!isset($_post->time))
             $res["error"]=0003; //temps invalide
         else{
             $res["success"]=true;
@@ -36,11 +36,11 @@ switch ($_post->action) {
         }
         break;
     case "info":
-        if($_post->id==NULL) $res["error"]=2; //id vide
+        if(!isset($_post->id)) $res["error"]=2; //id vide
         else{
             $group=recup_group_id($_post->id);
             if (empty($group)) $res["error"]=2002; //groupe inexistant
-            elseif ($_post->time===NULL) $res["error"]=0003; //temps invalide
+            elseif (!isset($_post->time)) $res["error"]=0003; //temps invalide
             elseif( $_post->time==$group["last_update"]){
             $res["success"]=true;
             $res["groupe"]=NULL;
@@ -67,7 +67,7 @@ switch ($_post->action) {
         if((int)$_post->nb_results <= 0){
             $res["error"]=2004; //Nombre de resulats invalide
         }
-        elseif($_post->query!=NULL){
+        elseif(isset($_post->query)){
             $res["success"]=true;
             $group_data=recherche_par_nom_ou_description($_post->query, $_post->page_first, (int)$_post->nb_results);
             $groups=array();
@@ -87,7 +87,7 @@ switch ($_post->action) {
         }
         break;
     case "join":
-        if($_post->id==NULL){
+        if(!isset($_post->id)){
             $res["error"]=0001;
         }elseif(empty(recup_group_id($_post->id))){
             $res["error"]=0001;
@@ -97,7 +97,7 @@ switch ($_post->action) {
         }
         break;
     case "leave":
-        if($_post->id==NULL){
+        if(!isset($_post->id)){
             $res["error"]=0001;
         }elseif (empty(recup_group_id($_post->id))){
             $res["error"]=0001;
@@ -108,10 +108,10 @@ switch ($_post->action) {
         }
         break;
     case "create":
-        if($_post->nom==NULL){
+        if(!isset($_post->nom)){
             $res["error"]=2100;
         }
-        elseif ($_post->description==NULL) {
+        elseif (!isset($_post->description)) {
             $res["error"]=2100;
         }else{
             $res["success"]=true;
@@ -119,9 +119,9 @@ switch ($_post->action) {
         }
         break;
     case "kickUser":
-        if($_post->id==NULL){
+        if(!isset($_post->id)){
             $res["error"]=2001;
-        }elseif ($_post->group==NULL) {
+        }elseif (!isset($_post->group)) {
             $res["error"]=2002;
         }elseif(empty(recup_user_id($_post->id))){
             $res["error"]=0001;
@@ -133,29 +133,29 @@ switch ($_post->action) {
             if ($_session["user"]["id"]==$_post->id) {
                 $res["success"]=leave_group($_post->group,$_post->id);
              } else{
-                /*if (!is_allowed($_session["user"]["id"],$_post->group,ROLE_KICK_USER)) {
+                if (!is_allowed($_session["user"]["id"],$_post->group,ROLE_KICK_USER)) {
                     $res["error"]=2004;
-                }else{*/
+                }else{
                     $res["success"]=leave_group($_post->group,$_post->id);
-                //}
+                }
             }
         }
         break;
     case "acceptUser":
-        if($_post->id==NULL){
+        if(!isset($_post->id)){
             $res["error"]=2000;
-        }elseif ($_post->group==NULL) {
+        }elseif (!isset($_post->group)) {
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
-        /*}elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_ACCEPT_USER)) {
-            $res["error"]=2000;*/
+        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_ACCEPT_USER)) {
+            $res["error"]=2000;
         }else{
             $res["success"]=join_group($_post->group,$_post->id);
         }
         break;
     case "getRoles":
-        if($_post->group_id==NULL){
+        if(!isset($_post->group_id)){
             $res["error"]=0001;
         }elseif (empty(recup_group_id($_post->group_id))) {
             $res["error"]=0001;
@@ -196,35 +196,53 @@ switch ($_post->action) {
         }
         break;
     case "editRoles":
-        if($_post->group_id==NULL){
+        if(!isset($_post->group_id)){
             $res["error"]=2000;
         }elseif(empty(recup_group_id($_post->group_id))){
             $res["error"]=2000; 
-       /* }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
-            $res["error"]=2000;*/
+        }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_EDIT_ROLE)){
+            $res["error"]=2008;
         }else{
-            if($_post->edited!=NULL){
+            if(isset($_post->edited)){
                 foreach($_post->edited as $value){
                     edit_role($value->id,$value->nom,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
                     (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
                     (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
                 }
             }
-            if($_post->removed!=NULL){
+            if(isset($_post->removed)){
                 delete_role_tab($_post->group_id,$_post->removed);
             }
-            if($_post->added!=NULL){
+            if(isset($_post->added)){
                 foreach($_post->added as $value){
-                    create_role($value->nom,$_post->group_id,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
+                    create_role($_post->group_id,$value->nom,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
                     (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
-                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
-                }
+                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);}
             }
             $res["success"]=true;
         }
         break;
+    case "setRole":
+        if(!isset($_post->group)){
+            $res["error"]=2000;
+        }elseif (!isset($_post->user)) {
+            $res["error"]=2000;
+        }elseif (!isset($_post->role)) {
+            $res["error"]=2000;
+        }elseif (empty(recup_user_id($_post->user))) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (empty(recup_role_id($_post->role))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_post->user,$_post->group,ROLE_MANAGE_ROLE)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=add_role($_post->user,$_post->group,$_post->role);
+        }
+        break;
     case "getMembers":
-        if($_post->group==NULL){
+        if(!isset($_post->group)){
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
@@ -234,7 +252,7 @@ switch ($_post->action) {
         }
         break;
     case "getApplications":
-        if($_post->group==NULL){
+        if(!isset($_post->group)){
             $res["error"]=2000;
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2000;
@@ -243,62 +261,21 @@ switch ($_post->action) {
             $res["applications"]=recup_applications($_post->group);
         }
         break;
-    case "add-role":
-        if($_post->user==NULL){
-            $res["error"]=2000;
-        }elseif ($_post->group==NULL) {
-            $res["error"]=2000;
-        }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_MANAGE_ROLE)) {
-            $res["error"]=2000;
-        }else{
-            $res["success"]=add_role($_post->group,$_post->user,$_post->role);
-        }
-        break;
     case "push":
-        if($_post->id == NULL){
+        if(!isset($_post->id)){
             $res["error"]=0001;
         }elseif (empty(recup_group_id($_post->id))) {
             $res["error"]=0001;
-        }elseif ($_post->nom == NULL) {
+        }elseif (!isset($_post->nom)) {
             $res["error"]=0001;
-        }elseif ($_post->description == NULL) {
+        }elseif (!isset($_post->description)) {
             $res["error"]=0001;
-        }elseif (is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_NAME) && is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_DESCRIPTION)) {
+        }elseif (!is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_NAME) || !is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_DESCRIPTION)) {
             $res["error"]=0001;
         }else {
             $res["success"]=modif_groupe($_post->id,$_post->nom,$_post->description);
         }
         break;
-   /* case "remove-role":
-        if($_post->user==NULL){
-            $res["error"]=2000;
-        }elseif ($_post->group==NULL) {
-            $res["error"]=2000;
-        }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_EDIT_ROLE)) {
-            $res["error"]=2000;
-        }else{
-            $res["success"]=remove_role($_post->group,$_post->user,$_post->role);
-        }
-        break;
-    case "delete-role":
-        if($_post->role==NULL){
-            $res["error"]=2000;
-        }elseif ($_post->group==NULL) {
-            $res["error"]=2000;
-        }elseif (empty(recup_group_id($_post->group))) {
-            $res["error"]=2000;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_EDIT_ROLE)) {
-            $res["error"]=2000;
-        }elseif (nb_roles_group($_post->role)) {
-            $res["success"]=2000;
-        }else{
-            $res["success"]=delete_role($_post->role);
-        }
-        break;*/
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;
 }

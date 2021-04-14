@@ -6,9 +6,6 @@ require_once dirname(__FILE__) . "/../session.php";
 
 $_post = json_decode(file_get_contents("php://input"));
 
-$_SESSION["file"]=array(
-
-);
 $res = array(
     "success" => false
 );
@@ -21,29 +18,29 @@ switch ($_post->action) {
             $res["error"] = 3002; //Dossier vide
         } elseif (empty(recup_folder_id($_post->folder))) {
             $res["error"]=3003;
-        /*}elseif (!empty(recup_file_filename($_post->nom))) {
-            $res["error"] = 3004; //un fichier a le meme nom*/
+        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FILE)) {
+            $res["error"] = 3004;*/
         }else{
             $res["success"]=true;
             $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_session["user"]["id"]);
         }
         break;
     case "end-upload":
-        if ($_post->id == NULL) {
+        if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
         }else {
             $res["success"]=finish_upload($_post->id);
         }
         break;
     case "pull":
-        if ($_post->id == NULL) {
+        if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
         } else {
             $file = recup_file_id($_post->id);
             if (empty($file)){
                 $res["error"] = 3006; //Fichier inexistant
             }
-            elseif ($_post->lastUpdate === NULL){
+            elseif (!isset($_post->lastUpdate)){
                 $res["error"] = 0003; //temps invalide
             }            
             elseif ($_post->lastUpdate == $file["last_update"]) {
@@ -52,7 +49,6 @@ switch ($_post->action) {
             } else {
                 $res["success"] = true;
                 $res["file"] = array(
-                    //"id" => $file["id"],
                     "nom" => $file["name"],
                     "description" => $file["description"],
                     "auteur" => $file["creator_id"],
@@ -72,24 +68,32 @@ switch ($_post->action) {
         }
         break;
     case "remove":
-        session_destroy();
-        if ($_post->id == NULL) {
+        if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
         } elseif (empty(recup_file_id($id))) {
             $res["error"] = 3006; //Fichier inexistant
-        } else {
-            $res["success"]=supprime_file($_post->id);
+        }else {
+            $file=recup_file_id($_post->id);
+            if(empty($file)){
+                $res["error"] = 3006;
+            /*}elseif ((!is_allowed($_session["user"]["id"],$test,ROLE_REMOVE_FILE))&&(!is_allowed($_session["user"]["id"],$test,ROLE_REMOVE_ANY_FILE))) {
+                $res["error"] = 3006;*/
+            }else {
+                $res["success"]=supprime_file($_post->id);
+            }
         }
         break;
     case "push":
-        if ($_post->id == NULL) {
+        if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
         } elseif($_post->nom == NULL){
             $res["error"] = 3001; //nom vide
-        }elseif($_post->description == NULL){
+        }elseif(!isset($_post->description)){
             $res["error"] = 3005; //description vide
         }elseif (empty(recup_file_id($id))) {
             $res["error"] = 3006; //Fichier inexistant
+        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_RENAME_FILE)) {
+            $res["error"] = 3004;*/
         } else {
             $res["success"] = modifie_file($_post->id,$_post->nom,$_post->description);
         }
@@ -98,22 +102,22 @@ switch ($_post->action) {
         if((int)$_post->nb_results <= 0){
             $res["error"]=3000; //Nombre de resulats invalide
         }
-        elseif($_post->query!=NULL){
+        elseif(!isset($_post->query)){
+            $res["error"]=2005; //Recherche invalide(champ vide)
+        }else{
             $res["success"]=true;
             $res["results"] = search_files($_post->query, $_post->page_first, (int)$_post->nb_results);
-        }else{
-            $res["error"]=2005; //Recherche invalide(champ vide)
         }
         break;
-    /*case "like":
-        if($_post->id==NULL){
+    case "like":
+        if(!isset($_post->id)){
             $res["error"]=3000;
-        }elseif(empty(recup_file_id($_post->id)){
+        }elseif(empty(recup_file_id($_post->id))){
             $res["error"]=3000;
         }else{
-            $res["success"]=like_file($_post->id);
+            $res["success"]=true;//=like_file($_post->id);
         }
-        break;*/
+        break;
     default:
         $ers["error"] = 3000; //Erreur inconnu généré par file
         break;

@@ -10,12 +10,15 @@ function create_group($nom, $description, $id_proprietaire) {
 	$query = "INSERT INTO `group` (name, description, root, id_creator) VALUES ('$nom', '$description', $id, $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
 	$id_group=mysqli_insert_id($database);
-	apply_group($id_group,$id_proprietaire);
-	join_group($id_group,$id_proprietaire,$id_proprietaire);
 	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	$id=mysqli_insert_id($database);
+	$query="UPDATE `group` SET default_role=$id WHERE id=$id_group";
+	mysqli_query($database,$query);
 	create_role_color($id_group,"Fondateur","dc3545",1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 	$id=mysqli_insert_id($database);
 	add_role($id_group,$id_proprietaire,$id);
+	apply_group($id_group,$id_proprietaire);
+	join_group($id_group,$id_proprietaire,$id_proprietaire);
 	return $id_group;
 }
 
@@ -79,7 +82,7 @@ function apply_group($id_group,$id_user){
 
 function join_group($group_id,$user_id){
 	global $database;
-	$query="UPDATE groupUser SET status='accepted' AND role_id = (SELECT default_role FROM `group` WHERE id=$group_id) WHERE group_id=$group_id AND user_id=$user_id";
+	$query="UPDATE groupUser SET status='accepted',role_id = (SELECT default_role FROM `group` WHERE id=$group_id) WHERE group_id=$group_id AND user_id=$user_id";
 	$res=mysqli_query($database,$query);
 	return $res;
 }

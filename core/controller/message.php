@@ -12,15 +12,15 @@ $res = array(
 
 switch ($_post->action) {
 	case "send":
-		if($_post->id==NULL){
+		if(!isset($_post->id)){
 			$res["error"]=5000;
-		}elseif ($_post->group_id==NULL) {
+		}elseif (!isset($_post->group_id)) {
 			$res["error"]=5000;
 		}elseif (empty(recup_group_id($_post->group_id))) {
 			$res["error"]=5000;
 		}elseif (!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_WRITE_MESSAGE)) {
 			$res["error"]=5000;
-		}elseif ($_post->file==NULL) {
+		}elseif (!isset($_post->file)) {
 			$res["success"]=ajouter_message_group($_post->message,$_post->group,$_session["user"]["id"]);
 		}elseif (empty(recup_file_id($_post->file))) {
 			$res["error"]=5000;
@@ -29,9 +29,9 @@ switch ($_post->action) {
 		}
 		break;
 	case "delete":
-		if($_post->id==NULL){
+		if(!isset($_post->id)){
 			$res["error"]=5000;
-		}elseif ($_post->user==NULL) {
+		}elseif (!isset($_post->user)) {
 			$res["error"]=5000;
 		}elseif ($_post->user==$_session["user"]["id"]) {
 			if(is_allowed($_session["user"]["id"],$_post->group_id,ROLE_REMOVE_MESSAGE)){
@@ -46,7 +46,7 @@ switch ($_post->action) {
 		}
 		break;
 	case "getMessages":
-		if($_post->file!=NULL){
+		if(isset($_post->file)){
 			$res["success"]=true;
 			$list_message=recup_messages_file($_post->file);
             $messages=array();
@@ -60,7 +60,7 @@ switch ($_post->action) {
                 );
             }
             $res["messages"] = $messages; 
-		}elseif ($_post->group!=NULL) {
+		}elseif (isset($_post->group)) {
 			$res["success"]=true;
 			$list_message=recup_messages_group($_post->group);
             $messages=array();
@@ -77,7 +77,8 @@ switch ($_post->action) {
 		}
 		break;
 	case "info":
-		if($_post->id==NULL) $res["error"]=2; //id vide
+		if(!isset($_post->id)) 
+			$res["error"]=2; //id vide
         else{
             $message=recup_message($_post->id);
             if (empty($message)) $res["error"]=2002; //message inexistant
@@ -98,14 +99,14 @@ switch ($_post->action) {
         }
 		break;
 	case "edit":
-        if ($_post->id == NULL) {
+        if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
-        }elseif($_post->message == NULL){
+		}elseif (!isset($_post->group)) {
+			$res["error"] = 0002;
+        }elseif(!isset($_post->message)){
             $res["error"] = 3005; //description vide
-        }elseif (empty(recup_message($id))){
+        }elseif (empty(recup_message($_post->id))){
             $res["error"] = 3006; //Fichier inexistant
-		}elseif (!is_allowed($_session["user"]["id"],$_post->group,ROLE_WRITE_MESSAGE)) {
-			$res["error"] = 5000;
 		}elseif(!is_author($_session["session"]["id"],$_post->group)){
 			$res["error"] = 5000;
         }else {
@@ -116,7 +117,7 @@ switch ($_post->action) {
 		if((int)$_post->nb_results <= 0){
 			$res["error"]=5000; //Nombre de resulats invalide
 		}
-		elseif($_post->query==NULL){
+		elseif(!isset($_post->query)){
 			$res["error"]=5000; //Recherche invalide(champ vide)
 		}else{
 			$res["success"]=true;
