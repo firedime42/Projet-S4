@@ -57,6 +57,7 @@
         static EVENT_REMOVE = 'remove';
 
         constructor(data) {
+            super();
             this.id = null;
             this.author = null;
             this.content = null;
@@ -66,20 +67,20 @@
         }
 
         update(data) {
-            if (this.id !== null && this.id != data.id) return;
+            if (this.id != null && this.id != data.id) return;
 
-            if (data.id instanceof Number && data.id >= 0) this.id = data.id;
+            if (Number.isInteger(data.id) && data.id >= 0) this.id = data.id;
             if (data.author != null
-                && data.author.id instanceof Number && data.author.id >= 0
-                && data.author.name instanceof String && data.author.name.length > 0
+                && Number.isInteger(data.author.id) && data.author.id >= 0
+                && typeof data.author.name == 'string' && data.author.name.length > 0
             )
                 this.author = {
                     id: data.author.id,
                     name: data.author.name
                 };
 
-            if (data.content instanceof String && data.content.length > 0) this.content = data.content;
-            if (data.publish_date instanceof Number) this.publish_date = data.publish_date;
+            if (typeof data.content == 'string' && data.content.length > 0) this.content = data.content;
+            if (Number.isFinite(data.publish_date)) this.publish_date = data.publish_date;
 
             this.emit(Message.EVENT_UPDATE);
         }
@@ -108,6 +109,7 @@
         #update;
 
         constructor (id) {
+            super();
             this.#id = id;
             this.#head = [];
             this.#disp = [];
@@ -439,4 +441,4 @@
     window.Message = Message;
     window.Chat = Chat;
     window.ChatManager = new ChatManager();
-})
+})();

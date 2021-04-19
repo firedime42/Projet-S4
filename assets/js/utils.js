@@ -28,7 +28,7 @@ class SuperPromise {
         this.#p = null;
         this.#rs = null;
         this.#rj = null;
-        this.#state = STATE_PENDING;
+        this.#state = SuperPromise.STATE_PENDING;
         this.#nb_renew = 0;
         this.renew();
     }
