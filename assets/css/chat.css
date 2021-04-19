@@ -1,13 +1,81 @@
+.chat {
+  padding: 10px;
+  min-width: 284px;
+}
+
 .chat .content-chat {
-  height: calc(100% - 50px);
+  height: calc(100% - 100px);
+  padding: 10px;
 }
 
-.chat .controls {
-  height: 50px;
+.chat .content-chat .message {
+  padding: 10px;
 }
 
-.chat .controls .text-input {
+.chat .content-chat .message .data {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+}
+
+.chat .content-chat .message .data .user {
+  padding: 0;
+  font-weight: 600;
+}
+
+.chat .content-chat .message .data .time {
+  color: #a8aab1;
+  padding-left: 6px;
+}
+
+.chat .content-chat .message .data .opts {
+  display: none;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 auto;
+          flex: 0 0 auto;
+}
+
+.chat .content-chat .message .data .opts > div {
+  width: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.chat .content-chat .message .data .opts .delete:hover {
+  color: red;
+}
+
+.chat .content-chat .message .data .opts .edit:hover {
+  color: blue;
+}
+
+.chat .content-chat .message .message-content {
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 5px;
+  background-color: #00bdd61f;
+}
+
+.chat .content-chat .message:hover .opts {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.chat .controles {
+  height: 100px;
+  padding: 10px 0;
+}
+
+.chat .controles .text-input {
   width: 100%;
-  height: 30px;
+}
+
+.chat .controles .text-input:empty:before {
+  content: "Tapez votre message ici";
+  color: #919190;
 }
 /*# sourceMappingURL=chat.css.map */

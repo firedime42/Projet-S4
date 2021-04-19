@@ -13,9 +13,9 @@
             {{ INCLUDE this.currentNode "/template/app.groupes.main.preview.html" }}
         </div>
     </div>
-    <div class="column scrollable" style="width:{{ chat_width }};">
+    <div class="column" style="width:{{ chat_width }};overflow:hidden;">
         <div class="chat">
-            {{ INCLUDE this.currentNode "/template/app.groupes.main.chat.html" }}
+            {{ INCLUDE this.currentNode "/template/app.chat.html" }}
         </div>
     </div>
 </div>
@@ -27,6 +27,7 @@
 
     window.setChatSize = function (w) {
         doc.update({ chat_width: w });
+        setTimeout(() => doc.update(), 100);
     };
 
     URLrooter.addListener("/app/groupes/$id/*",

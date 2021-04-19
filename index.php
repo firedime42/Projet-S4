@@ -36,6 +36,7 @@
     <script src="/assets/js/models/wazapfile.js"></script>
 
     <script src="/assets/js/models/groupe.js"></script>
+    <script src="/assets/js/models/chat.js"></script>
     <script src="/assets/js/models/search.js"></script>
 
     <!-- feuille de style -->
