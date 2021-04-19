@@ -15,6 +15,59 @@ function ExternPrivatePromise() {
     return { promise: p, resolve: rs, reject: rj };
 }
 
+class SuperPromise {
+    static STATE_PENDING = 'pending';
+    static STATE_FULFILLED = 'fulfilled';
+    static STATE_REJECTED = 'rejected';
+    #p;
+    #rs;
+    #rj;
+    #state;
+    #nb_renew;
+    constructor() {
+        this.#p = null;
+        this.#rs = null;
+        this.#rj = null;
+        this.#state = STATE_PENDING;
+        this.#nb_renew = 0;
+        this.renew();
+    }
+    get promise() { return this.#p; }
+    get nb_renew() { return this.#nb_renew; }
+    
+    resolve(...args) {
+        if (this.#state == SuperPromise.STATE_PENDING) {
+            this.#state = SuperPromise.STATE_FULFILLED;
+            this.#rs(...args);
+        }
+
+        return this;
+    }
+    reject(...args) {
+        if (this.#state == SuperPromise.STATE_PENDING) {
+            this.#state = SuperPromise.STATE_REJECTED;
+            this.#rj(...args);
+        }
+
+        return this;
+    }
+
+    renew() {
+        var rs, rj;
+        var p = new Promise(async function (resolve, reject) { rs = resolve; rj = reject; });
+    
+        if (this.#rj && this.#state == SuperPromise.STATE_PENDING) this.#rj();
+        
+        this.#state = SuperPromise.STATE_PENDING;
+        this.#p = p;
+        this.#rs = rs;
+        this.#rj = rj;
+        this.#nb_renew++;
+
+        return this;
+    }
+}
+
 /**
  * Génère une nouvelle instance d'{Erreur} avec le code entrée en paramètre
  * @param {Number} errcode le code de l'erreur
