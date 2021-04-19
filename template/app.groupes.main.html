@@ -5,11 +5,11 @@
     <a href="/app/groupes/{{ groupe.id }}/settings" class="settings-btn icon icon-cog"></a>
 </div>
 <div class="groupe-main">
-    <div class="column scrollable" style="width:calc(100% - {{ chat_width }});">
-        <div class="explorer">
+    <div class="column over" style="width:calc(100% - {{ chat_width }});">
+        <div class="explorer column scrollable">
             {{ INCLUDE this.currentNode "/template/app.groupes.main.explorer.html" }}
         </div>
-        <div class="preview" data-visible="{{ false }}">
+        <div class="preview column scrollable" data-visible="{{ false }}">
             {{ INCLUDE this.currentNode "/template/app.groupes.main.preview.html" }}
         </div>
     </div>
