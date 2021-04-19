@@ -25,6 +25,12 @@ define('ROLE_EDIT_ROLE',"edit_role");
 define('ROLE_EDIT_NAME',"edit_name");
 define('ROLE_EDIT_DESCRIPTION',"edit_description");
 
+function recup_role_id($role){
+	global $database;
+	$query="SELECT * FROM `role` WHERE id=$role";
+	$res=mysqli_query($database,$query);
+	return mysqli_fetch_assoc($res);
+}
 
 function is_owner($user_id,$group_id){
 	global $database;

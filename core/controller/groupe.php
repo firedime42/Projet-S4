@@ -200,7 +200,7 @@ switch ($_post->action) {
             $res["error"]=2000;
         }elseif(empty(recup_group_id($_post->group_id))){
             $res["error"]=2000; 
-        }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_MANAGE_ROLE)){
+        }elseif(!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_EDIT_ROLE)){
             $res["error"]=2008;
         }else{
             if(isset($_post->edited)){
@@ -220,6 +220,25 @@ switch ($_post->action) {
                     (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);}
             }
             $res["success"]=true;
+        }
+        break;
+    case "setRole":
+        if(!isset($_post->group)){
+            $res["error"]=2000;
+        }elseif (!isset($_post->user)) {
+            $res["error"]=2000;
+        }elseif (!isset($_post->role)) {
+            $res["error"]=2000;
+        }elseif (empty(recup_user_id($_post->user))) {
+            $res["error"]=2000;
+        }elseif (empty(recup_group_id($_post->group))) {
+            $res["error"]=2000;
+        }elseif (empty(recup_role_id($_post->role))) {
+            $res["error"]=2000;
+        }elseif (!is_allowed($_post->user,$_post->group,ROLE_MANAGE_ROLE)) {
+            $res["error"]=2000;
+        }else{
+            $res["success"]=add_role($_post->user,$_post->group,$_post->role);
         }
         break;
     case "getMembers":
