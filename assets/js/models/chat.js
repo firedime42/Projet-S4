@@ -183,7 +183,7 @@
             let v = this.#update.nb_renew;
 
             // creation de la requete
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'update',
                 id: this.#id,
                 oldest_message: this.#disp[0] || 0,
@@ -311,7 +311,7 @@
         async send(msg) {
             if (!(msg instanceof Message)) return _error(-1);
 
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'send',
                 id: this.#id,
                 content: msg.content
@@ -331,7 +331,7 @@
          * @returns 
          */
         async remove(msg_id) {
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'remove',
                 chat_id: this.#id,
                 msg_id: msg_id
@@ -351,7 +351,7 @@
          * @returns 
          */
         async edit(msg_id, content) {
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'edit',
                 chat_id: this.#id,
                 msg_id: msg_id,
@@ -374,7 +374,7 @@
         async loadMore(direction = LOAD_DIRECTION_OLDER) {
             if (direction != LOAD_DIRECTION_OLDER && direction != LOAD_DIRECTION_NEWER) return _error(-1);
 
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'loadMore',
                 id: this.#id,
                 oldest_message: this.#disp[0] || 0,

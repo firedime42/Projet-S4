@@ -32,7 +32,7 @@ function create_file($folder,$filename,$content_type,$size,$description,$id_crea
     $querry = "INSERT INTO file (location, name, extension, creator_id,size,description) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description')";
     mysqli_query($database, $querry);
     $id=mysqli_insert_id($database);
-    
+    ajouter_chat_file($id);
     return $id;
 }
 

@@ -9,6 +9,7 @@ function create_group($nom, $description, $id_proprietaire) {
 	$id=mysqli_insert_id($database);
 	$query = "INSERT INTO `group` (name, description, root, id_creator) VALUES ('$nom', '$description', $id, $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
+	ajouter_chat_folder($id);
 	$id_group=mysqli_insert_id($database);
 	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 	$id=mysqli_insert_id($database);
