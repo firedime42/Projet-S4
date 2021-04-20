@@ -50,4 +50,3 @@ CSS :
 
 JS :
 Sauvegarder roles
-Quitter

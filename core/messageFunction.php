@@ -106,25 +106,16 @@ function  edit_message($id,$message){
     $res=mysqli_query($database,$query);
     return $res;
 }
-/*
-function recup_messages_file($file){
+function ajouter_chat_folder($id){
     global $database;
-    $query="SELECT * FROM message WHERE file_id=$file";
+    $query="INSERT INTO chat (folder_id) VALUES($id)";
     $res=mysqli_query($database,$query);
-    $message_list=array();
-	while($row = mysqli_fetch_assoc($res)) {
-	    $message_list[] = $row;
-	}
-    return $message_list;
+    return mysqli_fetch_assoc($res);
 }
-
-function recup_messages_group($group){
+function ajouter_chat_file($id){
     global $database;
-    $query="SELECT * FROM message WHERE group_id=$group";
+    $query="INSERT INTO chat (file_id) VALUES($id)";
     $res=mysqli_query($database,$query);
-    while($row = mysqli_fetch_assoc($res)) {
-	    $message_list[] = $row;
-	}
-    return $res;
-}*/
+    return mysqli_fetch_assoc($res);
+}
 ?>

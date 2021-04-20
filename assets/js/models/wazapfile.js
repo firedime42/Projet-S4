@@ -341,8 +341,11 @@
 
             if (r instanceof Error) return r;
 
+            this.#nb_likes++;
             this.#liked = true;
             this.emit(WazapFile.EVENT_UPDATE);
+
+            console.log('Je l\'aime !', this, WazapFile.EVENT_UPDATE);
 
             return this;
         }
@@ -361,6 +364,7 @@
 
             if (r instanceof Error) return r;
 
+            this.#nb_likes--;
             this.#liked = false;
             this.emit(WazapFile.EVENT_UPDATE);
 

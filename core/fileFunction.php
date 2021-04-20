@@ -32,7 +32,7 @@ function create_file($folder,$filename,$content_type,$size,$description,$id_crea
     $querry = "INSERT INTO file (location, name, extension, creator_id,size,description) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description')";
     mysqli_query($database, $querry);
     $id=mysqli_insert_id($database);
-    
+    ajouter_chat_file($id);
     return $id;
 }
 
@@ -63,5 +63,37 @@ function search_files($needle,$page,$nb_results){
 			$grouplist[] = $row["id"];
 		}
 	return $grouplist;
+}
+
+function modif_nombre_like($id,$edit){
+    global $database;
+    $query = "UPDATE file SET nb_likes=nb_likes+$edit WHERE id=$id";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,$res);
+    return $res;
+}
+
+function like_file($file,$user){
+    global $database;
+    $query = "INSERT INTO file_liked (file_id,user_id) VALUES($file,$user)";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,$res);
+    return $res;
+}
+
+function unlike_file($file,$user){
+    global $database;
+    $query = "DELETE FROM file_liked WHERE file_id=$file AND user_id=$user";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,$res);
+    return $res;
+}
+
+function is_liked($file,$user){
+    global $database;
+    $query = "SELECT * FROM file_liked WHERE file_id=$file AND user_id=$user";
+    $res = mysqli_query($database, $query);
+    //var_dump($query,"test",$res,(mysqli_num_rows($res) >= 1));
+    return (mysqli_num_rows($res) >= 1);
 }
 ?>

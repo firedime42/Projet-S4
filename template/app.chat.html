@@ -1,0 +1,65 @@
+<div class="content-chat scrollable">
+    {{ MARK this "scroll" }}
+    <div data-visible="{{ NOT isTail }}" class="">
+        loading ...
+        {{ MARK this "toTail" }}
+    </div>
+    <div>
+        {{ MARK this "content-chat" }}
+    </div>
+    <div data-visible="{{ NOT isHead }}" class="">
+        loading ...
+        {{ MARK this "toHead" }}
+    </div>
+</div>
+<div class="controles">
+    <div contentEditable="true" class="text-input form-control">{{ MARK this 'text-input' }}</div>
+    <button class="btn btn-primary">{{ ADDLISTENER this.currentNode 'click' send }}Envoyer<em class="icon icon-send"></em></button>
+</div>
+
+<script>
+    doc.update({ chat: new Chat(10), isHead: true, isTail: false, send: () => send() });
+
+    function scrollToHead() {
+        let offset = Dom.offset(doc.ctx.markedElement['content-chat']);
+        let y = offset.top + offset.height;
+        doc.ctx.markedElement['scroll'].scrollTop = y;
+    }
+
+    function send() {
+        console.log('ok');
+    }
+
+    window.scrollToHead = scrollToHead;
+
+    // Dom.data(toTail).visible // data-visible
+
+    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", function (...arg) {
+    
+    });
+
+
+    let messageHTML = fetch("/template/app.chat.message.html");
+
+    messageHTML = (await messageHTML).text();
+
+    messageHTML = await messageHTML;
+
+    let messageParser = new uTemplate.parser(messageHTML);
+
+    var messagesList = new HTMLList(doc.ctx.markedElement['content-chat'], messageParser);
+    
+    for (let i = 0; i < 10; i++) {
+        let msg = new Message(
+            {
+                id: i,
+                author: {
+                    id: 0,
+                    name: 'Mattéo'
+                },
+                content: 'Je serais super content si ça marche !'
+            }
+        );
+        messagesList.add(msg.id, msg);
+    }
+</script>

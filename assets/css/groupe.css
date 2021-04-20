@@ -183,6 +183,10 @@
   transition: 1s;
 }
 
+.groupe .groupe-browse .groupe-main .over {
+  position: relative;
+}
+
 .groupe .groupe-browse .groupe-main .chat {
   border-left: 1px solid #000;
   height: 100%;

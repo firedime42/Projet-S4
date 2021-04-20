@@ -243,6 +243,13 @@
                     if (result instanceof Error) {
                         console.log('le fichier ne peut pas être apprécié');
                     }
+                },
+                unlike: async function () {
+                    let f = await file;
+                    let result = await f.unlike();
+                    if (result instanceof Error) {
+                        console.log('ah ah heu...');
+                    }
                 }
             }
         );
