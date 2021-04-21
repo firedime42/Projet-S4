@@ -18,9 +18,19 @@ function ajouter_message_group($message, $groupId, $idUtilisateur) {
 	}
 	return $messages;
 }*/
-function recherche_messages($id,$lastUpdate,$resp_max){
+function recherche_messages($id,$lastUpdate,$resp_max,$newest_message,$oldest_message,$direction){
     global $database;
-    $query="SELECT * FROM message m JOIN user u ON u.id=m.author WHERE m.last_update<$lastUpdate AND m.chat_id=$id LIMIT $resp_max";
+    switch ($direction) {
+        case 1:
+            $query="SELECT * FROM message m JOIN user u ON u.id=m.author WHERE m.id>$newest_message AND m.last_update<$lastUpdate AND m.chat_id=$id LIMIT $resp_max";
+            break;
+        case -1:
+            $query="SELECT * FROM message m ORDER BY m.id DESC JOIN user u ON u.id=m.author WHERE m.id<$oldest_message AND m.last_update<$lastUpdate AND m.chat_id=$id LIMIT $resp_max";
+            break;
+        default:
+        $query="SELECT * FROM message m JOIN user u ON u.id=m.author WHERE m.last_update<$lastUpdate AND m.chat_id=$id LIMIT $resp_max";
+            break;
+    }
     $res=mysqli_query($database,$query);
     $res= mysqli_fetch_assoc($res);
     $head=array();
@@ -31,15 +41,26 @@ function recherche_messages($id,$lastUpdate,$resp_max){
             "id"=>$value["author"],
             "name"=>$value["username"]
         ),
-        "publish_date" => $value["last_update"],
+        "publish_date" => strtotime($value["last_update"]),
         "content"=>$value["message"]
         );
     }
     return $head;
 }
-function edition_suppresion($id,$oldest_message,$newest_message,$lastUpdate){
+function edition_suppresion($id,$oldest_message,$newest_message,$lastUpdate,$direction,$resp_max){
     global $database;
-    $query="SELECT * FROM message WHERE chat_id=$id AND id BETWEEN $oldest_message AND $newest_message AND last_update>$lastUpdate";
+    switch ($direction) {
+        case 1:
+            $query="SELECT * FROM message WHERE chat_id=$id AND id>$newest_message AND last_update>$lastUpdate LIMIT $resp_max";
+            break;
+        case -1:
+            $query="SELECT * FROM message ORDER BY id DESC WHERE chat_id=$id AND id<$oldest_message AND last_update>$lastUpdate LIMIT $resp_max";
+            break;
+        default:
+            $query="SELECT * FROM message WHERE chat_id=$id AND id BETWEEN $oldest_message AND $newest_message AND last_update>$lastUpdate";
+            break;
+    }
+    
     $res=mysqli_query($database,$query);
     $list=mysqli_fetch_assoc($res);
     $removed=array();
@@ -62,7 +83,7 @@ function edition_suppresion($id,$oldest_message,$newest_message,$lastUpdate){
                     "id"=>$value["author"],
                     "name"=>$value["username"]
                 ),
-                "publish_date" => $value["last_update"],
+                "publish_date" => strtotime($value["last_update"]),
                 "content"=>$value["message"]
                 );
         }
@@ -110,12 +131,12 @@ function ajouter_chat_folder($id){
     global $database;
     $query="INSERT INTO chat (folder_id) VALUES($id)";
     $res=mysqli_query($database,$query);
-    return mysqli_fetch_assoc($res);
+    return $res;
 }
 function ajouter_chat_file($id){
     global $database;
     $query="INSERT INTO chat (file_id) VALUES($id)";
     $res=mysqli_query($database,$query);
-    return mysqli_fetch_assoc($res);
+    return $res;
 }
 ?>

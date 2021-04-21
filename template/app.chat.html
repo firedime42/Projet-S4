@@ -18,6 +18,11 @@
 </div>
 
 <script>
+    var folder = null;
+    var file = null;
+    var chat = null;
+
+
     doc.update({ chat: new Chat(10), isHead: true, isTail: false, send: () => send() });
 
     function scrollToHead() {
@@ -30,12 +35,63 @@
         console.log('ok');
     }
 
-    window.scrollToHead = scrollToHead;
+    async function urlChange({ groupe_id, folder_id, file_id }) {
+        console.log('chat url change : ', groupe_id, folder_id, file_id);
+        let chat_about_file = file_id !== undefined;
+        let new_chat_id = -1;
+        if (chat_about_file && (!file || file.id != file_id)) {
+            // le fichier à changé
+            folder = null;
+            file = await FILES.get(file_id);
+            new_chat_id = file.chat;
+        } else if (!chat_about_file && (file || !folder || folder.id != folder_id)) {
+            // le dossier à changé
+            folder = await FOLDERS.get(folder_id);
+            file = null;
+            new_chat_id = folder.chat;
+        }
+
+        console.log(folder, file, new_chat_id);
+
+        if (new_chat_id >= 0) {
+            removeListeners(chat);
+            chat = await CHATS.get(chat_id);
+            addListener(chat);
+        }
+    }
+
+    function onNewMessage(chat, msg) {
+        messagesList.add(msg.id, msg);
+    }
+
+    function onRmMessage(chat, message_id) {
+        messagesList.remove(message_id);
+    }
+
+    function onRebase(chat) {
+        messagesList.clear();
+        let messages = chat.displayed;
+        let nb_messages = messages.length;
+        for (let i = 0; i < nb_messages; i++)
+            onNewMessage(chat, messages[i]);
+    }
+
+    function removeListeners(chat) {
+        chat.removeListener(Chat.EVENT_NEw_MESSAGE_DISPLAYED, onNewMessage);
+        chat.removeListener(Chat.EVENT_RM_MESSAGE, onRmMessage);
+        chat.removeListener(Chat.EVENT_REBASE, onRebase);
+    }
+
+    function addListeners(chat) {
+        chat.addListener(Chat.EVENT_NEw_MESSAGE_DISPLAYED, onNewMessage);
+        chat.addListener(Chat.EVENT_RM_MESSAGE, onRmMessage);
+        chat.addListener(Chat.EVENT_REBASE, onRebase);
+    }
 
     // Dom.data(toTail).visible // data-visible
 
-    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", function (...arg) {
-    
+    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", function (event) {
+        console.log(e.scrollTop);
     });
 
 
@@ -57,9 +113,12 @@
                     id: 0,
                     name: 'Mattéo'
                 },
-                content: 'Je serais super content si ça marche !'
+                content: 'Je serais super content si ça marche !',
+                publish_date: 1618921805 + i * 1000
             }
         );
         messagesList.add(msg.id, msg);
     }
+
+URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
 </script>

@@ -47,6 +47,7 @@
         get nom() { return this.#newNom || this.#nom; }
         get description() { return this.#newDescription || this.#description; }
         get groupe() { return this.#groupe; }
+        get chat() { return this.#chat; }
 
         get nb_folders() { return this.#folders.length; }
         get nb_files() { return this.#files.length; }
@@ -72,6 +73,7 @@
             this.#nom = data.nom;
             this.#description = data.description;
             this.#groupe = data.groupe;
+            this.#chat = data.chat;
             this.#rename = data.rename;
             this.#delete = data.delete;
             this.#add = true;

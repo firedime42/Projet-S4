@@ -246,6 +246,36 @@
             let element = `<input type="checkbox" name="${name}" ${checked ? 'checked' : ''} ${readonly ? 'disabled' : ''}/>`;
             Dom.before(_this.currentNode, element);
             return '';
+        },
+
+        /**
+         * Converti un timestamp en une chaine visible en fonction de la date actuelle.
+         * @param {Number} timestamp en secondes
+         */
+        READ_TIMESTAMP: function (timestamp) {
+            var res;
+
+            const min = 60;
+            const hour = 60 * min;
+            const day = 24 * hour;
+
+            const today = new Date();
+            const yesterday = new Date(today.getTime() - day * 1000);
+
+            let dtime = Date.now() / 1000 - timestamp;
+            let date = new Date(timestamp * 1000);
+            let d_hours = date.getHours();
+            let d_minutes = `0${date.getMinutes()}`.slice(-2);
+            let d_day = date.getDate();
+            let d_month = date.getMonth();
+            let d_year = date.getFullYear();
+
+            if (dtime < hour) res = `Il y a ${Math.floor(dtime / min)} min.`;
+            else if (today.sameDay(date)) res = `Ajourd'hui à ${d_hours}:${d_minutes}.`;
+            else if (yesterday.sameDay(date)) res = `Hier à ${d_hours}:${d_minutes}.`;
+            else res = `Le ${d_day}/${d_month}/${d_year} à ${d_hours}:${d_minutes}.`;
+        
+            return res;
         }
     });
 })(uTemplate);

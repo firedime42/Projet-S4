@@ -440,5 +440,5 @@
 
     window.Message = Message;
     window.Chat = Chat;
-    window.ChatManager = new ChatManager();
+    window.CHATS = new ChatManager();
 })();

@@ -4,6 +4,8 @@ require_once dirname(__FILE__)."/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 require_once dirname(__FILE__)."/../roleFunction.php";
 require_once dirname(__FILE__)."/../accountFunction.php";
+require_once dirname(__FILE__)."/../messageFunction.php";
+
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(

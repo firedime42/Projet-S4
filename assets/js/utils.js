@@ -175,3 +175,10 @@ function objectCompare(a, b) {
  * defined AsyncFunction constructor if not defined
  */
 var AsyncFunction = AsyncFunction || (async function () {}).constructor;
+
+
+Date.prototype.sameDay = function (date) {
+    return this.getDate() === date.getDate()
+    && this.getMonth() === date.getMonth()
+    && this.getFullYear() === date.getFullYear();
+};

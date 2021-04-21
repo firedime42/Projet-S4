@@ -321,6 +321,7 @@
         get size() { return this.#size; }
         get type() { return this.#type; }
         get etat() { return this.#etat; }
+        get chat() { return this.#chat; }
 
         get isLiked () { return this.#liked; }
         get canRemove () { return this.#delete; }
@@ -371,8 +372,6 @@
             return this;
         }
 
-        getChat() { return null; }
-
         __parseData(data) {
             let exists = (a, b) => (a != null && a != undefined) ? a : b;
             this.#nom = exists(data['nom'], this.#nom);
@@ -387,6 +386,7 @@
             this.#delete = exists(data['delete'], this.#delete);
             this.#liked = exists(data['liked'], this.#liked);
             this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
+            this.#chat = exists(data['chat'], this.#chat);
 
             this.emit(WazapFile.EVENT_UPDATE);
         }
