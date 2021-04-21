@@ -109,7 +109,7 @@ function create_folder($nom,$parent){
 	global $database;
 	$querry = "INSERT INTO folder (name,root) VALUES ('$nom',$parent)";
 	$res = mysqli_query($database, $querry);
-	ajouter_chat_folder(mysqli_last_insert($database));
+	ajouter_chat_folder(mysqli_insert_id($database));
 	return $res;
 }
 

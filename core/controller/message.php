@@ -42,7 +42,7 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}elseif (!isset($_post->newest_message)) {
 			$res["error"]=5000;
-		}elseif (isset($_post->lastUpdate)) {
+		}elseif (!isset($_post->lastUpdate)) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
@@ -50,7 +50,7 @@ switch ($_post->action) {
 			$res["edited"]=$messages_list["edited"];
 			$res["removed"]=$messages_list["removed"];
 			$res["head"]=recherche_messages($_post->id,$_post->lastUpdate,$_post->resp_max,0,0,0);
-			$res["lastUpdate"] = microtime(true); 
+			$res["lastUpdate"] = microtime(true)*1000; 
 		}
 		break;
 	case "loadMore":
@@ -64,9 +64,9 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}elseif (!isset($_post->newest_message)) {
 			$res["error"]=5000;
-		}elseif (isset($_post->lastUpdate)) {
+		}elseif (!isset($_post->lastUpdate)) {
 			$res["error"]=5000;
-		}elseif(isset($_post->direction)){
+		}elseif(!isset($_post->direction)){
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
@@ -74,7 +74,7 @@ switch ($_post->action) {
 			$res["edited"]=$messages_list["edited"];
 			$res["removed"]=$messages_list["removed"];
 			$res["head"]=recherche_messages($_post->id,$_post->lastUpdate,$_post->resp_max,$_post->direction);
-			$res["lastUpdate"] = microtime(true); 
+			$res["lastUpdate"] = microtime(true)*1000; 
 		}
 		break;
 	case "remove":
@@ -122,7 +122,7 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$res["id"]=ajouter_message($_post->id,$_post->message,$_session["user"]["id"]);
+			$res["id"]=ajouter_message($_post->id,$_post->content,$_session["user"]["id"]);
 		}
 		break;
 	default :
@@ -130,5 +130,6 @@ switch ($_post->action) {
 		break;
 }
 
+echo json_encode($res);
 
-	
+?>

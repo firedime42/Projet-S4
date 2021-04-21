@@ -3,6 +3,8 @@ header("Content-Type: application/json");
 
 require_once dirname(__FILE__)."/../folderFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
+require_once dirname(__FILE__) . "/../messageFunction.php";
+
 
 $_post = json_decode(file_get_contents("php://input"));
 
@@ -35,7 +37,7 @@ switch($_post->action){
                     "description" => $folder["description"],
                     "folders" => recupere_dossiers_dans_dossier($_post->id),
                     "files" => recupere_fichiers_dans_dossier($_post->id),
-                    "chat" => recupere_chat($_post->id),
+                    "chat" => recup_chat_folder($_post->id),
                     "lastUpdate" => $folder["last_update"]
                 );
             }

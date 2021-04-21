@@ -20,25 +20,26 @@ function ajouter_message_group($message, $groupId, $idUtilisateur) {
 }*/
 function recherche_messages($id,$lastUpdate,$resp_max,$newest_message,$oldest_message,$direction){
     global $database;
+    $lastUpdate = date("Y-m-d H:i:s", $lastUpdate/1000);
     switch ($direction) {
         case 1:
-            $query="SELECT * FROM message m JOIN user u ON u.id=m.author WHERE m.id>$newest_message AND m.last_update<$lastUpdate AND m.chat_id=$id LIMIT $resp_max";
+            $query="SELECT *,m.id AS mess_id FROM message m JOIN user u ON u.id=m.author WHERE m.id>$newest_message AND m.last_update>'$lastUpdate' AND m.chat_id=$id LIMIT $resp_max";
             break;
         case -1:
-            $query="SELECT * FROM message m ORDER BY m.id DESC JOIN user u ON u.id=m.author WHERE m.id<$oldest_message AND m.last_update<$lastUpdate AND m.chat_id=$id LIMIT $resp_max";
+            $query="SELECT *,m.id AS mess_id FROM message m ORDER BY m.id DESC JOIN user u ON u.id=m.author WHERE m.id<$oldest_message AND m.last_update<'$lastUpdate' AND m.chat_id=$id LIMIT $resp_max";
             break;
         default:
-        $query="SELECT * FROM message m JOIN user u ON u.id=m.author WHERE m.last_update<$lastUpdate AND m.chat_id=$id LIMIT $resp_max";
+        $query="SELECT *,m.id AS mess_id FROM message m JOIN user u ON u.id=m.author WHERE m.last_update>'$lastUpdate' AND m.chat_id=$id LIMIT $resp_max";
             break;
     }
     $res=mysqli_query($database,$query);
-    $res= mysqli_fetch_assoc($res);
+    var_dump($query);
     $head=array();
-    foreach($res as $value){
+    while($value = mysqli_fetch_array($res)){
         $head[]=array(
-        "id" => $value["id"],
+        "id" => (int)$value["mess_id"],
         "author" => array(
-            "id"=>$value["author"],
+            "id"=>(int)$value["author"],
             "name"=>$value["username"]
         ),
         "publish_date" => strtotime($value["last_update"]),
@@ -49,38 +50,39 @@ function recherche_messages($id,$lastUpdate,$resp_max,$newest_message,$oldest_me
 }
 function edition_suppresion($id,$oldest_message,$newest_message,$lastUpdate,$direction,$resp_max){
     global $database;
+    $lastUpdate = date("Y-m-d H:i:s", $lastUpdate/1000);
     switch ($direction) {
         case 1:
-            $query="SELECT * FROM message WHERE chat_id=$id AND id>$newest_message AND last_update>$lastUpdate LIMIT $resp_max";
+            $query="SELECT * ,m.id AS mess_id FROM message m JOIN user u ON u.id=m.author WHERE m.chat_id=$id AND m.id>$newest_message AND m.last_update>'$lastUpdate' LIMIT $resp_max";
             break;
         case -1:
-            $query="SELECT * FROM message ORDER BY id DESC WHERE chat_id=$id AND id<$oldest_message AND last_update>$lastUpdate LIMIT $resp_max";
+            $query="SELECT * ,m.id AS mess_id FROM message m JOIN user u ON u.id=m.author ORDER BY m.id DESC WHERE m.chat_id=$id AND m.id<$oldest_message AND m.last_update>'$lastUpdate' LIMIT $resp_max";
             break;
         default:
-            $query="SELECT * FROM message WHERE chat_id=$id AND id BETWEEN $oldest_message AND $newest_message AND last_update>$lastUpdate";
+            $query="SELECT * ,m.id AS mess_id FROM message m JOIN user u ON u.id=m.author WHERE m.chat_id=$id AND m.id BETWEEN $oldest_message AND $newest_message AND m.last_update>'$lastUpdate'";
             break;
     }
-    
     $res=mysqli_query($database,$query);
     $list=mysqli_fetch_assoc($res);
+    var_dump($query);
     $removed=array();
     $edited=array();
-    foreach ($list as $value) {
+    while ($value = mysqli_fetch_array($res)) {
         if ((int)$value["deleted"]){
             $removed[]=array(
-                "id" => $value["id"],
+                "id" => (int)$value["mess_id"],
                 "author" => array(
-                    "id"=>$value["author"],
+                    "id"=>(int)$value["author"],
                     "name"=>$value["username"]
                 ),
-                "publish_date" => $value["last_update"],
+                "publish_date" => strtotime($value["last_update"]),
                 "content"=>$value["message"]
                 );
         }else{
             $edited[]=array(
-                "id" => $value["id"],
+                "id" => (int)$value["mess_id"],
                 "author" => array(
-                    "id"=>$value["author"],
+                    "id"=>(int)$value["author"],
                     "name"=>$value["username"]
                 ),
                 "publish_date" => strtotime($value["last_update"]),
@@ -90,12 +92,25 @@ function edition_suppresion($id,$oldest_message,$newest_message,$lastUpdate,$dir
     }
     return array( "removed" => $removed,"edited"=>$edited); 
 }
+function recup_chat_folder($id){
+    global $database;
+    $query="SELECT id FROM chat WHERE folder_id=$id";
+    $res=mysqli_query($database,$query);
+    return mysqli_fetch_assoc($res)["id"];
+}
+function recup_chat_file($id){
+    global $database;
+    $query="SELECT id FROM chat WHERE file_id=$id";
+    $res=mysqli_query($database,$query);
+    return mysqli_fetch_assoc($res)["id"];
+}
 function recup_chat($id){
     global $database;
-    $query="SELECT * FROM chat WHERE id=$id";
+    $query="SELECT id FROM chat WHERE id=$id";
     $res=mysqli_query($database,$query);
-    return mysqli_fetch_assoc($res);
+    return mysqli_fetch_assoc($res)["id"];
 }
+
 function recup_message($id){
     global $database;
     $query="SELECT FROM message WHERE id=$id";
@@ -112,7 +127,7 @@ function ajouter_message($chat,$message,$idUtilisateur) {
     global $database;
     $query="INSERT INTO message (message,author,chat_id) VALUES('$message',$idUtilisateur,$chat)";
     $res=mysqli_query($database,$query);
-    return $res;
+    return mysqli_insert_id($database);
 }
 function supprimer_message($id) {
     global $database;

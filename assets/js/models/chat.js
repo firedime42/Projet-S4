@@ -140,7 +140,6 @@
          */
         displayHead() {
             this.keepHead = true;
-            if (this.isHead()) return this;
 
             let nb_messages_displayed = this.#disp.length;
             let nb_messages_head = this.#head.length;
@@ -186,8 +185,8 @@
             let r = await request('/core/controller/message.php', {
                 action: 'update',
                 id: this.#id,
-                oldest_message: this.#disp[0] || 0,
-                newest_message: this.#disp[this.#disp.length - 1] || 0,
+                oldest_message: this.#disp[0] || -1,
+                newest_message: this.#disp[this.#disp.length - 1] || -1,
                 resp_max: MAX_MESSAGES_PER_LOAD,
                 lastUpdate: this.#lastUpdate
             });
@@ -211,10 +210,10 @@
          * @param {Object} msg 
          */
         __addMessage(msg) {
-            if (!this.messages[msg.id])
-                this.messages[msg.id] = new Message(msg);
+            if (!this.#messages[msg.id])
+                this.#messages[msg.id] = new Message(msg);
             else
-                this.messages[msg.id].update(msg);
+                this.#messages[msg.id].update(msg);
         }
 
         /**
@@ -271,8 +270,8 @@
 
             // messages édités
             for (let i = 0; i < nb_edited; i++)
-                if (this.messages[data.edited[i].id])
-                    this.messages[data.edited[i].id].update(data.edited[i]);
+                if (this.#messages[data.edited[i].id])
+                    this.#messages[data.edited[i].id].update(data.edited[i]);
 
             // messages supprimés
             this.__deleteMessages(data.removed);
@@ -288,9 +287,13 @@
                             this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]]);
                         }
                     } else {
-                        for (let i = 0; i < nb_news; i++)
+                        for (let i = 0; i < nb_news; i++) {
                             this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]]);
-                        
+                            console.log(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]], head_id[i], i);
+                        }
+
+                        console.log(this);
+
                         let rm = _pushMaxLength(this.#disp, head_id, MAX_MESSAGES_DISPLAYED);
                         for (let i = 0, nb_rm = rm.length; i < nb_rm; i++)
                             this.emit(Chat.EVENT_RM_MESSAGE, this.#messages[head_id[i]]);
@@ -428,10 +431,9 @@
             if (!this.#chats[id])  {
                 let chat = new Chat(id);
                 let r = await chat.update();
-
                 if (r instanceof Error) return r;
 
-                this.chats[id] = chat;
+                this.#chats[id] = chat;
             }
 
             return this.#chats[id];
