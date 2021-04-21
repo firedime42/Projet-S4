@@ -255,15 +255,16 @@
         READ_TIMESTAMP: function (timestamp) {
             var res;
 
-            const min = 60;
+            const sec = 1000;
+            const min = 60 * sec;
             const hour = 60 * min;
             const day = 24 * hour;
 
             const today = new Date();
-            const yesterday = new Date(today.getTime() - day * 1000);
+            const yesterday = new Date(today.getTime() - day);
 
-            let dtime = Date.now() / 1000 - timestamp;
-            let date = new Date(timestamp * 1000);
+            let dtime = Date.now() - timestamp;
+            let date = new Date(timestamp);
             let d_hours = date.getHours();
             let d_minutes = `0${date.getMinutes()}`.slice(-2);
             let d_day = date.getDate();

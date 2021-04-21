@@ -36,11 +36,12 @@
         if (text.length < 1) console.error('message trop court !');
         else if (text.length > 500) console.error('message trop long !');
         else {
-            let msg = new Message({ author: { id: user.id, name: user.username }, content: text });
+            let msg = new Message({ author: { id: user.id * 1, name: user.username }, content: text });
             let r = await chat.send(msg);
-            if (r instanceof Error) console.log(r);
+            if (r instanceof Error) console.error(r);
             onNewMessage(chat, msg);
-            console.log('whouhou');
+            await sleep(100);
+            scrollToHead();
         }
     }
 
@@ -85,7 +86,6 @@
 
     function onRebase(chat) {
         messagesList.clear();
-        console.log("yuhu", chat);
         let messages = chat.displayed;
         let nb_messages = messages.length;
         for (let i = 0; i < nb_messages; i++)
@@ -115,6 +115,11 @@
         //console.log(e.scrollTop);
     });
 
+    function autoUpdate() {
+        setTimeout(autoUpdate, 5000);
+        if (chat instanceof Chat) chat.update();
+    }
+    autoUpdate();
 
     let messageHTML = fetch("/template/app.chat.message.html");
 

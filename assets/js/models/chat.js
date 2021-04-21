@@ -61,7 +61,7 @@
             this.id = null;
             this.author = null;
             this.content = null;
-            this.publication_date = Date.now() / 1000;
+            this.publication_date = Date.now();
 
             this.update(data);
         }
@@ -287,12 +287,9 @@
                             this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]]);
                         }
                     } else {
-                        for (let i = 0; i < nb_news; i++) {
+                        for (let i = 0; i < nb_news; i++)
                             this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]]);
-                            console.log(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]], head_id[i], i);
-                        }
-
-                        console.log(this);
+                            
 
                         let rm = _pushMaxLength(this.#disp, head_id, MAX_MESSAGES_DISPLAYED);
                         for (let i = 0, nb_rm = rm.length; i < nb_rm; i++)

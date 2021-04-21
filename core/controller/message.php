@@ -46,11 +46,17 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
+			/*
 			$messages_list=edition_suppresion($_post->id,$_post->oldest_message,$_post->newest_message,$_post->lastUpdate,0,0);
 			$res["edited"]=$messages_list["edited"];
 			$res["removed"]=$messages_list["removed"];
 			$res["head"]=recherche_messages($_post->id,$_post->lastUpdate,$_post->resp_max,0,0,0);
-			$res["lastUpdate"] = microtime(true)*1000; 
+			*/
+			$res["lastUpdate"] = microtime(true)*1000;
+			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
+			$res["edited"] = $updates["edited"];
+			$res["removed"] = $updates["removed"];
+			$res["head"] = $updates["head"];
 		}
 		break;
 	case "loadMore":
@@ -70,11 +76,20 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
+			/*
 			$messages_list=edition_suppresion($_post->id,$_post->oldest_message,$_post->newest_message,$_post->lastUpdate,$_post->direction,$_post->resp_max);
 			$res["edited"]=$messages_list["edited"];
 			$res["removed"]=$messages_list["removed"];
 			$res["head"]=recherche_messages($_post->id,$_post->lastUpdate,$_post->resp_max,$_post->direction);
-			$res["lastUpdate"] = microtime(true)*1000; 
+			$res["lastUpdate"] = microtime(true)*1000;*/
+			
+			$res["lastUpdate"] = microtime(true)*1000;
+			$messages = loadMore($_post->id, $_post->resp_max, $_post->newest_message, $_post);
+			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
+			$res["messages"] = $messages;
+			$res["edited"] = $updates["edited"];
+			$res["removed"] = $updates["removed"];
+			$res["head"] = $updates["head"];
 		}
 		break;
 	case "remove":

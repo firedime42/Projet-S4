@@ -2,7 +2,8 @@
 
 function ajouter_message_group($message, $groupId, $idUtilisateur) {
     global $database;
-    $query="INSERT INTO message (message,author,group_id) VALUES('$message',$idUtilisateur,$groupId)";
+    $time = (int) (microtime(true) * 1000);
+    $query="INSERT INTO message (message,author,group_id,last_update,creation_date) VALUES('$message',$idUtilisateur,$groupId,$time,$time)";
     $res=mysqli_query($database,$query);
     return $res;
 }
@@ -20,7 +21,7 @@ function ajouter_message_group($message, $groupId, $idUtilisateur) {
 }*/
 function recherche_messages($id,$lastUpdate,$resp_max,$newest_message,$oldest_message,$direction){
     global $database;
-    $lastUpdate = date("Y-m-d H:i:s", $lastUpdate/1000);
+    //$lastUpdate = date("Y-m-d H:i:s", $lastUpdate/1000); // mal théo !
     switch ($direction) {
         case 1:
             $query="SELECT *,m.id AS mess_id FROM message m JOIN user u ON u.id=m.author WHERE m.id>$newest_message AND m.last_update>'$lastUpdate' AND m.chat_id=$id LIMIT $resp_max";
@@ -92,6 +93,91 @@ function edition_suppresion($id,$oldest_message,$newest_message,$lastUpdate,$dir
     }
     return array( "removed" => $removed,"edited"=>$edited); 
 }
+
+
+/**
+ * Converti une ligne retourné par la base de donnée en un message dans le format attendu par le protocol.
+ */
+function parseMessage($msg_row) {
+    return array(
+        "id" => (int)$msg_row["id"],
+        "author" => array(
+            "id"=>(int)$msg_row["author"],
+            "name"=>$msg_row["username"]
+        ),
+        "publish_date" => (int) $msg_row["last_update"],
+        "content"=>$msg_row["message"]
+    );
+}
+
+/**
+ * Fonction qui recupère plus de messages dans une direction
+ */
+function loadMore($chat_id, $resp_max, $newest_message, $oldest_message, $direction) {
+    global $database;
+    $query_base = "SELECT msg.id, msg.author, msg.message, msg.last_update, u.username FROM `message` AS msg JOIN `user` AS u ON msg.author = u.id WHERE msg.chat_id = $chat_id AND msg.deleted = 0";
+    $load_newer = $query_base." AND msg.id > $newest_message ORDER BY msg.id LIMIT $resp_max";
+    $load_older = $query_base." AND msg.id < $oldest_message ORDER BY msg.id DESC LIMIT $resp_max";
+
+    // recuperer les messages depuis la base de donnée
+    $res = msqli_query($database, ($direction == 1) ? $load_newer : $load_older);
+    $messages = array();
+    while ($msg_row = msqli_fetch_assoc($res)) {
+        $messages[] = parseMessage($msg_row);
+    }
+
+    // renverser l'ordre si necessaire
+    if ($direction == -1) $messages = array_reverse($messages);
+
+    return $messages;
+}
+
+/**
+ * Récupère les information necessaire pour detecter les messages supprimés, modifiés et 
+ */
+function getHeadEditedRemovedMessage($chat_id, $lastUpdate, $resp_max, $newest_message, $oldest_message) {
+    global $database;
+    $query_base = "SELECT msg.id, msg.author, msg.message, msg.deleted, msg.last_update, u.username FROM `message` AS msg JOIN `user` AS u ON msg.author = u.id WHERE msg.chat_id = $chat_id";
+    
+    $query_between = 
+        "
+        ($query_base AND (msg.id > $newest_message AND msg.creation_date < $lastUpdate) AND msg.last_update > $lastUpdate ORDER BY msg.id DESC LIMIT $resp_max)
+        UNION
+        ($query_base AND (msg.id >= $oldest_message AND msg.id <= $newest_message) AND msg.last_update > $lastUpdate ORDER BY msg.id DESC)
+        "
+    ;
+    $query_head    = $query_base." AND msg.creation_date > $lastUpdate ORDER BY msg.id DESC LIMIT $resp_max";
+    
+    $edited = array(); // contenant les messages qui ont été édités
+    $removed = array(); // contenant les messages qui ont été supprimés
+    $head = array(); // contenant les messages qui ont été ajouté à la tête de chat
+
+    // recuperation des elements modifiés et supprimés
+    $req_between = mysqli_query($database, $query_between);
+    while ($msg_row = mysqli_fetch_array($req_between)) {
+        if ($msg_row['deleted'] == '0') $removed[] = parseMessage($msg_row);
+        else if ($msg_row['deleted'] == '1') $edited[] = parseMessage($msg_row);
+    }
+
+    // recuperation de la tête
+    $req_head = mysqli_query($database, $query_head);
+    while ($msg_row = mysqli_fetch_array($req_head)) {
+        $head[] = parseMessage($msg_row);
+    }
+
+    // on remet dans l'ordre croissant
+    $removed = array_reverse($removed);
+    $edited = array_reverse($edited);
+    $head = array_reverse($head);
+
+    // on retourne les resultats
+    return array(
+        "edited" => $edited,
+        "removed" => $removed,
+        "head" => $head
+    );
+}
+
 function recup_chat_folder($id){
     global $database;
     $query="SELECT id FROM chat WHERE folder_id=$id";
@@ -125,20 +211,25 @@ function is_author($user,$id){
 }
 function ajouter_message($chat,$message,$idUtilisateur) {
     global $database;
-    $query="INSERT INTO message (message,author,chat_id) VALUES('$message',$idUtilisateur,$chat)";
+    $time = (int) (microtime(true) * 1000);
+    $message=mysqli_real_escape_string($database, $message);
+    $query="INSERT INTO message (message,author,chat_id,last_update,creation_date) VALUES('$message',$idUtilisateur,$chat,$time,$time)";
     $res=mysqli_query($database,$query);
     return mysqli_insert_id($database);
 }
 function supprimer_message($id) {
     global $database;
-    $query="UPDATE message SET deleted=1 WHERE id=$id";
+    $time = (int) (microtime(true) * 1000);
+    $query="UPDATE message SET deleted=1, last_update=$time WHERE id=$id";
     //$query="DELETE FROM message WHERE id=$id";
     $res=mysqli_query($database,$query);
     return $res;
 }
-function  edit_message($id,$message){
+function edit_message($id,$message){
     global $database;
-    $query="UPDATE FROM message SET message='$message' WHERE id=$id";
+    $time = (int) (microtime(true) * 1000);
+    $message=mysqli_real_escape_string($database, $message);
+    $query="UPDATE FROM message SET message='$message', last_update=$time WHERE id=$id";
     $res=mysqli_query($database,$query);
     return $res;
 }
