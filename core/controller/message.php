@@ -84,7 +84,7 @@ switch ($_post->action) {
 			$res["lastUpdate"] = microtime(true)*1000;*/
 			
 			$res["lastUpdate"] = microtime(true)*1000;
-			$messages = loadMore($_post->id, $_post->resp_max, $_post->newest_message, $_post);
+			$messages = loadMore($_post->id, $_post->resp_max, $_post->newest_message, $_post->oldest_message, $_post->direction);
 			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
 			$res["messages"] = $messages;
 			$res["edited"] = $updates["edited"];

@@ -120,9 +120,9 @@ function loadMore($chat_id, $resp_max, $newest_message, $oldest_message, $direct
     $load_older = $query_base." AND msg.id < $oldest_message ORDER BY msg.id DESC LIMIT $resp_max";
 
     // recuperer les messages depuis la base de donnée
-    $res = msqli_query($database, ($direction == 1) ? $load_newer : $load_older);
+    $res = mysqli_query($database, ($direction == 1) ? $load_newer : $load_older);
     $messages = array();
-    while ($msg_row = msqli_fetch_assoc($res)) {
+    while ($msg_row = mysqli_fetch_assoc($res)) {
         $messages[] = parseMessage($msg_row);
     }
 

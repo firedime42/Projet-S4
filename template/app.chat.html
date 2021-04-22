@@ -4,6 +4,9 @@
         loading ...
         {{ MARK this "toTail" }}
     </div>
+    <div data-visible="{{ isTail }}" class="">
+        Pas d'autre message...
+    </div>
     <div>
         {{ MARK this "content-chat" }}
     </div>
@@ -11,6 +14,9 @@
         loading ...
         {{ MARK this "toHead" }}
     </div>
+</div>
+<div data-visible="{{ NOT isHead }}" class="">
+    {{ ADDLISTENER this.currentNode 'click' jumpToPresent }}Retourner tout en bas.
 </div>
 <div class="controles">
     <div contentEditable="true" class="text-input form-control">{{ MARK this 'text-input' }}</div>
@@ -22,13 +28,25 @@
     var file = null;
     var chat = null;
 
+    await doc.update({ isHead: true, isTail: true, send: () => send(), jumpToPresent: () => {
+        chat.keepHead = true;
+        chat.displayHead();
+    }});
 
-    doc.update({ chat: new Chat(10), isHead: true, isTail: false, send: () => send() });
+    var scroll = doc.ctx.markedElement['scroll'];
+    var toTail = doc.ctx.markedElement['toTail'];
+    var toHead = doc.ctx.markedElement['toHead'];
 
-    function scrollToHead() {
-        let offset = Dom.offset(doc.ctx.markedElement['content-chat']);
-        let y = offset.top + offset.height;
-        doc.ctx.markedElement['scroll'].scrollTop = y;
+    function scrollYMax() {
+        return scroll.scrollHeight - scroll.offsetHeight;
+    }
+
+    function scrollToBottom() {
+        scroll.scrollTop = scrollYMax();
+    }
+
+    function scrollOnBottom() {
+        return scroll.scrollTop > scrollYMax() - 50;
     }
 
     async function send() {
@@ -36,12 +54,13 @@
         if (text.length < 1) console.error('message trop court !');
         else if (text.length > 500) console.error('message trop long !');
         else {
+            Dom.html(doc.ctx.markedElement['text-input'], '');
             let msg = new Message({ author: { id: user.id * 1, name: user.username }, content: text });
             let r = await chat.send(msg);
             if (r instanceof Error) console.error(r);
             onNewMessage(chat, msg);
             await sleep(100);
-            scrollToHead();
+            scrollToBottom();
         }
     }
 
@@ -62,6 +81,7 @@
 
         if (new_chat_id >= 0) {
             removeListeners(chat);
+            doc.update({ isHead: true, isTail: true });
             chat = await CHATS.get(new_chat_id);
 
             if (chat instanceof Error) {
@@ -76,21 +96,30 @@
         }
     }
 
-    function onNewMessage(chat, msg) {
-        messagesList.add(msg.id, msg);
+    async function onNewMessage(chat, msg, prepend=false) {
+        messagesList.add(msg.id, msg, {}, prepend);
+
+        await sleep(1);
+
+        if (chat.keepHead) scrollToBottom();
+
+        doc.update({ isTail: chat.isTail(), isHead: chat.isHead() });
     }
 
     function onRmMessage(chat, message_id) {
         messagesList.remove(message_id);
     }
 
-    function onRebase(chat) {
+    async function onRebase(chat) {
         messagesList.clear();
         let messages = chat.displayed;
         let nb_messages = messages.length;
         for (let i = 0; i < nb_messages; i++)
             onNewMessage(chat, messages[i]);
-        scrollToHead();
+
+        await sleep(10);
+
+        scrollToBottom();
     }
 
     function removeListeners(chat) {
@@ -110,16 +139,54 @@
     }
 
     // Dom.data(toTail).visible // data-visible
+    let isLoadingData = false;
 
-    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", function (e) {
-        //console.log(e.scrollTop);
+    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", async function (e) {
+        if (!(chat instanceof Chat)) return;
+
+        // keepHead
+        chat.keepHead = chat.isHead() && scroll.scrollTop > scrollYMax() - 50;
     });
+
+    Dom.addListener(doc.ctx.markedElement["scroll"], "mouseup", async function (e) {
+        if (!(chat instanceof Chat)) return;
+
+        if (!isLoadingData) {
+            isLoadingData = true;
+            let direction = 0;
+
+            // loadMore older
+            if (!chat.isTail() && scroll.scrollTop < toTail.offsetHeight)
+                direction = Chat.LOAD_DIRECTION_OLDER;
+
+            // loadMore newer
+            if (!chat.isHead() && scroll.scrollTop > scrollYMax() - toHead.offsetHeight)
+                direction = Chat.LOAD_DIRECTION_NEWER;
+
+            if (direction != 0) {
+                
+                if (scroll.scrollTop < toTail.offsetHeight)
+                    scroll.scrollTop = toTail.offsetHeight + 10;
+                else if (scroll.scrollTop > scrollYMax() - toHead.offsetHeight)
+                    scroll.scrollTop = scrollYMax() - toHead.offsetHeight;
+                
+
+                let r = await chat.loadMore(direction);
+
+                if (r instanceof Error) console.error(r);
+
+                doc.update({ isHead: chat.isHead(), isTail: chat.isTail() });
+            }
+
+            isLoadingData = false;
+        }
+    })
 
     function autoUpdate() {
         setTimeout(autoUpdate, 5000);
         if (chat instanceof Chat) chat.update();
     }
-    autoUpdate();
+    //autoUpdate();
 
     let messageHTML = fetch("/template/app.chat.message.html");
 
@@ -131,8 +198,8 @@
 
     var messagesList = new HTMLList(doc.ctx.markedElement['content-chat'], messageParser);
     
-    /**
-    for (let i = 0; i < 10; i++) {
+    
+    /*for (let i = 0; i < 10; i++) {
         let msg = new Message(
             {
                 id: i,
@@ -140,13 +207,26 @@
                     id: 0,
                     name: 'Mattéo'
                 },
-                content: 'Je serais super content si ça marche !',
+                content: 'msg n°'+i,
                 publish_date: 1618921805 + i * 1000
             }
         );
-        messagesList.add(msg.id, msg);
-    }
-    */
+        let msg2 = new Message(
+            {
+                id: i + 10,
+                author: {
+                    id: 0,
+                    name: 'Mattéo'
+                },
+                content: 'msg n° -'+i,
+                publish_date: 1618921805 + i * 1000
+            }
+        );
+        messagesList.add(msg.id, msg, {});
+        messagesList.add(msg2.id, msg2, {}, true);
+    }*/
 
-URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
+    
+
+    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
 </script>
