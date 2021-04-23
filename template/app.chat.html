@@ -70,7 +70,7 @@
         if (chat_about_file && (!file || file.id != file_id * 1)) {
             // le fichier à changé
             folder = null;
-            file = await FILES.get(file_id * 1);
+            file = await WFILES.get(file_id * 1);
             new_chat_id = file.chat * 1;
         } else if (!chat_about_file && (file || !folder || folder.id != folder_id * 1)) {
             // le dossier à changé

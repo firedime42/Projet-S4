@@ -263,8 +263,8 @@
         }
 
         async remove() {
-            if (this.#id != null) return _error(-1); // identifiant null
-            if (!this.#delete) return _error(-1);    // autorisation manquante
+            if (this.#id == null) return _error(-1); // identifiant null
+            if (!this.#delete) return _error(-2);    // autorisation manquante
 
             let r = await request("/core/controller/file.php", {
                 action: 'remove',

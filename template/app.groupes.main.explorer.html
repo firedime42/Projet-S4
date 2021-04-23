@@ -35,9 +35,9 @@
 <script>
     let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete à changer lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages, on commence à charger une page mais on change d'avis entre temp.
 
-    let groupe = null;
-    let folder = null;
-    let uploads = {}; // id => Upload
+    var groupe = -1;
+    var folder = null;
+    var uploads = {}; // id => Upload
 
     /**
      * Set the correct dir to the windows
@@ -45,6 +45,7 @@
     async function setDir({ groupe_id, folder_id }) {
         if (!folder_id) return;
 
+        groupe = groupe_id;
         folder_id *= 1;
 
         if (folder != null && folder_id == folder.id) {// actualise data on the folder
@@ -62,6 +63,7 @@
                 addAllFiles();
             }
         }
+        
     }
 
     doc.update();
@@ -80,8 +82,6 @@
         let files = e.dataTransfer.files;
         let nb_files = files.length;
         let wfiles = new Array(nb_files);
-
-        console.log(folder);
 
         for (let i = 0; i < nb_files; i++) {
             let file = files[i];     // recuperer le fichier
@@ -229,10 +229,18 @@
                     Dom.remove(link);                       // retire le lien du document
                     window.URL.revokeObjectURL(blob_url);   // on libere l'espace associé au lien blob
                 },
+                rename: function () {
+                    console.log('rename pas encore disponnible');
+                },
+                preview: async function () {
+                    let f = await file;
+                    setURL(`/app/groupes/${groupe}/${folder.id}/${f.id}`, `Prévisualisation : ${f.nom}`);
+                },
                 delete: async function () {
                     let f = await file;
                     let result = await f.remove();
                     if (result instanceof Error) {
+                        console.error(result);
                         console.log('le fichier ne peut pas être supprimé');
                     }
                     else listFiles.remove(file_id);
@@ -262,7 +270,7 @@
         if (folder == null) return;
         let nb_files = folder.nb_files;
         let files = folder.files;
-        for (let i = 0; i < nb_files; i++) addFile(null, files[i]);
+        for (let i = 0; i < nb_files; i++) addFile(folder, files[i]);
     }
 
     /**

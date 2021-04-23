@@ -2,6 +2,7 @@
 header("Content-Type: application/json");
 require_once dirname(__FILE__) . "/../fileFunction.php";
 require_once dirname(__FILE__) . "/../folderFunction.php";
+require_once dirname(__FILE__) . "/../messageFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 
 $_post = json_decode(file_get_contents("php://input"));
@@ -70,7 +71,7 @@ switch ($_post->action) {
     case "remove":
         if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
-        } elseif (empty(recup_file_id($id))) {
+        } elseif (empty(recup_file_id($_post->id))) {
             $res["error"] = 3006; //Fichier inexistant
         }else {
             $file=recup_file_id($_post->id);
