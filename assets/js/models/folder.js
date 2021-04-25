@@ -145,12 +145,12 @@
          */
         async createFolder(nom, description) {
             if (!this.#create) return _error(-1);
-            if (!(nom instanceof String && nom.length > 2 && nom.length < 50)) return _error(-1);
-            if (!(description instanceof String && nom.length < 300)) return _error(-1);
+            if (!(typeof nom == 'string' && nom.length > 2 && nom.length < 50)) return _error(-1);
+            if (!(typeof description == 'string' && nom.length < 300)) return _error(-1);
 
             let r = await request("/core/controller/folder.php", {
                 action: 'create',
-                parent_folder: this.#id,
+                parent: this.#id,
                 nom: nom,
                 description: description
             });
@@ -158,6 +158,7 @@
             if (r instanceof Error) { return r; }
 
             this.#folders.push(r.id);
+            this.emit(Folder.EVENT_NEW_FOLDER, r.id);
 
             return r;
         }

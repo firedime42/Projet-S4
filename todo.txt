@@ -35,7 +35,13 @@ Roles :
 Gerer creation couleur
 
 PHP :
-isset() à la place de ==NULL ?
+Increment Messages Du groupe
+Envoyer Id Tchat
+Creation fichier -> ajouter Tchat
+Supression FIchier -> Retirer Tchat
+Suppresion Folder -> Retirer Tchat
+Recup Id Fichiers -> Messages
+
 
 HTML :
 DashBoard des groupes avec tableau de gestions des roles
@@ -49,4 +55,10 @@ Page Profil
 CSS :
 
 JS :
-Sauvegarder roles
+mise à jour des dates 
+suppression des messages
+modification des messages
+ajout des dossiers
+
+rename fichiers
+rename folders

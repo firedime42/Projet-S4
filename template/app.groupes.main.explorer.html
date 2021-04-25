@@ -12,7 +12,7 @@
         {{ MARK this "path" }}
     </div>
 </div>
-<div class="content">
+<div class="content dropzone">
     {{ MARK this "dropzone" }}
     <div class="browse-main" data-visible="true">
         <center><em>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</em></center>
@@ -20,9 +20,17 @@
         <div class="folders row-container">
             {{ MARK this "folders" }}
         </div>
+        <div class="addButton">
+            {{ ADDLISTENER this.currentNode "click" create_folder }}
+            <span class="icon icon-add"></span>
+        </div>
         <h3><em class="icon icon-files"></em> Fichiers</h3>
         <div class="files row-container">
             {{ MARK this "files" }}
+        </div>
+        <div class="addButton">
+            {{ ADDLISTENER this.currentNode "click" create_file }}
+            <span class="icon icon-add"></span>
         </div>
     </div>
     <div class="flux" data-visible="false">
@@ -60,26 +68,70 @@
 
             if (req == current_request_num) {
                 addListeners();
+                addAllFolders();
                 addAllFiles();
             }
         }
         
     }
 
-    doc.update();
+    doc.update({
+        /**
+         * creer un dossier dans le dossier courant
+         */
+        create_folder: async function () {
+            let nom = prompt('nom du dossier'); // a ameliorer
+            let descr = prompt('description');
+            if (folder != null && typeof nom == 'string' && nom.length > 3 && descr != null) {
+                let res = await folder.createFolder(nom, descr);
+                if (res instanceof Error) console.error(res);
+            }
+        },
+
+        /**
+         * creer un fichier dans le dossier courant.
+         */
+        create_file: async function () {
+            // creation d'une input pour recuperer les fichiers que l'utilisateur veut selectionner
+            let input = Dom.create('<input type="file" style="position: absolute; width: 0; height: 0; top: -100%;">').children[0];
+
+            // promesse pour attendre le choix de l'utilisateur
+            let onchange = ExPromise();
+            input.onchange = onchange.resolve;
+
+            // attente du choix de l'utilisateur
+            input.click();
+            await onchange;
+
+            // recuperation des données
+            let files = input.files;
+
+            // suppresion de l'input
+            input.onchange = null;
+            Dom.remove(input);
+
+            // ajout des Fichiers
+            upload_files(files);
+        }
+    });
 
     /* gestion du drop de fichier */
     doc.ctx.markedElement['dropzone'].addEventListener('dragenter', function (e) { e.preventDefault(); e.stopPropagation(); });
     doc.ctx.markedElement['dropzone'].addEventListener('dragleave', function (e) { e.preventDefault(); e.stopPropagation(); });
     doc.ctx.markedElement['dropzone'].addEventListener('dragover',  function (e) { e.preventDefault(); e.stopPropagation(); });
-    doc.ctx.markedElement['dropzone'].addEventListener('drop', async function (e) {
+    doc.ctx.markedElement['dropzone'].addEventListener('drop',      function (e) {
         // on empeche le navigateur de le gerer par defaut : tanter d'ouvrir le fichier dans le navigateur
         e.preventDefault(); e.stopPropagation();
         
         console.log(e.dataTransfer.files);
 
-        // on recupere les fichiers
-        let files = e.dataTransfer.files;
+        upload_files(e.dataTransfer.files);
+    });
+
+    /**
+     * Ajoute des fichiers au dossier parent
+     */
+    async function upload_files(files) {
         let nb_files = files.length;
         let wfiles = new Array(nb_files);
 
@@ -113,7 +165,7 @@
                 folder.addFile(wfile);
             }
         }
-    });
+    }
 /*
     function onFileChange2(file) {
         let html_element = Dom.find(`[data-file-id="${file.id}"]`, doc.ctx.markedElement.files)[0];
@@ -189,7 +241,9 @@
         if (!(folder instanceof Folder)) return;
         folder.removeListener(Folder.EVENT_UPDATE, onFolderUpdate);
         folder.removeListener(Folder.EVENT_NEW_FILE, addFile);
+        folder.removeListener(Folder.EVENT_NEW_FOLDER, addFolder);
         folder.removeListener(Folder.EVENT_REMOVE_FILE, removeFile);
+        folder.removeListener(Folder.EVENT_REMOVE_FOLDER, removeFolder);
     }
 
     /**
@@ -199,15 +253,17 @@
         if (!(folder instanceof Folder)) return;
         folder.addListener(Folder.EVENT_UPDATE, onFolderUpdate);
         folder.addListener(Folder.EVENT_NEW_FILE, addFile);
+        folder.addListener(Folder.EVENT_NEW_FOLDER, addFolder);
         folder.addListener(Folder.EVENT_REMOVE_FILE, removeFile);
+        folder.addListener(Folder.EVENT_REMOVE_FOLDER, removeFolder);
     }
 
     /**
-     * ajoute le fichier sur l'interface.
-     * @param {Folder} folder : le dossiers
+     * ajoute le fichier sur la vue.
+     * @param {Folder} parent : le dossier parent
      * @param {Number} file_id : l'identifiant du fichier
      */
-    function addFile(folder, file_id) {
+    function addFile(parent, file_id) {
         let file = WFILES.get(file_id);
         listFiles.add(file_id, file,
             {
@@ -234,7 +290,7 @@
                 },
                 preview: async function () {
                     let f = await file;
-                    setURL(`/app/groupes/${groupe}/${folder.id}/${f.id}`, `Prévisualisation : ${f.nom}`);
+                    setURL(`/app/groupes/${groupe}/${parent.id}/${f.id}`, `Prévisualisation : ${f.nom}`);
                 },
                 delete: async function () {
                     let f = await file;
@@ -264,6 +320,19 @@
     }
 
     /**
+     * ajoute le dossier sur la vue.
+     * @param {Folder} parent : le dossier parent
+     * @param {Number} folder_id : l'identifiant du dossier
+     */
+    function addFolder(parent_folder, folder_id) {
+        let folder = FOLDERS.get(folder_id);
+        listFolders.add(folder_id, folder, {
+            delete: function () { console.log('supprimer le dossier'); }
+        });
+        console.log(folder);
+    }
+
+    /**
      * ajoute les fichiers present par defaut dans le dossier
      */
     function addAllFiles() {
@@ -274,12 +343,32 @@
     }
 
     /**
-     * reitire le fichier sur l'interface.
-     * @param {Folder} folder : le dossiers
+     * ajoute les dossiers present par défaut dans le dossier
+     */
+    function addAllFolders() {
+        if (folder == null) return;
+        let nb_folders = folder.nb_folders;
+        let folders = folder.folders;
+        console.log('folders: ', folders);
+        for  (let i = 0; i < nb_folders; i++) addFolder(folder, folders[i])
+    }
+
+    /**
+     * retire le fichier sur l'interface.
+     * @param {Folder} parent : le dossier parent
      * @param {Number} file_id : l'identifiant du fichier
      */
-    function removeFile(folder, file_id) {
+    function removeFile(parent, file_id) {
         listFiles.remove(file_id);
+    }
+
+    /**
+     * retire le dossier sur la vue
+     * @param {Folder} parent : le dossier parent
+     * @param {Number} folder_id : l'identifiant du dossier
+     */
+    function removeFolder(parent, folder_id) {
+        listFolders.remove(folder_id);
     }
 
     /**

@@ -105,7 +105,7 @@ function recup_folder_id($id){
 	return $folder_data;
 }
 
-function create_folder($nom,$parent){
+function create_folder($nom, $parent, $description=""){
 	global $database;
 	$querry = "INSERT INTO folder (name,root) VALUES ('$nom',$parent)";
 	$res = mysqli_query($database, $querry);

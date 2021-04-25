@@ -48,13 +48,13 @@ switch($_post->action){
             $res["error"] = 4001; //nom de dossier invalide
         } elseif (!isset($_post->parent)) {
             $res["error"] = 4002; //dossier parent vide
-        } elseif (!empty(recup_folder_id($_post->parent))){
+        } elseif (empty(recup_folder_id($_post->parent))){
             $res["error"] = 4004; //dossier parent inexistant
         /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FOLDER)) {
             $res["error"] = 3004;*/
         }else{
             $res["success"]=create_folder($_post->nom,$_post->parent,$_post->description);
-            $res["id"]=recup_folder_nom_descr($_post->nom,$_post->description);
+            $res["id"]=recup_folder_nom_descr($_post->nom,$_post->description); // wtf !?
         }
         break;
     default:
