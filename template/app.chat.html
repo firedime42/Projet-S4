@@ -5,7 +5,7 @@
         {{ MARK this "toTail" }}
     </div>
     <div data-visible="{{ isTail }}" class="">
-        Pas d'autre message...
+        Pas d'autre message.
     </div>
     <div>
         {{ MARK this "content-chat" }}
@@ -28,10 +28,15 @@
     var file = null;
     var chat = null;
 
-    await doc.update({ isHead: true, isTail: true, send: () => send(), jumpToPresent: () => {
-        chat.keepHead = true;
-        chat.displayHead();
-    }});
+    await doc.update({
+        isHead: true,
+        isTail: true,
+        send: () => send(),
+        jumpToPresent: () => {
+            chat.keepHead = true;
+            chat.displayHead();
+        }
+    });
 
     var scroll = doc.ctx.markedElement['scroll'];
     var toTail = doc.ctx.markedElement['toTail'];
@@ -67,16 +72,19 @@
     async function urlChange({ groupe_id, folder_id, file_id }) {
         let chat_about_file = file_id !== undefined;
         let new_chat_id = -1;
+
         if (chat_about_file && (!file || file.id != file_id * 1)) {
             // le fichier à changé
             folder = null;
             file = await WFILES.get(file_id * 1);
             new_chat_id = file.chat * 1;
+
         } else if (!chat_about_file && (file || !folder || folder.id != folder_id * 1)) {
             // le dossier à changé
             folder = await FOLDERS.get(folder_id * 1);
             file = null;
             new_chat_id = folder.chat * 1;
+
         }
 
         if (new_chat_id >= 0) {
@@ -97,7 +105,12 @@
     }
 
     async function onNewMessage(chat, msg, prepend=false) {
-        messagesList.add(msg.id, msg, {}, prepend);
+        messagesList.add(msg.id, msg, {
+            canDelete: msg.author.id == user.id * 1,
+            canEdit: msg.author.id == user.id * 1,
+            delete: async function () { console.log('retirer le message'); },
+            edit: async function () { console.log('modifier le message'); }
+        }, prepend);
 
         await sleep(1);
 
@@ -141,19 +154,14 @@
     // Dom.data(toTail).visible // data-visible
     let isLoadingData = false;
 
-    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", async function (e) {
-        if (!(chat instanceof Chat)) return;
-
-        // keepHead
-        chat.keepHead = chat.isHead() && scroll.scrollTop > scrollYMax() - 50;
-    });
-
-    Dom.addListener(doc.ctx.markedElement["scroll"], "mouseup", async function (e) {
+    async function chatMove(e) {
         if (!(chat instanceof Chat)) return;
 
         if (!isLoadingData) {
             isLoadingData = true;
             let direction = 0;
+
+            await sleep(100);
 
             // loadMore older
             if (!chat.isTail() && scroll.scrollTop < toTail.offsetHeight)
@@ -165,6 +173,8 @@
 
             if (direction != 0) {
                 
+                await sleep(100);
+
                 if (scroll.scrollTop < toTail.offsetHeight)
                     scroll.scrollTop = toTail.offsetHeight + 10;
                 else if (scroll.scrollTop > scrollYMax() - toHead.offsetHeight)
@@ -180,7 +190,18 @@
 
             isLoadingData = false;
         }
-    })
+    }
+
+
+    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", async function (e) {
+        if (!(chat instanceof Chat)) return;
+
+        // keepHead
+        chat.keepHead = chat.isHead() && scroll.scrollTop > scrollYMax() - 50;
+    });
+
+    Dom.addListener(doc.ctx.markedElement["scroll"], "mouseup", chatMove);
+    Dom.addListener(doc.ctx.markedElement["scroll"], "wheel", chatMove);
 
     function autoUpdate() {
         setTimeout(autoUpdate, 5000);
@@ -225,8 +246,6 @@
         messagesList.add(msg.id, msg, {});
         messagesList.add(msg2.id, msg2, {}, true);
     }*/
-
-    
 
     URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
 </script>

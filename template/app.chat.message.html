@@ -6,8 +6,8 @@
         </div>
         <div class="time">{{ READ_TIMESTAMP element.publish_date }}</div>
         <div class="opts">
-            <div class="edit"><span class="icon icon-edit-3"></span></div>
-            <div class="delete"><span class="icon icon-trash-2"></span></div>
+            <div class="edit" data-visible="{{ canEdit }}">{{ ADDLISTENER this.currentNode "click" edit }}<span class="icon icon-edit-3"></span></div>
+            <div class="delete" data-visible="{{ canRemove }}">{{ ADDLISTENER this.currentNode "click" delete }}<span class="icon icon-trash-2"></span></div>
         </div>
     </div>
     <div class="message-content">{{ element.content }}</div>
