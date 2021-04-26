@@ -24,9 +24,11 @@
     <script src="/assets/lib/urlmanager.js"></script>
     <script src="/assets/lib/listenable.js"></script>
     <script src="/assets/lib/htmllist.js"></script>
+    <script src="/assets/lib/autotime.js"></script>
 
     <!-- script -->
     <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/autotime.func.js"></script>
     <script src="/assets/js/utemplate.func.js"></script>
 
     <!-- models -->

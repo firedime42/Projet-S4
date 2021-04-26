@@ -249,34 +249,15 @@
         },
 
         /**
-         * Converti un timestamp en une chaine visible en fonction de la date actuelle.
-         * @param {Number} timestamp en secondes
+         * Creer un element fichier
+         * @param {*} _this 
+         * @param {Number} timestamp 
+         * @param {String} mode 
          */
-        READ_TIMESTAMP: function (timestamp) {
-            var res;
-
-            const sec = 1000;
-            const min = 60 * sec;
-            const hour = 60 * min;
-            const day = 24 * hour;
-
-            const today = new Date();
-            const yesterday = new Date(today.getTime() - day);
-
-            let dtime = Date.now() - timestamp;
-            let date = new Date(timestamp);
-            let d_hours = date.getHours();
-            let d_minutes = `0${date.getMinutes()}`.slice(-2);
-            let d_day = date.getDate();
-            let d_month = date.getMonth();
-            let d_year = date.getFullYear();
-
-            if (dtime < hour) res = `Il y a ${Math.floor(dtime / min)} min.`;
-            else if (today.sameDay(date)) res = `Ajourd'hui à ${d_hours}:${d_minutes}.`;
-            else if (yesterday.sameDay(date)) res = `Hier à ${d_hours}:${d_minutes}.`;
-            else res = `Le ${d_day}/${d_month}/${d_year} à ${d_hours}:${d_minutes}.`;
-        
-            return res;
+        AUTOTIME: function (_this, timestamp, mode="default") {
+            let element = AutoTime.createHTML(mode, timestamp);
+            Dom.before(_this.currentNode, element);
+            return '';
         }
     });
 })(uTemplate);

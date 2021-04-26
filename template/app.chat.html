@@ -106,9 +106,9 @@
 
     async function onNewMessage(chat, msg, prepend=false) {
         messagesList.add(msg.id, msg, {
-            canDelete: msg.author.id == user.id * 1,
+            canRemove: msg.author.id == user.id * 1,
             canEdit: msg.author.id == user.id * 1,
-            delete: async function () { console.log('retirer le message'); },
+            remove: async function () { console.log('retirer le message'); },
             edit: async function () { console.log('modifier le message'); }
         }, prepend);
 
@@ -161,7 +161,7 @@
             isLoadingData = true;
             let direction = 0;
 
-            await sleep(100);
+            await sleep(1);
 
             // loadMore older
             if (!chat.isTail() && scroll.scrollTop < toTail.offsetHeight)
@@ -173,7 +173,7 @@
 
             if (direction != 0) {
                 
-                await sleep(100);
+                await sleep(10);
 
                 if (scroll.scrollTop < toTail.offsetHeight)
                     scroll.scrollTop = toTail.offsetHeight + 10;
