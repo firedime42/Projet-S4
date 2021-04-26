@@ -4,15 +4,15 @@ require_once("sql.php");
 
 function create_group($nom, $description, $id_proprietaire) {
 	global $database;
-	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom',$id_proprietaire)";
-	mysqli_query($database,$query);
-	$id=mysqli_insert_id($database);
-	$query = "INSERT INTO `group` (name, description, root, id_creator) VALUES ('$nom', '$description', $id, $id_proprietaire)";//, $avatar )";
+	$query = "INSERT INTO `group` (name, description, id_creator) VALUES ('$nom', '$description', $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
 	$id_group=mysqli_insert_id($database);
+	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom',$id_group)";
+	mysqli_query($database,$query);
+	$id_folder=mysqli_insert_id($database);
 	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 	$id=mysqli_insert_id($database);
-	$query="UPDATE `group` SET default_role=$id WHERE id=$id_group";
+	$query="UPDATE `group` SET default_role=$id,root=$id_folder WHERE id=$id_group";
 	mysqli_query($database,$query);
 	create_role_color($id_group,"Fondateur","dc3545",1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 	$id=mysqli_insert_id($database);

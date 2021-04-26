@@ -245,4 +245,19 @@ function ajouter_chat_file($id){
     $res=mysqli_query($database,$query);
     return $res;
 }
+function supprime_chat_file($id){
+    global $database;
+    $querry = "DELETE FROM chat WHERE file_id=$id";
+    $res=mysqli_query($database, $querry);
+    
+    return $res;
+}
+
+function supprime_chat_folder($id){
+    global $database;
+    $querry = "DELETE FROM chat WHERE folder_id=$id";
+    $res=mysqli_query($database, $querry);
+    
+    return $res;
+}
 ?>

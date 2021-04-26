@@ -35,24 +35,22 @@ Roles :
 Gerer creation couleur
 
 PHP :
-Increment Messages Du groupe
-Envoyer Id Tchat
-Creation fichier -> ajouter Tchat
-Supression FIchier -> Retirer Tchat
-Suppresion Folder -> Retirer Tchat
-Recup Id Fichiers -> Messages
+NB Messages
+Nb Files
+Chat Id -> File/Folder (sur db)
 
 
 HTML :
-DashBoard des groupes avec tableau de gestions des roles
-Fenetre de chat
 Fenetre de preview d'un document
 parametres groupe
 notification groupe
-Groupe -> page interieure
+Correction Fautes Orthographes
 Page Profil
 
 CSS :
+DashBoard des groupes avec tableau de gestions des roles
+Fenetre de chat
+Groupe -> page interieure
 
 JS :
 mise à jour des dates 
