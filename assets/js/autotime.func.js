@@ -6,6 +6,7 @@
     const DAY  = 24 * HOUR;
 
     AutoTime.modes["custom"] = function (element, now, time) {
+        
         const today = new Date(now);
         const yesterday = new Date(now - DAY);
 
@@ -29,5 +30,14 @@
             res = `Le ${d_day}/${d_month}/${d_year} à ${d_hours}:${d_minutes}.`;
     
         return res;
+    };
+
+    AutoTime.modes["delais_minutes"] = function (element, now, time) {
+        let nb_secondes = Math.floor((time % MIN) / SEC);
+        let nb_minutes = Math.floor((time % HOUR) / MIN);
+        let nb_hours = Math.floor((time % DAY) / HOUR);
+        let nb_days = Math.floor(time / DAY);
+
+        return `${nb_days}j ${nb_hours}h ${nb_minutes}m ${nb_secondes}s`;
     };
 })();

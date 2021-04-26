@@ -248,14 +248,22 @@
             return '';
         },
 
+        UNITS: Object.freeze({
+            SECONDE: 1000,
+            MINUTE: 60000,
+            HOUR: 3600000,
+            DAY: 86400000
+        }),
+
         /**
          * Creer un element fichier
          * @param {*} _this 
-         * @param {Number} timestamp 
-         * @param {String} mode 
+         * @param {Number} time 
+         * @param {String} mode
+         * @param {Number} unit
          */
-        AUTOTIME: function (_this, timestamp, mode="default") {
-            let element = AutoTime.createHTML(mode, timestamp);
+        AUTOTIME: function (_this, time, mode="default", unit=1) {
+            let element = AutoTime.createHTML(mode, time * unit);
             Dom.before(_this.currentNode, element);
             return '';
         }
