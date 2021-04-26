@@ -52,7 +52,7 @@ DashBoard des groupes avec tableau de gestions des roles
 Fenetre de chat
 Groupe -> page interieure
 
-JS :
+JS :œ
 mise à jour des dates 
 suppression des messages
 modification des messages

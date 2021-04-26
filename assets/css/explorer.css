@@ -100,7 +100,6 @@
   display: inline-block;
   width: 15px;
   text-align: center;
-  /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: never;
   font-style: normal;
