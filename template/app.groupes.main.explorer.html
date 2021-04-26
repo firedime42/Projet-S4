@@ -327,6 +327,7 @@
     function addFolder(parent_folder, folder_id) {
         let folder = FOLDERS.get(folder_id);
         listFolders.add(folder_id, folder, {
+            open: function () { setURL(`/app/groupes/${groupe}/${folder_id}`); },
             delete: function () { console.log('supprimer le dossier'); }
         });
         console.log(folder);

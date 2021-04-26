@@ -43,13 +43,13 @@ function recup_folder_id($id){
 	return $folder_data;
 }
 
-function create_folder($nom,$group, $parent = null, $description=""){
+function create_folder($nom, $group, $parent = null, $description=""){
 	global $database;
 	$id_chat=ajoute_chat();
 	if(isset($parent))
-		$query = "INSERT INTO folder (name,parent_id,group_id,description,chat_id) VALUES ('$nom',$parent,$group,$description,$id_chat)";
+		$query = "INSERT INTO folder (name,parent_id,group_id,description,chat_id) VALUES ('$nom',$parent,$group,'$description',$id_chat)";
 	else
-		$query = "INSERT INTO folder (name,group_id,description,chat_id) VALUES ('$nom',$group,$description,$id_chat)";
+		$query = "INSERT INTO folder (name,group_id,description,chat_id) VALUES ('$nom',$group,'$description',$id_chat)";
 	$res = mysqli_query($database, $query);
 	return $res;
 }
@@ -64,8 +64,8 @@ function recup_folder_nom_descr($nom,$description){
 }
 
 function supprimer_dossier($id){
-   global $database;
-   supprime_chat_folder($id);
+	global $database;
+	supprime_chat_folder($id);
     $query = "DELETE FROM folder f WHERE f.id = $id";
     $res = mysqli_query($database, $query);
     return $res;

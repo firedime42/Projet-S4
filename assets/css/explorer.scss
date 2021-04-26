@@ -60,6 +60,9 @@
                 position: relative;
                 transition: .1s;
 
+                --opt-data-colsize: 100px;
+                --opt-data-nbcol: 1;
+
                 > div {
                     border-bottom: 1px solid #999;
                     display: flex;
@@ -72,7 +75,7 @@
                     }
 
                     .data {
-                        width: calc(100% - 130px);
+                        width: calc(100% - 30px - var(--opt-data-colsize) * var(--opt-data-nbcol));
                         .nom {
                             font-size: 14px;
                             letter-spacing: .01em;
@@ -84,16 +87,22 @@
                     }
 
                     .optional-data {
-                        width: 100px;
+                        width: calc(var(--opt-data-colsize) * var(--opt-data-nbcol));
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+
                         > div {
                             font-size: 12px;
                             letter-spacing: .01em;
+                            flex: 0 0 calc(100% / var(--opt-data-nbcol));
                         }
                         > div:before {
                             display: inline-block;
                             width: 15px;
                             text-align: center;
 
+                            /* icon */
                             font-family: 'icomoon' !important;
                             speak: never;
                             font-style: normal;
@@ -135,6 +144,7 @@
 
         .nb_messages:before { content: "\e914"; }
         .nb_files:before { content: "\e909"; }
+        .nb_folders:before { content: "\e900"; }
         .nb_likes:before { content: "\e919"; }// icon coeur vide
         .nb_likes[data-liked=true]:before { content: "\e91a"; }// icon coeur plein
 
@@ -176,7 +186,9 @@
         }
 
         .folders {
-
+            .item {
+                --opt-data-nbcol: 2;
+            }
         }
     }
 }

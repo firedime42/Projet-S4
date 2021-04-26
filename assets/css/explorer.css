@@ -55,6 +55,8 @@
   position: relative;
   -webkit-transition: .1s;
   transition: .1s;
+  --opt-data-colsize: 100px;
+  --opt-data-nbcol: 1;
 }
 
 .explorer .browse-main .row-container .item > div {
@@ -74,7 +76,7 @@
 }
 
 .explorer .browse-main .row-container .item > div .data {
-  width: calc(100% - 130px);
+  width: calc(100% - 30px - var(--opt-data-colsize) * var(--opt-data-nbcol));
 }
 
 .explorer .browse-main .row-container .item > div .data .nom {
@@ -88,18 +90,31 @@
 }
 
 .explorer .browse-main .row-container .item > div .optional-data {
-  width: 100px;
+  width: calc(var(--opt-data-colsize) * var(--opt-data-nbcol));
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .explorer .browse-main .row-container .item > div .optional-data > div {
   font-size: 12px;
   letter-spacing: .01em;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 calc(100% / var(--opt-data-nbcol));
+          flex: 0 0 calc(100% / var(--opt-data-nbcol));
 }
 
 .explorer .browse-main .row-container .item > div .optional-data > div:before {
   display: inline-block;
   width: 15px;
   text-align: center;
+  /* icon */
   font-family: 'icomoon' !important;
   speak: never;
   font-style: normal;
@@ -143,6 +158,10 @@
 
 .explorer .browse-main .nb_files:before {
   content: "\e909";
+}
+
+.explorer .browse-main .nb_folders:before {
+  content: "\e900";
 }
 
 .explorer .browse-main .nb_likes:before {
@@ -192,5 +211,9 @@
   border-radius: 3px;
   -webkit-transform: scale(1.01);
           transform: scale(1.01);
+}
+
+.explorer .browse-main .folders .item {
+  --opt-data-nbcol: 2;
 }
 /*# sourceMappingURL=explorer.css.map */
