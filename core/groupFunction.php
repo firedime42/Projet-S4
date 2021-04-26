@@ -15,9 +15,9 @@ function create_group($nom, $description, $id_proprietaire) {
 	mysqli_query($database,$query);
 	create_role_color($id_group,"Fondateur","dc3545",1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 	$id=mysqli_insert_id($database);
-	add_role($id_group,$id_proprietaire,$id);
 	apply_group($id_group,$id_proprietaire);
 	join_group($id_group,$id_proprietaire,$id_proprietaire);
+	add_role($id_group,$id_proprietaire,$id);
 	return $id_group;
 }
 

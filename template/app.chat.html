@@ -70,7 +70,7 @@
     }
 
     async function urlChange({ groupe_id, folder_id, file_id }) {
-        let chat_about_file = file_id !== undefined;
+        let chat_about_file = file_id !== undefined && file_id.length > 0;
         let new_chat_id = -1;
 
         if (chat_about_file && (!file || file.id != file_id * 1)) {
@@ -247,5 +247,5 @@
         messagesList.add(msg2.id, msg2, {}, true);
     }*/
 
-    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
+    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id/*", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
 </script>
