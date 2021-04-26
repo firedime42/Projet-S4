@@ -233,18 +233,14 @@ function edit_message($id,$message){
     $res=mysqli_query($database,$query);
     return $res;
 }
-function ajouter_chat_folder($id){
+
+function ajoute_chat(){
     global $database;
-    $query="INSERT INTO chat (folder_id) VALUES($id)";
+    $query="INSERT INTO chat () VALUES()";
     $res=mysqli_query($database,$query);
-    return $res;
+    return mysqli_insert_id($database);
 }
-function ajouter_chat_file($id){
-    global $database;
-    $query="INSERT INTO chat (file_id) VALUES($id)";
-    $res=mysqli_query($database,$query);
-    return $res;
-}
+
 function supprime_chat_file($id){
     global $database;
     $querry = "DELETE FROM chat WHERE file_id=$id";

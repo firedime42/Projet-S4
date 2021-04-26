@@ -37,7 +37,7 @@ switch($_post->action){
                     "description" => $folder["description"],
                     "folders" => recupere_dossiers_dans_dossier($_post->id),
                     "files" => recupere_fichiers_dans_dossier($_post->id),
-                    "chat" => recup_chat_folder($_post->id),
+                    "chat"=> $folder["chat_id"],
                     "lastUpdate" => $folder["last_update"]
                 );
             }

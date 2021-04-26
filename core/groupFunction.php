@@ -7,8 +7,7 @@ function create_group($nom, $description, $id_proprietaire) {
 	$query = "INSERT INTO `group` (name, description, id_creator) VALUES ('$nom', '$description', $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
 	$id_group=mysqli_insert_id($database);
-	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom',$id_group)";
-	mysqli_query($database,$query);
+	create_folder($nom, $id_group);
 	$id_folder=mysqli_insert_id($database);
 	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 	$id=mysqli_insert_id($database);

@@ -60,8 +60,9 @@ switch ($_post->action) {
                     "nb_comments" => $file["nb_comments"],
                     "nb_likes" => (int)$file["nb_likes"],
 
-                    "renamed" => $file["rename"],
-                    "delete" => $file["delete"],
+                    "chat"=>$file["chat_id"],
+                    "renamed" => is_allowed($_session["user"],,ROLE_RENAME_FILE),
+                    "delete" => is_allowed($_session["user"],,ROLE_REMOVE_FILE),
                     "liked" => is_liked($_post->id,$_session["user"]["id"]),
                     "lastUpdate" => $file["last_update"]
                 );

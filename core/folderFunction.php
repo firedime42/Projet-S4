@@ -43,11 +43,14 @@ function recup_folder_id($id){
 	return $folder_data;
 }
 
-function create_folder($nom, $description, $group, $parent = null){
+function create_folder($nom,$group, $parent = null, $description=""){
 	global $database;
-	$query = "INSERT INTO folder (name,parent_id,group_id,description) VALUES ('$nom',$parent,$group,$description)";
+	$id_chat=ajoute_chat();
+	if(isset($parent))
+		$query = "INSERT INTO folder (name,parent_id,group_id,description,chat_id) VALUES ('$nom',$parent,$group,$description,$id_chat)";
+	else
+		$query = "INSERT INTO folder (name,group_id,description,chat_id) VALUES ('$nom',$group,$description,$id_chat)";
 	$res = mysqli_query($database, $query);
-	ajouter_chat_folder(mysqli_insert_id($database));
 	return $res;
 }
 
