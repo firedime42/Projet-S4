@@ -92,7 +92,7 @@
             else
                 Dom.prepend(
                     path,
-                    `<a href="/app/groupes/${groupe}/${dir.id}" class="path-node">${dir.nom}</a>`
+                    `<div class="path-item"><a href="/app/groupes/${groupe}/${dir.id}">${dir.nom}</a></div>`
                 );
 
             dir = (dir.parent !== null) ? await FOLDERS.get(dir.parent) : null;

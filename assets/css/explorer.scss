@@ -3,8 +3,7 @@
     .content { height: 100%; }
 
     .explorer-header {
-        color: #fff;
-        text-shadow: 0 0 3px rgba(0, 0, 0, .2);
+        padding: 15px 15px;
 
 
         .search{
@@ -38,6 +37,53 @@
             position: relative;
             left: -227px;
             top: -26px;
+        }
+
+        .path {
+            padding: 5px;
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            flex-direction: row;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+
+            .path-item {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+
+                > a {
+                    color: var(--site-text-color);
+                    padding: 4px 8px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    text-shadow:none;
+
+                }
+                > a:hover {
+                    background-color: #f1f3f4;
+
+                }
+            }
+
+            .path-item:not(:first-child):before {
+                content: '\e91e';
+                color: var(--site-text-color);
+                
+                /* use !important to prevent issues with browser extensions that change fonts */
+                font-family: 'icomoon' !important;
+                speak: never;
+                font-style: normal;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+
+                /* Better Font Rendering =========== */
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
         }
     }
 

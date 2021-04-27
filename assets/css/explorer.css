@@ -8,8 +8,7 @@
 }
 
 .explorer .explorer-header {
-  color: #fff;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  padding: 15px 15px;
 }
 
 .explorer .explorer-header .search {
@@ -40,6 +39,66 @@
   position: relative;
   left: -227px;
   top: -26px;
+}
+
+.explorer .explorer-header .path {
+  padding: 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.explorer .explorer-header .path .path-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.explorer .explorer-header .path .path-item > a {
+  color: var(--site-text-color);
+  padding: 4px 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  text-shadow: none;
+}
+
+.explorer .explorer-header .path .path-item > a:hover {
+  background-color: #f1f3f4;
+}
+
+.explorer .explorer-header .path .path-item:not(:first-child):before {
+  content: '\e91e';
+  color: var(--site-text-color);
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .explorer .browse-main .row-container .clip {
