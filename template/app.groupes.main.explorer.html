@@ -59,20 +59,44 @@
         if (folder != null && folder_id == folder.id) {// actualise data on the folder
             folder.pull();
         } else { // change folder
-            listFolders.clear();
             listFiles.clear();
+            listFolders.clear();
             removeListeners();
 
             let req = ++current_request_num;
-            folder = await FOLDERS.get(folder_id);
+            let f = await FOLDERS.get(folder_id);
 
             if (req == current_request_num) {
+                folder = f;
                 addListeners();
                 addAllFolders();
                 addAllFiles();
+                setPath(f);
             }
         }
         
+    }
+
+    /**
+     * Affiche le chemin du fichier
+     */
+    async function setPath(folder) {
+        let path = doc.ctx.markedElement['path'];
+
+        // on supprime le chemin precedent
+        Dom.html(path, "");
+
+        let dir = folder;
+        while (dir) {
+            if (dir instanceof Error) console.error(dir);
+            else
+                Dom.prepend(
+                    path,
+                    `<a href="/app/groupes/${groupe}/${dir.id}" class="path-node">${dir.nom}</a>`
+                );
+
+            dir = (dir.parent !== null) ? await FOLDERS.get(dir.parent) : null;
+        }
     }
 
     doc.update({
@@ -324,13 +348,12 @@
      * @param {Folder} parent : le dossier parent
      * @param {Number} folder_id : l'identifiant du dossier
      */
-    function addFolder(parent_folder, folder_id) {
+    function addFolder(parent, folder_id) {
         let folder = FOLDERS.get(folder_id);
         listFolders.add(folder_id, folder, {
             open: function () { setURL(`/app/groupes/${groupe}/${folder_id}`); },
             delete: function () { console.log('supprimer le dossier'); }
         });
-        console.log(folder);
     }
 
     /**
@@ -350,7 +373,6 @@
         if (folder == null) return;
         let nb_folders = folder.nb_folders;
         let folders = folder.folders;
-        console.log('folders: ', folders);
         for  (let i = 0; i < nb_folders; i++) addFolder(folder, folders[i])
     }
 
@@ -375,7 +397,9 @@
     /**
      * raffraichit les données affichés
      */
-    function onFolderUpdate(folder) { doc.update(); }
+    function onFolderUpdate(folder) {
+        //doc.update();
+    }
 
     let folderHTML = fetch("/template/app.explorer.folderitem.html");
     let fileHTML = fetch("/template/app.explorer.fileitem.html");

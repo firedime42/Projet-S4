@@ -28,16 +28,17 @@ switch($_post->action){
             }            
             elseif ($_post->lastUpdate == $folder["last_update"]) {
                 $res["success"] = true;
-                $res["groupe"] = NULL;
             } else {
                 $res["success"] = true;
                 $res["folder"] = array(
                     //"id" => $folder["id"],
                     "nom" => $folder["name"],
                     "description" => $folder["description"],
+                    "groupe" => (int) $folder["group_id"],
+                    "parent" => is_numeric($folder["parent_id"]) ? (int) $folder["parent_id"] : null,
                     "folders" => recupere_dossiers_dans_dossier($_post->id),
                     "files" => recupere_fichiers_dans_dossier($_post->id),
-                    "chat"=> $folder["chat_id"],
+                    "chat"=> (int) $folder["chat_id"],
                     "lastUpdate" => $folder["last_update"]
                 );
             }

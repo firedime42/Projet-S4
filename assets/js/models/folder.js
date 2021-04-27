@@ -17,6 +17,7 @@
         #newDescription;
 
         #groupe;     // identifiant du groupe auquel appartient le dossier
+        #parent;
 
         #folders;    // tous les identifiants des dossiers contenu dans le dossier
         #files;      // tous les identifiants des fichiers contenu dans le dossier
@@ -36,6 +37,7 @@
             this.#nom = null;
             this.#description = null;
             this.#groupe = null;
+            this.#parent = null;
 
             this.#folders = [];
             this.#files = [];
@@ -47,6 +49,7 @@
         get nom() { return this.#newNom || this.#nom; }
         get description() { return this.#newDescription || this.#description; }
         get groupe() { return this.#groupe; }
+        get parent() { return this.#parent; }
         get chat() { return this.#chat; }
 
         get nb_folders() { return this.#folders.length; }
@@ -73,6 +76,7 @@
             this.#nom = data.nom;
             this.#description = data.description;
             this.#groupe = data.groupe;
+            this.#parent = data.parent;
             this.#chat = data.chat;
             this.#rename = data.rename;
             this.#delete = data.delete;
@@ -174,18 +178,37 @@
         __valideID(id) { return Number.isInteger(id) && id >= 0; }
 
         /**
-         * Recupère un fichier
-         * @param {Number} id l'identifiant du fichier
+         * Recupère un dossier
+         * @param {Number} id l'identifiant du dossier
          */
         async get(id) {
             // verification du type de l'id
             if (!this.__valideID(id)) return null;
 
-            // on crée le fichier s'il n'existe pas
+            // on crée le dossier s'il n'existe pas
             if (!this.#folders[id]) this.#folders[id] = new Folder(id);
 
             // on récupère les données depuis le serveur
             return await this.#folders[id].pull();
+        }
+
+        /**
+         * récupère le dossier sans mettre à jour.
+         * @param {Number} id 
+         * @returns 
+         */
+        async _get(id) {
+            // verification du type de l'id
+            if (!this.__valideID(id)) return null;
+
+            // on crée le dossier s'il n'existe pas
+            if (!this.#folders[id]) { 
+                this.#folders[id] = new Folder(id);
+                await this.#folders[id].pull();
+            }
+
+            // on récupère les données depuis le serveur
+            return this.#folders[id];
         }
 
         /**
