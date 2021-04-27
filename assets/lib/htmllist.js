@@ -34,7 +34,7 @@
          * @returns 
          */
         async add(id, element, data, prepend = false) {
-            if (this.#elements[id]) return;
+            if (this.#elements[id]) return await this.update(element);
 
             let dom_element = Dom.create(`<div></div>`).children[0];
             
@@ -112,8 +112,10 @@
 
             if (element instanceof Listenable)
                 element.removeListener('update', this.#updateFunction);
-
+            
+            this.#elements[element_id] = null;
             delete this.#elements[element_id];
+
             Dom.remove(dom_element);
         }
 

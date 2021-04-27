@@ -1,10 +1,18 @@
 <?php
 
-require_once("sql.php");
-
+require_once("sql.php")
+;
 function recup_file_id($id){
     global $database;
-    $user =  "SELECT * FROM file WHERE id = $id";
+    $user =  "SELECT * FROM file WHERE id=$id";
+	$result = mysqli_query($database, $user);
+	$file_data=mysqli_fetch_assoc($result);
+	
+	return $file_data;
+}
+function recup_file($id,$user){
+    global $database;
+    $user =  "SELECT f.*, COUNT(DISTINCT m.id) AS nb_comments, COUNT(DISTINCT fl.id) AS nb_likes, EXISTS(SElECT * FROM file_liked WHERE file_id=$id AND user_id=$user) AS liked FROM file f JOIN message m ON f.chat_id=m.chat_id JOIN file_liked fl ON fl.file_id=f.id WHERE f.id =$id AND m.deleted=0";
 	$result = mysqli_query($database, $user);
 	$file_data=mysqli_fetch_assoc($result);
 	

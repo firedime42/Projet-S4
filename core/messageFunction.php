@@ -146,7 +146,7 @@ function getHeadEditedRemovedMessage($chat_id, $lastUpdate, $resp_max, $newest_m
         ($query_base AND (msg.id >= $oldest_message AND msg.id <= $newest_message) AND msg.last_update > $lastUpdate ORDER BY msg.id DESC)
         "
     ;
-    $query_head    = $query_base." AND msg.creation_date > $lastUpdate ORDER BY msg.id DESC LIMIT $resp_max";
+    $query_head    = $query_base." AND msg.deleted = 0 AND msg.creation_date > $lastUpdate ORDER BY msg.id DESC LIMIT $resp_max";
     
     $edited = array(); // contenant les messages qui ont été édités
     $removed = array(); // contenant les messages qui ont été supprimés
@@ -155,8 +155,8 @@ function getHeadEditedRemovedMessage($chat_id, $lastUpdate, $resp_max, $newest_m
     // recuperation des elements modifiés et supprimés
     $req_between = mysqli_query($database, $query_between);
     while ($msg_row = mysqli_fetch_array($req_between)) {
-        if ($msg_row['deleted'] == '0') $removed[] = parseMessage($msg_row);
-        else if ($msg_row['deleted'] == '1') $edited[] = parseMessage($msg_row);
+        if ($msg_row['deleted'] == '1') $removed[] = $msg_row['id'];
+        else if ($msg_row['deleted'] == '0') $edited[] = parseMessage($msg_row);
     }
 
     // recuperation de la tête
@@ -199,7 +199,7 @@ function recup_chat($id){
 
 function recup_message($id){
     global $database;
-    $query="SELECT FROM message WHERE id=$id";
+    $query="SELECT * FROM message WHERE id=$id";
     $res=mysqli_query($database,$query);
     return mysqli_fetch_array($res);
 }

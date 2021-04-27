@@ -36,7 +36,7 @@ function recupere_dossiers_dans_dossier($folderId){
 
 function recup_folder_id($id){
 	global $database;
-    $folder =  "SELECT * FROM folder WHERE id = $id";
+    $folder =  "SELECT f.*, COUNT(DISTINCT m.id) AS nb_messages FROM folder f JOIN message m ON f.chat_id=m.chat_id WHERE f.id =$id AND m.deleted=0";
 	$result = mysqli_query($database, $folder);
 	$folder_data=mysqli_fetch_assoc($result);
 	

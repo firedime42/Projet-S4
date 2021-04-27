@@ -3,6 +3,25 @@
     padding: 10px;
     min-width: 284px;
 
+    .top {
+        background: url(/assets/img/eezy_68.svg);
+        background-position: center;
+        background-size: cover;
+
+        height: 250px;
+        padding: 30px;
+        border-radius: 20px;
+
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        flex-direction: column;
+
+        .h1 {
+            text-align: center;
+        }
+    }
+
     .content-chat {
         height: calc(100% - 100px);
         padding: 10px;
@@ -49,9 +68,15 @@
         .message:hover .opts { display: flex; }
     }
 
+    .loading-top, .loading-bottom {
+        height: 100%;
+
+    }
+
     .controles {
         height: 100px;
-        padding: 10px 0;
+        padding: 10px 5px;
+        display: flex;
 
         .text-input {
             width: 100%;
@@ -60,6 +85,11 @@
         .text-input:empty:before {
             content: "Tapez votre message ici";
             color: #919190;
+        }
+
+        .btn {
+            width: 50px;
+            margin-left: 5px;
         }
     }
 }

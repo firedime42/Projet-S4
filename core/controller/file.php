@@ -37,7 +37,7 @@ switch ($_post->action) {
         if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
         } else {
-            $file = recup_file_id($_post->id);
+            $file = recup_file($_post->id,$_session["user"]["id"]);
             if (empty($file)){
                 $res["error"] = 3006; //Fichier inexistant
             }
@@ -57,13 +57,11 @@ switch ($_post->action) {
                     "size" => $file["size"],
                     
                     "etat" => $file["status"],
-                    "nb_comments" => $file["nb_comments"],
+                    "nb_comments" => (int)$file["nb_comments"],
                     "nb_likes" => (int)$file["nb_likes"],
 
                     "chat"=>$file["chat_id"],
-                    "renamed" => true,//is_allowed($_session["user"],,ROLE_RENAME_FILE),
-                    "delete" => true,//is_allowed($_session["user"],,ROLE_REMOVE_FILE),
-                    "liked" => is_liked($_post->id,$_session["user"]["id"]),
+                    "liked" => $file["liked"],
                     "lastUpdate" => $file["last_update"]
                 );
             }

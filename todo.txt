@@ -35,10 +35,8 @@ Roles :
 Gerer creation couleur
 
 PHP :
-NB Messages
-Nb Files
-Chat Id -> File/Folder (sur db)
-
+Echapper Caracteres
+Permissions File/Groupe
 
 HTML :
 Fenetre de preview d'un document

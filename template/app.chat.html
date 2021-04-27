@@ -1,17 +1,18 @@
 <div class="content-chat scrollable">
     {{ MARK this "scroll" }}
-    <div data-visible="{{ NOT isTail }}" class="">
-        loading ...
-        {{ MARK this "toTail" }}
+    <div data-visible="{{ isTail }}" class="top">
+        <h1>Vous êtes au sommet de ce chat</h1>
+        <p>Tapez un message dans la bar en bas pour commencer à discuter</p>
     </div>
-    <div data-visible="{{ isTail }}" class="">
-        Pas d'autre message.
+    <div data-visible="{{ NOT isTail }}" class="loading-top">
+        <h2>Chargement ...</h2>
+        {{ MARK this "toTail" }}
     </div>
     <div>
         {{ MARK this "content-chat" }}
     </div>
-    <div data-visible="{{ NOT isHead }}" class="">
-        loading ...
+    <div data-visible="{{ NOT isHead }}" class="loading-bottom">
+        <h2>Chargement ...</h2>
         {{ MARK this "toHead" }}
     </div>
 </div>
@@ -20,7 +21,7 @@
 </div>
 <div class="controles">
     <div contentEditable="true" class="text-input form-control">{{ MARK this 'text-input' }}</div>
-    <button class="btn btn-primary">{{ ADDLISTENER this.currentNode 'click' send }}Envoyer<em class="icon icon-send"></em></button>
+    <button class="btn btn-primary">{{ ADDLISTENER this.currentNode 'click' send }}<em class="icon icon-send"></em></button>
 </div>
 
 <script>
@@ -59,12 +60,12 @@
         if (text.length < 1) console.error('message trop court !');
         else if (text.length > 500) console.error('message trop long !');
         else {
-            Dom.html(doc.ctx.markedElement['text-input'], '');
+            Dom.text(doc.ctx.markedElement['text-input'], '');
             let msg = new Message({ author: { id: user.id * 1, name: user.username }, content: text });
             let r = await chat.send(msg);
             if (r instanceof Error) console.error(r);
             onNewMessage(chat, msg);
-            await sleep(100);
+            await sleep(10);
             scrollToBottom();
         }
     }
@@ -89,6 +90,7 @@
 
         if (new_chat_id >= 0) {
             removeListeners(chat);
+            messagesList.clear();
             doc.update({ isHead: true, isTail: true });
             chat = await CHATS.get(new_chat_id);
 
@@ -105,10 +107,17 @@
     }
 
     async function onNewMessage(chat, msg, prepend=false) {
+        var ongoing_action = false;
         messagesList.add(msg.id, msg, {
             canRemove: msg.author.id == user.id * 1,
             canEdit: msg.author.id == user.id * 1,
-            remove: async function () { console.log('retirer le message'); },
+            remove: async function () {
+                if (ongoing_action) return;
+                ongoing_action = true;
+                let res = await chat.remove(msg.id);
+                if (res instanceof Error) console.error(res);
+                ongoing_action = false;
+            },
             edit: async function () { console.log('modifier le message'); }
         }, prepend);
 
@@ -120,6 +129,7 @@
     }
 
     function onRmMessage(chat, message_id) {
+        console.log('oh non ! on veux retirer ', message_id);
         messagesList.remove(message_id);
     }
 

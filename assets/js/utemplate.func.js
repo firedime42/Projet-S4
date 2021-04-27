@@ -129,6 +129,8 @@
          * @param {String} nom un nom à donner au noeud
          */
         MARK: function (_this, nom) {
+            if (!_this.currentNode.parentNode) return '';
+
             if (typeof _this.template.ctx.markedElement != "object")
                 _this.template.ctx.markedElement = {};
 

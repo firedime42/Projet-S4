@@ -230,7 +230,7 @@
 
             for (let i = 0; i < nb_removed; i++)
                 if (this.#messages[removed[i]]) {
-                    this.emit(Chat.EVENT_RM_MESSAGE, this.#messages[removed[i]]);
+                    this.emit(Chat.EVENT_RM_MESSAGE, removed[i]);
                     delete this.#messages[removed[i]];
                 }
         }
@@ -295,7 +295,7 @@
 
                         let rm = _pushMaxLength(this.#disp, head_id, MAX_MESSAGES_DISPLAYED);
                         for (let i = 0, nb_rm = rm.length; i < nb_rm; i++)
-                            this.emit(Chat.EVENT_RM_MESSAGE, this.#messages[head_id[i]]);
+                            this.emit(Chat.EVENT_RM_MESSAGE, rm[i]);
                     }
                 }
             }

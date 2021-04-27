@@ -21,6 +21,7 @@
 
         #folders;    // tous les identifiants des dossiers contenu dans le dossier
         #files;      // tous les identifiants des fichiers contenu dans le dossier
+        #nb_messages;
 
         #chat;       // identifiant du chat
 
@@ -54,6 +55,7 @@
 
         get nb_folders() { return this.#folders.length; }
         get nb_files() { return this.#files.length; }
+        get nb_messages() { return this.#nb_messages; }
 
         get folders() { return this.#folders; }
         get files() { return this.#files; }
@@ -78,6 +80,7 @@
             this.#groupe = data.groupe;
             this.#parent = data.parent;
             this.#chat = data.chat;
+            this.#nb_messages = data.nb_messages;
             this.#rename = data.rename;
             this.#delete = data.delete;
             this.#add = true;
