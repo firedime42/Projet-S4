@@ -49,12 +49,15 @@
             if (r != this.#version) return;
 
             this.#elements[id].element = element;
-            this.#elements[id].dom_element = this.#parser.parse({ element, ...data }).children[0];
-            Dom.replace(dom_element, this.#elements[id].dom_element);
+
+            dom_element = this.#parser.parse({ element, ...data }).children[0];
+            
+            Dom.replace(this.#elements[id].dom_element, dom_element);
+            
+            this.#elements[id].dom_element = dom_element;
 
             if (element instanceof Listenable)
                 element.addListener('update', this.#updateFunction);
-
         }
 
 

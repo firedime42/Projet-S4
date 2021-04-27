@@ -25,7 +25,7 @@
     function _removeElement(array, element) {
         let index = _arrayIndexOf(array, element);
     
-        if (index == -1)
+        if (index > -1)
             array.splice(index, 1);
     }
     
