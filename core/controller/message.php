@@ -42,15 +42,15 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}elseif (!isset($_post->newest_message)) {
 			$res["error"]=5000;
-		}elseif (isset($_post->lastUpdate)) {
+		}elseif (!isset($_post->lastUpdate)) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$messages_list=edition_suppresion($_post->id,$_post->oldest_message,$_post->newest_message,$_post->lastUpdate);
-			$res["edited"]=$messages_list["edited"];
-			$res["removed"]=$messages_list["removed"];
-			$res["head"]=recherche_messages($_post->id,$_post->lastUpdate,$_post->resp_max);
-			$res["lastUpdate"] = microtime(true); 
+			$res["lastUpdate"] = microtime(true)*1000;
+			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
+			$res["edited"] = $updates["edited"];
+			$res["removed"] = $updates["removed"];
+			$res["head"] = $updates["head"];
 		}
 		break;
 	case "loadMore":
@@ -64,44 +64,42 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}elseif (!isset($_post->newest_message)) {
 			$res["error"]=5000;
-		}elseif (isset($_post->lastUpdate)) {
+		}elseif (!isset($_post->lastUpdate)) {
+			$res["error"]=5000;
+		}elseif(!isset($_post->direction)){
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$messages_list=edition_suppresion($_post->id,$_post->oldest_message,$_post->newest_message,$_post->lastUpdate);
-			$res["edited"]=$messages_list["edited"];
-			$res["removed"]=$messages_list["removed"];
-			$res["head"]=recherche_messages($_post->id,$_post->lastUpdate,$_post->resp_max,0);
-			$res["lastUpdate"] = microtime(true); 
+			$res["lastUpdate"] = microtime(true)*1000;
+			$messages = loadMore($_post->id, $_post->resp_max, $_post->newest_message, $_post->oldest_message, $_post->direction);
+			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
+			$res["messages"] = $messages;
+			$res["edited"] = $updates["edited"];
+			$res["removed"] = $updates["removed"];
+			$res["head"] = $updates["head"];
 		}
 		break;
 	case "remove":
-		if (!isset($_post->group_id)) {
-            $res["error"] = 0002; //id vide
-		}elseif (!isset($_post->msg_id)) {
+		if (!isset($_post->msg_id)) {
 			$res["error"] = 0002;
-		}elseif (empty(recup_group_id($_post->group_id))) {
-			$res["error"] = 3005; //description vide
-        }elseif (empty(recup_message($_post->msg_id))){
+		}elseif (empty(recup_message($_post->msg_id))){
             $res["error"] = 3006; //Fichier inexistant
-		}elseif(!is_allowed($_session["session"]["id"],$_post->group_id,ROLE_REMOVE_MESSAGE)){
+		}elseif(!is_allowed($_session["session"]["id"],recup_chat_group($_post->msg_id),ROLE_REMOVE_MESSAGE)){
 			$res["error"] = 5000;
+		}elseif (is_author($_session["session"]["id"],$_post->msg_id) && is_allowed($_session["user"]["id"],recup_chat_group($_post->msg_id),ROLE_REMOVE_ANY_MESSAGE)) {
+			$res["error"]=5008;
         }else {
             $res["success"] = supprimer_message($_post->msg_id);
         }
 		break;
 	case "edit":
-		if (!isset($_post->group_id)) {
-            $res["error"] = 0002; //id vide
-		}elseif (!isset($_post->msg_id)) {
+		if (!isset($_post->msg_id)) {
 			$res["error"] = 0002;
         }elseif(!isset($_post->content)){
             $res["error"] = 3005; //description vide
-		}elseif (empty(recup_group_id($_post->group_id))) {
-			$res["error"] = 3005; //description vide
         }elseif (empty(recup_message($_post->msg_id))){
             $res["error"] = 3006; //Fichier inexistant
-		}elseif(!is_allowed($_session["session"]["id"],$_post->group_id,ROLE_WRITE_MESSAGE)){
+		}elseif(!is_allowed($_session["session"]["id"],recup_chat_group($_post->msg_id),ROLE_WRITE_MESSAGE)){
 			$res["error"] = 5000;
         }else {
             $res["success"] = edit_message($_post->msg_id,$_post->content);
@@ -110,17 +108,13 @@ switch ($_post->action) {
 	case "send":
 		if(!isset($_post->id)){
 			$res["error"]=5000;
-		}elseif (!isset($_post->group_id)) {
-			$res["error"]=5000;
-		}elseif (empty(recup_group_id($_post->group_id))) {
-			$res["error"]=5000;
 		}elseif (!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_WRITE_MESSAGE)) {
 			$res["error"]=5000;
 		}elseif (empty(recup_chat($_post->id))) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$res["id"]=ajouter_message($_post->id,$_post->message,$_session["user"]["id"]);
+			$res["id"]=ajouter_message($_post->id,$_post->content,$_session["user"]["id"]);
 		}
 		break;
 	default :
@@ -128,5 +122,6 @@ switch ($_post->action) {
 		break;
 }
 
+echo json_encode($res);
 
-	
+?>

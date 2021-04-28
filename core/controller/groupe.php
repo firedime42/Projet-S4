@@ -4,6 +4,9 @@ require_once dirname(__FILE__)."/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 require_once dirname(__FILE__)."/../roleFunction.php";
 require_once dirname(__FILE__)."/../accountFunction.php";
+require_once dirname(__FILE__)."/../messageFunction.php";
+require_once dirname(__FILE__)."/../folderFunction.php";
+
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
@@ -38,7 +41,7 @@ switch ($_post->action) {
     case "info":
         if(!isset($_post->id)) $res["error"]=2; //id vide
         else{
-            $group=recup_group_id($_post->id);
+            $group=recup_group($_post->id,$_session["user"]["id"]);
             if (empty($group)) $res["error"]=2002; //groupe inexistant
             elseif (!isset($_post->time)) $res["error"]=0003; //temps invalide
             elseif( $_post->time==$group["last_update"]){
@@ -57,6 +60,8 @@ switch ($_post->action) {
                     "nb_membres" => nb_members($group["id"]),
                     "nb_messages" => 0,//(int) $group["nb_messages"],
                     "nb_files" => 0,//(int) $group["nb_files"],
+                    "renamed" => $group["renamed"],
+                    "delete" => $group["deleted"],
                     "creator_id" => $group["id_creator"],
                     "lastUpdate" => $group["last_update"]
                 );

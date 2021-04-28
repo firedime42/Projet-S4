@@ -35,18 +35,27 @@ Roles :
 Gerer creation couleur
 
 PHP :
-isset() à la place de ==NULL ?
+Echapper Caracteres
+is_allowed recup Permissions
+getDashboard
 
 HTML :
-DashBoard des groupes avec tableau de gestions des roles
-Fenetre de chat
 Fenetre de preview d'un document
 parametres groupe
 notification groupe
-Groupe -> page interieure
+Correction Fautes Orthographes
 Page Profil
 
 CSS :
+DashBoard des groupes avec tableau de gestions des roles
+Fenetre de chat
+Groupe -> page interieure
 
 JS :
-Sauvegarder roles
+mise à jour des dates 
+suppression des messages
+modification des messages
+ajout des dossiers
+
+rename fichiers
+rename folders

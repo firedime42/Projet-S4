@@ -3,6 +3,7 @@ header("Content-Type: application/json");
 
 require_once dirname(__FILE__)."/../folderFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
+require_once dirname(__FILE__) . "/../messageFunction.php";
 
 $_post = json_decode(file_get_contents("php://input"));
 
@@ -26,15 +27,18 @@ switch($_post->action){
             }            
             elseif ($_post->lastUpdate == $folder["last_update"]) {
                 $res["success"] = true;
-                $res["groupe"] = NULL;
             } else {
                 $res["success"] = true;
                 $res["folder"] = array(
                     //"id" => $folder["id"],
                     "nom" => $folder["name"],
                     "description" => $folder["description"],
+                    "groupe" => (int) $folder["group_id"],
+                    "parent" => is_numeric($folder["parent_id"]) ? (int) $folder["parent_id"] : null,
                     "folders" => recupere_dossiers_dans_dossier($_post->id),
                     "files" => recupere_fichiers_dans_dossier($_post->id),
+                    "chat"=> (int) $folder["chat_id"],
+                    "nb_messages" => (int) $folder["nb_messages"],
                     "lastUpdate" => $folder["last_update"]
                 );
             }
@@ -45,13 +49,21 @@ switch($_post->action){
             $res["error"] = 4001; //nom de dossier invalide
         } elseif (!isset($_post->parent)) {
             $res["error"] = 4002; //dossier parent vide
-        } elseif (!empty(recup_folder_id($_post->parent))){
-            $res["error"] = 4004; //dossier parent inexistant
-        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FOLDER)) {
-            $res["error"] = 3004;*/
-        }else{
-            $res["success"]=create_folder($_post->nom,$_post->parent,$_post->description);
-            $res["id"]=recup_folder_nom_descr($_post->nom,$_post->description);
+        } else {
+            $parents = recup_folder_id($_post->parent);
+            
+            if (empty($parents)){
+                $res["error"] = 4004; //dossier parent inexistant
+            /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FOLDER)) {
+                $res["error"] = 3004;*/
+            }else{
+                global $database;
+                $nom=mysqli_real_escape_string($database,$_post->nom);
+                $description=mysqli_real_escape_string($database,$_post->description);
+                $res["parent"] = $parents;
+                $res["success"]=create_folder($nom,$parents['group_id'],$_post->parent,$description);
+                $res["id"]=mysqli_insert_id($database);
+            }
         }
         break;
     default:

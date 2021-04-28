@@ -1,43 +1,223 @@
 <div class="content-chat scrollable">
     {{ MARK this "scroll" }}
-    <div data-visible="{{ NOT isTail }}" class="">
-        loading ...
+    <div data-visible="{{ isTail }}" class="top">
+        <h1>Vous êtes au sommet de ce chat</h1>
+        <p>Tapez un message dans la bar en bas pour commencer à discuter</p>
+    </div>
+    <div data-visible="{{ NOT isTail }}" class="loading-top">
+        <h2>Chargement ...</h2>
         {{ MARK this "toTail" }}
     </div>
     <div>
         {{ MARK this "content-chat" }}
     </div>
-    <div data-visible="{{ NOT isHead }}" class="">
-        loading ...
+    <div data-visible="{{ NOT isHead }}" class="loading-bottom">
+        <h2>Chargement ...</h2>
         {{ MARK this "toHead" }}
     </div>
 </div>
+<div data-visible="{{ NOT isHead }}" class="">
+    {{ ADDLISTENER this.currentNode 'click' jumpToPresent }}Retourner tout en bas.
+</div>
 <div class="controles">
     <div contentEditable="true" class="text-input form-control">{{ MARK this 'text-input' }}</div>
-    <button class="btn btn-primary">{{ ADDLISTENER this.currentNode 'click' send }}Envoyer<em class="icon icon-send"></em></button>
+    <button class="btn btn-primary">{{ ADDLISTENER this.currentNode 'click' send }}<em class="icon icon-send"></em></button>
 </div>
 
 <script>
-    doc.update({ chat: new Chat(10), isHead: true, isTail: false, send: () => send() });
+    var folder = null;
+    var file = null;
+    var chat = null;
 
-    function scrollToHead() {
-        let offset = Dom.offset(doc.ctx.markedElement['content-chat']);
-        let y = offset.top + offset.height;
-        doc.ctx.markedElement['scroll'].scrollTop = y;
-    }
-
-    function send() {
-        console.log('ok');
-    }
-
-    window.scrollToHead = scrollToHead;
-
-    // Dom.data(toTail).visible // data-visible
-
-    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", function (...arg) {
-    
+    await doc.update({
+        isHead: true,
+        isTail: true,
+        send: () => send(),
+        jumpToPresent: () => {
+            chat.keepHead = true;
+            chat.displayHead();
+        }
     });
 
+    var scroll = doc.ctx.markedElement['scroll'];
+    var toTail = doc.ctx.markedElement['toTail'];
+    var toHead = doc.ctx.markedElement['toHead'];
+
+    function scrollYMax() {
+        return scroll.scrollHeight - scroll.offsetHeight;
+    }
+
+    function scrollToBottom() {
+        scroll.scrollTop = scrollYMax();
+    }
+
+    function scrollOnBottom() {
+        return scroll.scrollTop > scrollYMax() - 50;
+    }
+
+    async function send() {
+        let text = Dom.text(doc.ctx.markedElement['text-input']);
+        if (text.length < 1) console.error('message trop court !');
+        else if (text.length > 500) console.error('message trop long !');
+        else {
+            Dom.text(doc.ctx.markedElement['text-input'], '');
+            let msg = new Message({ author: { id: user.id * 1, name: user.username }, content: text });
+            let r = await chat.send(msg);
+            if (r instanceof Error) console.error(r);
+            onNewMessage(chat, msg);
+            await sleep(10);
+            scrollToBottom();
+        }
+    }
+
+    async function urlChange({ groupe_id, folder_id, file_id }) {
+        let chat_about_file = file_id !== undefined && file_id.length > 0;
+        let new_chat_id = -1;
+
+        if (chat_about_file && (!file || file.id != file_id * 1)) {
+            // le fichier à changé
+            folder = null;
+            file = await WFILES.get(file_id * 1);
+            new_chat_id = file.chat * 1;
+
+        } else if (!chat_about_file && (file || !folder || folder.id != folder_id * 1)) {
+            // le dossier à changé
+            folder = await FOLDERS.get(folder_id * 1);
+            file = null;
+            new_chat_id = folder.chat * 1;
+
+        }
+
+        if (new_chat_id >= 0) {
+            removeListeners(chat);
+            messagesList.clear();
+            doc.update({ isHead: true, isTail: true });
+            chat = await CHATS.get(new_chat_id);
+
+            if (chat instanceof Error) {
+                console.error(chat);
+                file = null;
+                folder = null;
+                chat = null;
+            } else {
+                addListeners(chat);
+                chat.displayHead();
+            }
+        }
+    }
+
+    async function onNewMessage(chat, msg, prepend=false) {
+        var ongoing_action = false;
+        messagesList.add(msg.id, msg, {
+            canRemove: msg.author.id == user.id * 1,
+            canEdit: msg.author.id == user.id * 1,
+            remove: async function () {
+                if (ongoing_action) return;
+                ongoing_action = true;
+                let res = await chat.remove(msg.id);
+                if (res instanceof Error) console.error(res);
+                ongoing_action = false;
+            },
+            edit: async function () { console.log('modifier le message'); }
+        }, prepend);
+
+        await sleep(1);
+
+        if (chat.keepHead) scrollToBottom();
+
+        doc.update({ isTail: chat.isTail(), isHead: chat.isHead() });
+    }
+
+    function onRmMessage(chat, message_id) {
+        console.log('oh non ! on veux retirer ', message_id);
+        messagesList.remove(message_id);
+    }
+
+    async function onRebase(chat) {
+        messagesList.clear();
+        let messages = chat.displayed;
+        let nb_messages = messages.length;
+        for (let i = 0; i < nb_messages; i++)
+            onNewMessage(chat, messages[i]);
+
+        await sleep(10);
+
+        scrollToBottom();
+    }
+
+    function removeListeners(chat) {
+        if (!(chat instanceof Chat)) return;
+
+        chat.removeListener(Chat.EVENT_NEW_MESSAGE_DISPLAYED, onNewMessage);
+        chat.removeListener(Chat.EVENT_RM_MESSAGE, onRmMessage);
+        chat.removeListener(Chat.EVENT_REBASE, onRebase);
+    }
+
+    function addListeners(chat) {
+        if (!(chat instanceof Chat)) return;
+
+        chat.addListener(Chat.EVENT_NEW_MESSAGE_DISPLAYED, onNewMessage);
+        chat.addListener(Chat.EVENT_RM_MESSAGE, onRmMessage);
+        chat.addListener(Chat.EVENT_REBASE, onRebase);
+    }
+
+    // Dom.data(toTail).visible // data-visible
+    let isLoadingData = false;
+
+    async function chatMove(e) {
+        if (!(chat instanceof Chat)) return;
+
+        if (!isLoadingData) {
+            isLoadingData = true;
+            let direction = 0;
+
+            await sleep(1);
+
+            // loadMore older
+            if (!chat.isTail() && scroll.scrollTop < toTail.offsetHeight)
+                direction = Chat.LOAD_DIRECTION_OLDER;
+
+            // loadMore newer
+            if (!chat.isHead() && scroll.scrollTop > scrollYMax() - toHead.offsetHeight)
+                direction = Chat.LOAD_DIRECTION_NEWER;
+
+            if (direction != 0) {
+                
+                await sleep(10);
+
+                if (scroll.scrollTop < toTail.offsetHeight)
+                    scroll.scrollTop = toTail.offsetHeight + 10;
+                else if (scroll.scrollTop > scrollYMax() - toHead.offsetHeight)
+                    scroll.scrollTop = scrollYMax() - toHead.offsetHeight;
+                
+
+                let r = await chat.loadMore(direction);
+
+                if (r instanceof Error) console.error(r);
+
+                doc.update({ isHead: chat.isHead(), isTail: chat.isTail() });
+            }
+
+            isLoadingData = false;
+        }
+    }
+
+
+    Dom.addListener(doc.ctx.markedElement["scroll"], "scroll", async function (e) {
+        if (!(chat instanceof Chat)) return;
+
+        // keepHead
+        chat.keepHead = chat.isHead() && scroll.scrollTop > scrollYMax() - 50;
+    });
+
+    Dom.addListener(doc.ctx.markedElement["scroll"], "mouseup", chatMove);
+    Dom.addListener(doc.ctx.markedElement["scroll"], "wheel", chatMove);
+
+    function autoUpdate() {
+        setTimeout(autoUpdate, 5000);
+        if (chat instanceof Chat) chat.update();
+    }
+    //autoUpdate();
 
     let messageHTML = fetch("/template/app.chat.message.html");
 
@@ -49,7 +229,8 @@
 
     var messagesList = new HTMLList(doc.ctx.markedElement['content-chat'], messageParser);
     
-    for (let i = 0; i < 10; i++) {
+    
+    /*for (let i = 0; i < 10; i++) {
         let msg = new Message(
             {
                 id: i,
@@ -57,9 +238,24 @@
                     id: 0,
                     name: 'Mattéo'
                 },
-                content: 'Je serais super content si ça marche !'
+                content: 'msg n°'+i,
+                publish_date: 1618921805 + i * 1000
             }
         );
-        messagesList.add(msg.id, msg);
-    }
+        let msg2 = new Message(
+            {
+                id: i + 10,
+                author: {
+                    id: 0,
+                    name: 'Mattéo'
+                },
+                content: 'msg n° -'+i,
+                publish_date: 1618921805 + i * 1000
+            }
+        );
+        messagesList.add(msg.id, msg, {});
+        messagesList.add(msg2.id, msg2, {}, true);
+    }*/
+
+    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id/*", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
 </script>

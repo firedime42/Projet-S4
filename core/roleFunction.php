@@ -1,6 +1,5 @@
 <?php
 
-define('ROLE_READ_MESSAGE',"read_message"); //???
 define('ROLE_WRITE_MESSAGE',"write_message");
 define('ROLE_REMOVE_MESSAGE',"remove_message");
 define('ROLE_REMOVE_ANY_MESSAGE',"remove_any_message");
@@ -42,6 +41,7 @@ function is_owner($user_id,$group_id){
 
 function is_allowed($user_id, $group_id, $action){
     global $database;
+	if (is_owner($user_id, $group_id)) return true;
     $query = "SELECT r.$action FROM `groupUser` gj JOIN `role` r ON gj.role_id = r.id WHERE gj.user_id = $user_id AND gj.group_id = $group_id";
     $res = mysqli_query($database, $query);
     $res = mysqli_fetch_array($res);

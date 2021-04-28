@@ -10,34 +10,37 @@ $res = array(
 
 switch ($_post->action) {
     case "login":
-        //session_destroy();
+        global $database;
+        $password=mysqli_real_escape_string($database,$_post->password);
         if(($_post->time+10)<time()){
             $res["error"]=1102; //Le timestamp est trop vieux
         }
-        elseif (isset($_post->email)) { //Connexion par mail   
-               $user = recup_user_email($_post->email);
-                if(empty($user)){
-                    $res["error"]=1104; //Erreur l'email ne correspond à aucun utilisateur
-                }
-                elseif (!(hash('sha256', "$_post->time".$user["password"])==$_post->password)){
-                    $res["error"]=1101; //Le mot de passe ne correspond pas
-                }
-                else{
-                    $res["success"]=true;
-                    $res["user"] = array(
-                        "id" => $user["id"],
-                        "email" => $_post->email,
-                        "username" => $user["username"]
-                    );
-                    $_SESSION["user"]=$user;
-               }       
-        }elseif(isset($_post->username)) { //Connexion par username   
-            $user = recup_user_username($_post->username);
+        elseif (isset($_post->email)) { //Connexion par mail  
+            $email=mysqli_real_escape_string($database,$_post->email); 
+            $user = recup_user_email($email);
+            if(empty($user)){
+                $res["error"]=1104; //Erreur l'email ne correspond à aucun utilisateur
+            }
+            elseif (!(hash('sha256', "$_post->time".$user["password"])==$password)){
+                $res["error"]=1101; //Le mot de passe ne correspond pas
+            }
+            else{
+                $res["success"]=true;
+                $res["user"] = array(
+                "id" => $user["id"],
+                "email" => $email,
+                "username" => $user["username"]
+                );
+                $_SESSION["user"]=$user;
+            }       
+        }elseif(isset($_post->username)) { //Connexion par username
+            $username=mysqli_real_escape_string($database,$_post->username);
+            $user = recup_user_username($username);
             if(empty($user)){
                 $res["error"]=1103; //Erreur l'identifiant ne correspond à aucun utilisateur
             }
                 
-            elseif (!(hash('sha256', "$_post->time".$user["password"])==$_post->password)){
+            elseif (!(hash('sha256', "$_post->time".$user["password"])==$password)){
                 $res["error"]=1101; //Le mot de passe ne correspond pas
             }
             else{
@@ -45,7 +48,7 @@ switch ($_post->action) {
                 $res["user"] = array(
                    "id" => $user["id"],
                    "email" => $user["email"],
-                   "username" => $_post->username
+                   "username" => $username
                 );
                 $_SESSION["user"]=$user;
             }
@@ -54,7 +57,7 @@ switch ($_post->action) {
         }
         break;
     case "register":
-    //session_destroy();
+    global $database;
     if (!format_mail($_post->email)){
         $res["error"] = 1201; //email invalide (mauvais format)
     }
@@ -72,12 +75,15 @@ switch ($_post->action) {
         $res["error"] = 1205; //le mot de passe est vide
     } 
     else {
-        $res["success"] = creation_utilisateur($_post->username, $_post->email, $_post->password);
-        $_SESSION["user"] = recup_user_username($_post->username);
+        $email=mysqli_real_escape_string($database,$_post->email);
+        $username=mysqli_real_escape_string($database,$_post->username);
+        $password=mysqli_real_escape_string($database,$_post->password);
+        $res["success"] = creation_utilisateur($username, $email, $password);
+        $_SESSION["user"] = recup_user_username($username);
         $res["user"] = array(
             "id" => $_SESSION["user"]["id"],
-            "email" => $_post->email,
-            "username" => $_post->username
+            "email" => $email,
+            "username" => $username
         );
     }
     break;

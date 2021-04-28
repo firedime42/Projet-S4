@@ -1,7 +1,7 @@
 (function () {
 
-    const MAX_MESSAGES_PER_LOAD = 100;
-    const MAX_MESSAGES_DISPLAYED = 200;
+    const MAX_MESSAGES_PER_LOAD = 5;//100;
+    const MAX_MESSAGES_DISPLAYED = 15;//300;
 
     const MAX_TIME_BETWEEN_UPDATE = 1000;
     const MIN_TIME_BETWEEN_UPDATE = 500;
@@ -46,10 +46,10 @@
     function _unshiftMaxLength(arr, values, max_length) {
         let len_arr = arr.length;
         let nb_values = values.length;
-        arr.push(...values);
+        arr.unshift(...values);
         let total_length = len_arr + nb_values;
         let nb_removed = (total_length > max_length) ? total_length - max_length : 0;
-        return arr.splice(0, nb_removed);
+        return (nb_removed > 0) ? arr.splice(-nb_removed) : [];
     }
 
     class Message extends Listenable {
@@ -61,7 +61,7 @@
             this.id = null;
             this.author = null;
             this.content = null;
-            this.publication_date = Date.now() / 1000;
+            this.publication_date = Date.now();
 
             this.update(data);
         }
@@ -102,7 +102,7 @@
         #messages; // objets contenant les données des messages sur le chat
         #disp;     // liste contenant les identifiant des messages affichés sur le chats
         #head;     // liste contenant les identifiant des messages en tête du chat (les derniers messages)
-        #tail;     // identifiant du premier message du chat
+        #isTail;   // on a atteint le premier message du chat
 
         #last_request_update
         #lastUpdate;
@@ -113,7 +113,7 @@
             this.#id = id;
             this.#head = [];
             this.#disp = [];
-            this.#tail = 0;
+            this.#isTail = false;
             this.#messages = {};
             this.#lastUpdate = 0;
             this.#last_request_update = 0;
@@ -122,7 +122,7 @@
             this.keepHead = true; // indique s'il faut rester en tête ou abandonner la tête
         }
 
-        isTail() { return this.#tail >= this.#disp[0]; }
+        isTail() { return this.#isTail; }
         isHead() { return this.#disp[this.#disp.length - 1] == this.#head[this.#head.length - 1]; }
         
         get id() { return this.#id; }
@@ -140,7 +140,6 @@
          */
         displayHead() {
             this.keepHead = true;
-            if (this.isHead()) return this;
 
             let nb_messages_displayed = this.#disp.length;
             let nb_messages_head = this.#head.length;
@@ -154,6 +153,8 @@
             this.#disp = new Array(nb_messages_head);
             for (let i = 0; i < nb_messages_head; i++)
                 this.#disp[i] = this.#head[i];
+
+            this.#isTail = nb_messages_head < MAX_MESSAGES_PER_LOAD;
 
             this.emit(Chat.EVENT_REBASE);
 
@@ -183,11 +184,11 @@
             let v = this.#update.nb_renew;
 
             // creation de la requete
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'update',
                 id: this.#id,
-                oldest_message: this.#disp[0] || 0,
-                newest_message: this.#disp[this.#disp.length - 1] || 0,
+                oldest_message: this.#disp[0] || -1,
+                newest_message: this.#disp[this.#disp.length - 1] || -1,
                 resp_max: MAX_MESSAGES_PER_LOAD,
                 lastUpdate: this.#lastUpdate
             });
@@ -211,10 +212,10 @@
          * @param {Object} msg 
          */
         __addMessage(msg) {
-            if (!this.messages[msg.id])
-                this.messages[msg.id] = new Message(msg);
+            if (!this.#messages[msg.id])
+                this.#messages[msg.id] = new Message(msg);
             else
-                this.messages[msg.id].update(msg);
+                this.#messages[msg.id].update(msg);
         }
 
         /**
@@ -229,7 +230,7 @@
 
             for (let i = 0; i < nb_removed; i++)
                 if (this.#messages[removed[i]]) {
-                    this.emit(Chat.EVENT_RM_MESSAGE, this.#messages[removed[i]]);
+                    this.emit(Chat.EVENT_RM_MESSAGE, removed[i]);
                     delete this.#messages[removed[i]];
                 }
         }
@@ -271,8 +272,8 @@
 
             // messages édités
             for (let i = 0; i < nb_edited; i++)
-                if (this.messages[data.edited[i].id])
-                    this.messages[data.edited[i].id].update(data.edited[i]);
+                if (this.#messages[data.edited[i].id])
+                    this.#messages[data.edited[i].id].update(data.edited[i]);
 
             // messages supprimés
             this.__deleteMessages(data.removed);
@@ -290,10 +291,11 @@
                     } else {
                         for (let i = 0; i < nb_news; i++)
                             this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]]);
-                        
+                            
+
                         let rm = _pushMaxLength(this.#disp, head_id, MAX_MESSAGES_DISPLAYED);
                         for (let i = 0, nb_rm = rm.length; i < nb_rm; i++)
-                            this.emit(Chat.EVENT_RM_MESSAGE, this.#messages[head_id[i]]);
+                            this.emit(Chat.EVENT_RM_MESSAGE, rm[i]);
                     }
                 }
             }
@@ -311,7 +313,7 @@
         async send(msg) {
             if (!(msg instanceof Message)) return _error(-1);
 
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'send',
                 id: this.#id,
                 content: msg.content
@@ -331,7 +333,7 @@
          * @returns 
          */
         async remove(msg_id) {
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'remove',
                 chat_id: this.#id,
                 msg_id: msg_id
@@ -351,7 +353,7 @@
          * @returns 
          */
         async edit(msg_id, content) {
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'edit',
                 chat_id: this.#id,
                 msg_id: msg_id,
@@ -374,7 +376,7 @@
         async loadMore(direction = LOAD_DIRECTION_OLDER) {
             if (direction != LOAD_DIRECTION_OLDER && direction != LOAD_DIRECTION_NEWER) return _error(-1);
 
-            let r = await request('/core/controller/chat.php', {
+            let r = await request('/core/controller/message.php', {
                 action: 'loadMore',
                 id: this.#id,
                 oldest_message: this.#disp[0] || 0,
@@ -389,18 +391,33 @@
             // ajout des données sur la liste d'affichage
             let nb_messages = r.messages.length;
             var msgs_id = new Array(nb_messages);
+
             for (let i = 0; i < nb_messages; i++) {
                 msgs_id[i] = r.messages[i].id;
                 this.__addMessage(r.messages[i]);
-                this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[r.messages[i].id]);
             }
+
+            if (direction == LOAD_DIRECTION_OLDER)
+                for (let i = nb_messages - 1; i >= 0; i--)
+                    this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[r.messages[i].id], true);
+            else
+                for (let i = 0; i < nb_messages; i++)
+                    this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[r.messages[i].id], false);
+            
 
             let rm = (direction == LOAD_DIRECTION_OLDER) ?
                 _unshiftMaxLength(this.#disp, msgs_id, MAX_MESSAGES_DISPLAYED):
                 _pushMaxLength(this.#disp, msgs_id, MAX_MESSAGES_DISPLAYED);
             
-            for (let i = 0, nb_rm = rm.length; i < nb_rm; i++)
-                this.emit(Chat.EVENT_RM_MESSAGE_DISPLAYED, rm[i]);
+            let nb_rm = rm.length;
+
+            if (direction == LOAD_DIRECTION_OLDER)
+                this.#isTail = nb_messages < MAX_MESSAGES_PER_LOAD;
+            else
+                this.#isTail = this.#isTail && nb_rm == 0;
+
+            for (let i = 0; i < nb_rm; i++)
+                this.emit(Chat.EVENT_RM_MESSAGE, rm[i]);
 
             this.__garbageCollect();
 
@@ -428,10 +445,9 @@
             if (!this.#chats[id])  {
                 let chat = new Chat(id);
                 let r = await chat.update();
-
                 if (r instanceof Error) return r;
 
-                this.chats[id] = chat;
+                this.#chats[id] = chat;
             }
 
             return this.#chats[id];
@@ -440,5 +456,5 @@
 
     window.Message = Message;
     window.Chat = Chat;
-    window.ChatManager = new ChatManager();
+    window.CHATS = new ChatManager();
 })();

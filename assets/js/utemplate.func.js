@@ -129,6 +129,8 @@
          * @param {String} nom un nom à donner au noeud
          */
         MARK: function (_this, nom) {
+            if (!_this.currentNode.parentNode) return '';
+
             if (typeof _this.template.ctx.markedElement != "object")
                 _this.template.ctx.markedElement = {};
 
@@ -244,6 +246,26 @@
          */
         CHECKBOX: function (_this, name, checked, readonly=false) {
             let element = `<input type="checkbox" name="${name}" ${checked ? 'checked' : ''} ${readonly ? 'disabled' : ''}/>`;
+            Dom.before(_this.currentNode, element);
+            return '';
+        },
+
+        UNITS: Object.freeze({
+            SECONDE: 1000,
+            MINUTE: 60000,
+            HOUR: 3600000,
+            DAY: 86400000
+        }),
+
+        /**
+         * Creer un element fichier
+         * @param {*} _this 
+         * @param {Number} time 
+         * @param {String} mode
+         * @param {Number} unit
+         */
+        AUTOTIME: function (_this, time, mode="default", unit=1) {
+            let element = AutoTime.createHTML(mode, time * unit);
             Dom.before(_this.currentNode, element);
             return '';
         }

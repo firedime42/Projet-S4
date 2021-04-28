@@ -4,22 +4,20 @@ require_once("sql.php");
 
 function create_group($nom, $description, $id_proprietaire) {
 	global $database;
-	$query ="INSERT INTO folder (name,group_id) VALUES ('$nom',$id_proprietaire)";
-	mysqli_query($database,$query);
-	$id=mysqli_insert_id($database);
-	$query = "INSERT INTO `group` (name, description, root, id_creator) VALUES ('$nom', '$description', $id, $id_proprietaire)";//, $avatar )";
+	$query = "INSERT INTO `group` (name, description, id_creator) VALUES ('$nom', '$description', $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
-	ajouter_chat_folder($id);
 	$id_group=mysqli_insert_id($database);
+	create_folder($nom, $id_group);
+	$id_folder=mysqli_insert_id($database);
 	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 	$id=mysqli_insert_id($database);
-	$query="UPDATE `group` SET default_role=$id WHERE id=$id_group";
+	$query="UPDATE `group` SET default_role=$id,root=$id_folder WHERE id=$id_group";
 	mysqli_query($database,$query);
 	create_role_color($id_group,"Fondateur","dc3545",1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 	$id=mysqli_insert_id($database);
-	add_role($id_group,$id_proprietaire,$id);
 	apply_group($id_group,$id_proprietaire);
 	join_group($id_group,$id_proprietaire,$id_proprietaire);
+	add_role($id_group,$id_proprietaire,$id);
 	return $id_group;
 }
 
@@ -30,6 +28,28 @@ function recup_group_id($id) {
     $res = mysqli_query($database, $query);
 	$group_data=mysqli_fetch_assoc($res);
     return $group_data;
+}
+
+function recup_group($id,$user) {
+    // retourne les info du group passé en paramètre sous forme d'un tableau
+    global $database;
+    $query = "SELECT g.*, (r.remove_file) AS deleted, (r.rename_file) AS renamed FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user";
+    $res = mysqli_query($database, $query);
+	$group_data=mysqli_fetch_assoc($res);
+    return $group_data;
+}
+
+function recup_chat_group($id){
+	global $database;
+	$query="SELECT fa.group_id AS g1, f.group_id AS g2 FROM message m LEFT JOIN file fi ON fi.chat_id=m.chat_id LEFT JOIN folder fa ON fa.id=fi.location LEFT JOIN folder f ON f.chat_id=m.chat_id WHERE m.id=$id";
+	$res=mysqli_query($database,$query);
+	$group=null;
+	if(isset($res["g1"]))
+		$group=$res["g1"];
+	elseif(isset($res["g2"]))
+		$group=$res["g2"];
+	return $group;
+
 }
 
 function recherche_par_nom_ou_description($needle, $page, $nb_element_page){

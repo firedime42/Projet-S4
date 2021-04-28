@@ -9,8 +9,12 @@
         <div class="explorer column scrollable">
             {{ INCLUDE this.currentNode "/template/app.groupes.main.explorer.html" }}
         </div>
-        <div class="preview column scrollable" data-visible="{{ false }}">
+        <div class="preview column scrollable" data-visible="{{ CURRENT_URL_MATCH '/app/groupes/$group/$folder/$file/*' var_tests }}">
             {{ INCLUDE this.currentNode "/template/app.groupes.main.preview.html" }}
+        </div>
+        <div class="chat-btn">
+            {{ ADDLISTENER this.currentNode "click" toggleChat }}
+            <span class="icon icon-chat"></span>
         </div>
     </div>
     <div class="column" style="width:{{ chat_width }};overflow:hidden;">
@@ -23,7 +27,17 @@
 <script>
     let groupe = null;
 
-    doc.update({ groupe: {}, chat_width: '0%' });
+    const NUMBER = /[0-9]+/;
+
+    doc.update({
+        groupe: {},
+        chat_width: '0%',
+        var_tests: { group: NUMBER, folder: NUMBER, file: NUMBER },
+        toggleChat: function () {
+            if (doc.ctx.chat_width == '0%') setChatSize('50%');
+            else setChatSize('0%');
+        }
+    });
 
     window.setChatSize = function (w) {
         doc.update({ chat_width: w });
@@ -32,17 +46,25 @@
 
     URLrooter.addListener("/app/groupes/$id/*",
         async function ({ id }) {
-            if (groupe != null) {
-                if (groupe.id == id) return;
-                else groupe.removeListener(Groupe.EVENT_UPDATE, doc.update);
-            }
-            
-            groupe = await GROUPES.get(id);
 
-            if (groupe instanceof Groupe) {
-                groupe.addListener(Groupe.EVENT_UPDATE, doc.update);
-                doc.update({ groupe });
+            if (groupe == null || groupe.id != id) {
+            
+                if (groupe != null) groupe.removeListener(Groupe.EVENT_UPDATE, doc.update);
+            
+                groupe = await GROUPES.get(id);
+
+                if (groupe instanceof Groupe) {
+                    groupe.addListener(Groupe.EVENT_UPDATE, doc.update);
+                } else if (groupe instanceof Error) {
+                    let error = groupe;
+
+                    console.error(error);
+
+                    groupe = null;
+                }
             }
+
+            doc.update({ groupe });
         },
     null, { id : /^[0-9]+$/ });
 </script>

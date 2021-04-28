@@ -3,6 +3,32 @@
   min-width: 284px;
 }
 
+.chat .top {
+  background: url(/assets/img/eezy_68.svg);
+  background-position: center;
+  background-size: cover;
+  height: 250px;
+  padding: 30px;
+  border-radius: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.chat .top .h1 {
+  text-align: center;
+}
+
 .chat .content-chat {
   height: calc(100% - 100px);
   padding: 10px;
@@ -65,9 +91,16 @@
   display: flex;
 }
 
+.chat .loading-top, .chat .loading-bottom {
+  height: 100%;
+}
+
 .chat .controles {
   height: 100px;
-  padding: 10px 0;
+  padding: 10px 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .chat .controles .text-input {
@@ -77,5 +110,10 @@
 .chat .controles .text-input:empty:before {
   content: "Tapez votre message ici";
   color: #919190;
+}
+
+.chat .controles .btn {
+  width: 50px;
+  margin-left: 5px;
 }
 /*# sourceMappingURL=chat.css.map */
