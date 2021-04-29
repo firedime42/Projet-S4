@@ -19,8 +19,8 @@ switch ($_post->action) {
             $res["error"] = 3002; //Dossier vide
         } elseif (empty(recup_folder_id($_post->folder))) {
             $res["error"]=3003;
-        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FILE)) {
-            $res["error"] = 3004;*/
+        }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->folder),ROLE_CREATE_FILE)) {
+            $res["error"] = 3004;
         }else{
             global $database;
             $nom=mysqli_real_escape_string($database,$_post->nom);
@@ -79,8 +79,9 @@ switch ($_post->action) {
             $file=recup_file_id($_post->id);
             if(empty($file)){
                 $res["error"] = 3006;
-            /*}elseif ((!is_allowed($_session["user"]["id"],$test,ROLE_REMOVE_FILE))&&(!is_allowed($_session["user"]["id"],$test,ROLE_REMOVE_ANY_FILE))) {
-                $res["error"] = 3006;*/
+            }elseif (!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_ANY_FILE)) {
+                if(is_creator($_session["user"]["id"],$_post->id)&&(!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_FILE)))
+                    $res["error"] = 3006;
             }else {
                 $res["success"]=supprime_file($_post->id);
             }
@@ -95,8 +96,8 @@ switch ($_post->action) {
             $res["error"] = 3005; //description vide
         }elseif (empty(recup_file_id($id))) {
             $res["error"] = 3006; //Fichier inexistant
-        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_RENAME_FILE)) {
-            $res["error"] = 3004;*/
+        }elseif (!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_RENAME_FILE)) {
+            $res["error"] = 3004;
         } else {
             global $database;
             $nom=mysqli_real_escape_string($database,$_post->nom);

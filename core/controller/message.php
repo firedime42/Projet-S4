@@ -84,9 +84,9 @@ switch ($_post->action) {
 			$res["error"] = 0002;
 		}elseif (empty(recup_message($_post->msg_id))){
             $res["error"] = 3006; //Fichier inexistant
-		}elseif(!is_allowed($_session["session"]["id"],recup_chat_group($_post->msg_id),ROLE_REMOVE_MESSAGE)){
+		}elseif(!is_allowed($_session["session"]["id"],recup_group_msg($_post->msg_id),ROLE_REMOVE_MESSAGE)){
 			$res["error"] = 5000;
-		}elseif (is_author($_session["session"]["id"],$_post->msg_id) && is_allowed($_session["user"]["id"],recup_chat_group($_post->msg_id),ROLE_REMOVE_ANY_MESSAGE)) {
+		}elseif (is_author($_session["session"]["id"],$_post->msg_id) && !is_allowed($_session["user"]["id"],recup_group_msg($_post->msg_id),ROLE_REMOVE_ANY_MESSAGE)) {
 			$res["error"]=5008;
         }else {
             $res["success"] = supprimer_message($_post->msg_id);
@@ -99,7 +99,7 @@ switch ($_post->action) {
             $res["error"] = 3005; //description vide
         }elseif (empty(recup_message($_post->msg_id))){
             $res["error"] = 3006; //Fichier inexistant
-		}elseif(!is_allowed($_session["session"]["id"],recup_chat_group($_post->msg_id),ROLE_WRITE_MESSAGE)){
+		}elseif(!is_allowed($_session["session"]["id"],recup_group_msg($_post->msg_id),ROLE_WRITE_MESSAGE)){
 			$res["error"] = 5000;
         }else {
             $res["success"] = edit_message($_post->msg_id,$_post->content);
@@ -108,7 +108,7 @@ switch ($_post->action) {
 	case "send":
 		if(!isset($_post->id)){
 			$res["error"]=5000;
-		}elseif (!is_allowed($_session["user"]["id"],$_post->group_id,ROLE_WRITE_MESSAGE)) {
+		}elseif (!is_allowed($_session["user"]["id"],recup_group_chat($_post->group_id),ROLE_WRITE_MESSAGE)) {
 			$res["error"]=5000;
 		}elseif (empty(recup_chat($_post->id))) {
 			$res["error"]=5000;

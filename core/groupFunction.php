@@ -39,17 +39,46 @@ function recup_group($id,$user) {
     return $group_data;
 }
 
-function recup_chat_group($id){
+function recup_group_msg($id){
 	global $database;
 	$query="SELECT fa.group_id AS g1, f.group_id AS g2 FROM message m LEFT JOIN file fi ON fi.chat_id=m.chat_id LEFT JOIN folder fa ON fa.id=fi.location LEFT JOIN folder f ON f.chat_id=m.chat_id WHERE m.id=$id";
-	$res=mysqli_query($database,$query);
+	$resq=mysqli_query($database,$query);
+	$res=mysqli_fetch_assoc($resq);
 	$group=null;
 	if(isset($res["g1"]))
 		$group=$res["g1"];
 	elseif(isset($res["g2"]))
 		$group=$res["g2"];
 	return $group;
+}
 
+function recup_group_chat($id){
+	global $database;
+	$query="SELECT fa.group_id AS g1, f.group_id AS g2 FROM chat c LEFT JOIN file fi ON fi.chat_id=c.id LEFT JOIN folder fa ON fa.id=fi.location LEFT JOIN folder f ON f.chat_id=c.id WHERE c.id=$id";
+	$resq=mysqli_query($database,$query);
+	$res=mysqli_fetch_assoc($resq);
+	$group=null;
+	if(isset($res["g1"]))
+		$group=$res["g1"];
+	elseif(isset($res["g2"]))
+		$group=$res["g2"];
+	return $group;
+}
+
+function recup_group_folder($id){
+	global $database;
+	$query="SELECT group_id FROM folder WHERE id=$id";
+	$resq=mysqli_query($database,$query);
+	$res=mysqli_fetch_assoc($resq);
+	return $res["group_id"];
+}
+
+function recup_group_file($id){
+	global $database;
+	$query="SELECT group_id FROM file fi JOIN folder f ON f.id=fi.location WHERE fi.id=$id";
+	$resq=mysqli_query($database,$query);
+	$res=mysqli_fetch_assoc($resq);
+	return $res["group_id"];
 }
 
 function recherche_par_nom_ou_description($needle, $page, $nb_element_page){

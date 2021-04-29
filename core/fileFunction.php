@@ -107,4 +107,11 @@ function is_liked($file,$user){
     //var_dump($query,"test",$res,(mysqli_num_rows($res) >= 1));
     return (mysqli_num_rows($res) >= 1);
 }
+
+function is_creator($user,$id){
+    global $database;
+    $query="SELECT * FROM file WHERE creator_id=$user AND id=$id";
+    $res=mysqli_query($database,$query);
+    return mysqli_num_rows($res)>0;
+}
 ?>

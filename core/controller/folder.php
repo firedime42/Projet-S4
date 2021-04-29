@@ -54,8 +54,8 @@ switch($_post->action){
             
             if (empty($parents)){
                 $res["error"] = 4004; //dossier parent inexistant
-            /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FOLDER)) {
-                $res["error"] = 3004;*/
+            }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->parent),ROLE_CREATE_FOLDER)) {
+                $res["error"] = 3004;
             }else{
                 global $database;
                 $nom=mysqli_real_escape_string($database,$_post->nom);

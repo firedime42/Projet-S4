@@ -205,7 +205,7 @@ function recup_message($id){
 }
 function is_author($user,$id){
     global $database;
-    $query="SELECT * FROM message WHERE author='$user',id=$id";
+    $query="SELECT * FROM message WHERE author=$user AND id=$id";
     $res=mysqli_query($database,$query);
     return mysqli_num_rows($res)>0;
 }
