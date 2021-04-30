@@ -144,14 +144,6 @@ function leave_group($group_id,$user_id){
 	return $res;
 }
 
-function nb_members($group_id){
-	global $database;
-	$query = "SELECT * FROM groupUser WHERE group_id=$group_id";
-	$res = mysqli_query($database,$query);
-	$res=mysqli_num_rows($res);
-	return $res;
-}
-
 function modif_groupe($id,$nom,$description){
 	global $database;
 	$query="UPDATE `group` SET name = '$nom',description='$description' WHERE id=$id";
@@ -186,5 +178,34 @@ function recup_applications($group){
 		);
 	}
 	return $list_applications;
+}
+function recup_dashboard($group){
+	global $database;
+	$query="SELECT g.nb_messages AS nb_messages_overall,g.nb_membres AS nb_members_overall, g.nb_folders AS nb_folders_overall ,g.nb_files AS nb_files_overall, COUNT(DISTINCT m.id) AS nb_messages_folder, COUNT(DISTINCT mi.id) AS nb_messages_file, COUNT(DISTINCT fi.name) AS nb_files, COUNT(DISTINCT f.id) AS nb_folders, COUNT(DISTINCT gu.id) AS nb_members FROM `group`g JOIN groupUser gu ON g.id=gu.group_id JOIN folder f ON f.group_id=g.id LEFT JOIN file fi ON fi.location=f.id LEFT JOIN message m ON m.chat_id=f.chat_id LEFT JOIN message mi ON mi.chat_id=fi.chat_id WHERE g.id=45 AND (mi.deleted!=1 OR mi.deleted IS NULL) AND (m.deleted!=1 OR mi.deleted IS NULL)";
+	$resq=mysqli_query($database,$query);
+	$res=mysqli_fetch_assoc($resq);
+	return $res;
+};
+
+function modif_nb_members($group_id,$val){
+	global $database;
+	$query = "UPDATE `group` SET nb_membres=nb_membres+$val WHERE id=$group_id";
+	$res = mysqli_query($database,$query);
+	$res=mysqli_num_rows($res);
+	return $res;
+}
+function modif_nb_files($group_id,$val){
+	global $database;
+	$query = "UPDATE `group` SET nb_files=nb_files+$val WHERE id=$group_id";
+	$res = mysqli_query($database,$query);
+	$res=mysqli_num_rows($res);
+	return $res;
+}
+function modif_nb_messages($group_id,$val){
+	global $database;
+	$query = "UPDATE `group` SET nb_messages=nb_messages+$val WHERE id=$group_id";
+	$res = mysqli_query($database,$query);
+	$res=mysqli_num_rows($res);
+	return $res;
 }
 ?>

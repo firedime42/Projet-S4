@@ -114,7 +114,7 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$res["id"]=ajouter_message($_post->id,$_post->content,$_session["user"]["id"]);
+			$res["id"]=ajouter_message(recup_group_chat($_post->group_id),$_post->id,$_post->content,$_session["user"]["id"]);
 		}
 		break;
 	default :
