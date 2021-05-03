@@ -35,23 +35,6 @@ Roles :
 Gerer creation couleur
 
 PHP :
-<<<<<<< HEAD
-isset() à la place de ==NULL ?
-
-HTML :
-DashBoard des groupes avec tableau de gestions des roles
-Fenetre de chat
-Fenetre de preview d'un document
-parametres groupe
-notification groupe
-Groupe -> page interieure
-Page Profil
-
-CSS :
-
-JS :
-Sauvegarder roles
-=======
 Separer edit Nom/Description Groupe
 Modification dossier racine
 
@@ -75,4 +58,3 @@ ajout des dossiers
 
 rename fichiers
 rename folders
->>>>>>> Matteo

@@ -34,10 +34,6 @@
                     <div>
                         <div class="categ">Messages</div>
                         <div class="spec">
-<<<<<<< HEAD
-                            <div>Lire</div>
-=======
->>>>>>> Matteo
                             <div>Ecrire</div>
                             <div>Supprimer</div>
                             <div>Gerer</div>
@@ -142,11 +138,6 @@
     }
 
     /* Permettre à l'utilisateur de quitter le groupe */
-<<<<<<< HEAD
-    Dom.addListener(doc.ctx.markedElement["leave"], "click", async function () {
-        if (groupe) {
-            let c = await confirmeAction("Êtes-vous sûr de vouloir quitter ce groupe ?");
-=======
     
     console.log(doc.ctx.markedElement["leave"]);
     Dom.addListener(doc.ctx.markedElement["leave"], "click", async function () {
@@ -155,7 +146,6 @@
 
             let c = await confirmeAction("Êtes-vous sûr de vouloir quitter ce groupe ?");
             
->>>>>>> Matteo
             if (c) {
                 let r = await groupe.leave();
                 ListGroupe.update();
@@ -267,10 +257,6 @@
             "id": "",
             "nom": nom,
             // chat
-<<<<<<< HEAD
-            "read_message": false,
-=======
->>>>>>> Matteo
             "write_message": false,
             "remove_message": false,
             "remove_any_message": false,
@@ -365,14 +351,7 @@
         let r = await groupe.getMembres();
         let roles = await groupe.getRoles();
 
-<<<<<<< HEAD
-        //if (r instanceof Error) console.error(r);
-        r = [
-            { id: 7, name: "matteo", role: 6 }
-        ];
-=======
         if (r instanceof Error) console.error(r);
->>>>>>> Matteo
         
         membres = r;
 
@@ -386,16 +365,11 @@
             let id = membres[i].id;
             listMembres.add(id, membres[i], {
                 roles: _roles,
-<<<<<<< HEAD
-                change_role: () => console.log("change_role"),
-                kick: () => console.log("kick")
-=======
                 change_role: () => groupe.setRole(id, Dom.find('select', listMembres.getElement(id))[0].value),
                 kick: async function () {
                     listMembres.remove(id);
                     groupe.kick(id);
                 }
->>>>>>> Matteo
             });
         }
     }

@@ -26,10 +26,6 @@
 
 <script>
     let groupe = null;
-<<<<<<< HEAD
-
-    doc.update({ groupe: {}, chat_width: '0%' });
-=======
 
     const NUMBER = /[0-9]+/;
 
@@ -42,7 +38,6 @@
             else setChatSize('0%');
         }
     });
->>>>>>> Matteo
 
     window.setChatSize = function (w) {
         doc.update({ chat_width: w });
@@ -51,19 +46,6 @@
 
     URLrooter.addListener("/app/groupes/$id/*",
         async function ({ id }) {
-<<<<<<< HEAD
-            if (groupe != null) {
-                if (groupe.id == id) return;
-                else groupe.removeListener(Groupe.EVENT_UPDATE, doc.update);
-            }
-            
-            groupe = await GROUPES.get(id);
-
-            if (groupe instanceof Groupe) {
-                groupe.addListener(Groupe.EVENT_UPDATE, doc.update);
-                doc.update({ groupe });
-            }
-=======
 
             if (groupe == null || groupe.id != id) {
             
@@ -83,7 +65,6 @@
             }
 
             doc.update({ groupe });
->>>>>>> Matteo
         },
     null, { id : /^[0-9]+$/ });
 </script>

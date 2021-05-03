@@ -1,12 +1,5 @@
 <?php
 
-<<<<<<< HEAD
-require_once("sql.php");
-
-function recup_file_id($id){
-    global $database;
-    $user =  "SELECT * FROM file WHERE id = $id";
-=======
 require_once("sql.php")
 ;
 function recup_file_id($id){
@@ -20,7 +13,6 @@ function recup_file_id($id){
 function recup_file($id,$user){
     global $database;
     $user =  "SELECT f.*, COUNT(DISTINCT m.id) AS nb_comments, COUNT(DISTINCT fl.id) AS nb_likes, EXISTS(SElECT * FROM file_liked WHERE file_id=$id AND user_id=$user) AS liked FROM file f JOIN message m ON f.chat_id=m.chat_id JOIN file_liked fl ON fl.file_id=f.id WHERE f.id =$id AND m.deleted=0";
->>>>>>> Matteo
 	$result = mysqli_query($database, $user);
 	$file_data=mysqli_fetch_assoc($result);
 	
@@ -36,21 +28,6 @@ function recup_file_filename($filename){
 }
 function supprime_file($id){
     global $database;
-<<<<<<< HEAD
-    $querry = "DELETE FROM file WHERE id=$id";
-    $res=mysqli_query($database, $querry);
-    
-    return $res;
-}
-function create_file($folder,$filename,$content_type,$size,$description,$id_creator){
-//créer un fichier 
-
-    global $database;
-    $querry = "INSERT INTO file (location, name, extension, creator_id,size,description) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description')";
-    mysqli_query($database, $querry);
-    $id=mysqli_insert_id($database);
-    
-=======
     $query = "DELETE FROM file WHERE id=$id";
     $res=mysqli_query($database, $query);
 
@@ -68,32 +45,21 @@ function create_file($group,$folder,$filename,$content_type,$size,$description,$
     mysqli_query($database, $query);
     $id=mysqli_insert_id($database);
     modif_nb_files($group,1);
->>>>>>> Matteo
     return $id;
 }
 
 function modifie_file($id,$nom,$description){
     global $database;
-<<<<<<< HEAD
-    $querry = "UPDATE file SET name=$nom, description='$description' WHERE id=$id";//description";
-    $res=mysqli_query($database, $querry);
-=======
     $query = "UPDATE file SET name=$nom, description='$description' WHERE id=$id";//description";
     $res=mysqli_query($database, $query);
->>>>>>> Matteo
     
     return $res;
 }
 
 function finish_upload($id){
     global $database;
-<<<<<<< HEAD
-    $querry = "UPDATE file SET status='online' WHERE id=$id";//description";
-    $res=mysqli_query($database, $querry);
-=======
     $query = "UPDATE file SET status='online' WHERE id=$id";//description";
     $res=mysqli_query($database, $query);
->>>>>>> Matteo
     
     return $res;
 }
@@ -110,8 +76,6 @@ function search_files($needle,$page,$nb_results){
 		}
 	return $grouplist;
 }
-<<<<<<< HEAD
-=======
 
 function modif_nombre_like($id,$edit){
     global $database;
@@ -151,5 +115,4 @@ function is_creator($user,$id){
     $res=mysqli_query($database,$query);
     return mysqli_num_rows($res)>0;
 }
->>>>>>> Matteo
 ?>

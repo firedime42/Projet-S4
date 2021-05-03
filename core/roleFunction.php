@@ -1,9 +1,5 @@
 <?php
 
-<<<<<<< HEAD
-define('ROLE_READ_MESSAGE',"read_message");
-=======
->>>>>>> Matteo
 define('ROLE_WRITE_MESSAGE',"write_message");
 define('ROLE_REMOVE_MESSAGE',"remove_message");
 define('ROLE_REMOVE_ANY_MESSAGE',"remove_any_message");
@@ -28,15 +24,12 @@ define('ROLE_EDIT_ROLE',"edit_role");
 define('ROLE_EDIT_NAME',"edit_name");
 define('ROLE_EDIT_DESCRIPTION',"edit_description");
 
-<<<<<<< HEAD
-=======
 function recup_role_id($role){
 	global $database;
 	$query="SELECT * FROM `role` WHERE id=$role";
 	$res=mysqli_query($database,$query);
 	return mysqli_fetch_assoc($res);
 }
->>>>>>> Matteo
 
 function is_owner($user_id,$group_id){
 	global $database;
@@ -48,21 +41,6 @@ function is_owner($user_id,$group_id){
 
 function is_allowed($user_id, $group_id, $action){
     global $database;
-<<<<<<< HEAD
-    $query = "SELECT $action FROM `groupUser` gj JOIN `role` r ON gj.id = r.group_id WHERE gj.user_id = $user_id AND r.group_id = $group_id";
-    $res = mysqli_query($database, $query);
-    $res = mysqli_fetch_array($res);
-    return ($res == null) ? null : ($res[0] == '1');
-}
-
-function create_role_color($group_id,$nom_role,$couleur,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
-$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
-$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
-	global $database;
-	$query = "INSERT INTO `role` (group_id,name,color,read_message,write_message,remove_message,remove_any_message,download_file,
-	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
-	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($group_id,'$nom_role','$couleur',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
-=======
 	if (is_owner($user_id, $group_id)) return true;
     $query = "SELECT r.$action FROM `groupUser` gj JOIN `role` r ON gj.role_id = r.id WHERE gj.user_id = $user_id AND gj.group_id = $group_id";
     $res = mysqli_query($database, $query);
@@ -77,22 +55,12 @@ $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	$query = "INSERT INTO `role` (group_id,name,color,write_message,remove_message,remove_any_message,download_file,
 	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
 	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($group_id,'$nom_role','$couleur',$write_message,$remove_message,$remove_any_message,$download_file,
->>>>>>> Matteo
 	$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
 	$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description)";
 	$res=mysqli_query($database,$query);
 	return $res;
 }
 
-<<<<<<< HEAD
-function create_role($group_id,$nom_role,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
-$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
-$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
-	global $database;
-	$query = "INSERT INTO `role` (group_id,name,read_message,write_message,remove_message,remove_any_message,download_file,
-	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
-	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($nom_role,'$group_id',$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
-=======
 function create_role($group_id,$nom_role,$write_message,$remove_message,$remove_any_message,$download_file,
 $create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
 $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
@@ -100,7 +68,6 @@ $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	$query = "INSERT INTO `role` (group_id,name,write_message,remove_message,remove_any_message,download_file,
 	create_file,rename_file,remove_file,remove_any_file,create_folder,rename_folder,remove_folder,remove_any_folder,
 	accept_user,kick_user,manage_role,edit_role,edit_name,edit_description) VALUES($group_id,'$nom_role',$write_message,$remove_message,$remove_any_message,$download_file,
->>>>>>> Matteo
 	$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
 	$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description)";
 	$res=mysqli_query($database,$query);
@@ -109,20 +76,6 @@ $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 
 function add_role($group_id,$user_id,$role_id){
 	global $database;
-<<<<<<< HEAD
-	$query="UPDATE groupUser SET `role`=$role_id WHERE group_id=$group_id AND user_id=$user_id";
-	$res=mysqli_query($database,$query);
-	return $res;
-}
-
-function edit_role($id,$name,$read_message,$write_message,$remove_message,$remove_any_message,$download_file,
-$create_file,$rename_file,$remove_file,$remove_any_file,$create_folder,$rename_folder,$remove_folder,$remove_any_folder,
-$accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
-	global $database;
-	$query = "UPDATE `role` SET name='$name',read_message=$read_message,write_message=$write_message,remove_message=$remove_message,remove_any_message=$remove_any_message,download_file=$download_file,
-	create_file=$create_file,rename_file=$rename_file,remove_file=$remove_file,remove_any_file=$remove_any_file,create_folder=$create_folder,rename_folder=$rename_folder,remove_folder=$remove_folder,remove_any_folder=$remove_any_folder,
-	accept_user=$accept_user,kick_user=$kick_user,manage_role=$manage_role,edit_role=$edit_role,edit_name=$edit_name,edit_description=$edit_description WHERE id = $id";
-=======
 	$query="UPDATE groupUser SET role_id=$role_id WHERE group_id=$group_id AND user_id=$user_id";
 	$res=mysqli_query($database,$query);
 	//var_dump("Bonjour Vous",$query,$res);
@@ -136,7 +89,6 @@ $accept_user,$kick_user,$manage_role,$edit_role,$edit_name,$edit_description){
 	$query = "UPDATE `role` r, `group` g SET g.last_Update=CURRENT_TIMESTAMP,r.name='$name',r.write_message=$write_message,r.remove_message=$remove_message,r.remove_any_message=$remove_any_message,r.download_file=$download_file,r.
 	create_file=$create_file,r.rename_file=$rename_file,r.remove_file=$remove_file,r.remove_any_file=$remove_any_file,r.create_folder=$create_folder,r.rename_folder=$rename_folder,r.remove_folder=$remove_folder,r.remove_any_folder=$remove_any_folder,r.
 	accept_user=$accept_user,r.kick_user=$kick_user,r.manage_role=$manage_role,r.edit_role=$edit_role,r.edit_name=$edit_name,r.edit_description=$edit_description WHERE r.id = $id AND r.group_id=g.id";
->>>>>>> Matteo
 	$res=mysqli_query($database,$query);
 	return $res;
 }
