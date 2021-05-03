@@ -36,7 +36,7 @@ function supprime_file($id){
 
     return $res;
 }
-function create_file($folder,$filename,$content_type,$size,$description,$id_creator){
+function create_file($group,$folder,$filename,$content_type,$size,$description,$id_creator){
 //créer un fichier 
 
     global $database;
@@ -44,6 +44,7 @@ function create_file($folder,$filename,$content_type,$size,$description,$id_crea
     $query = "INSERT INTO file (location, name, extension, creator_id,size,description,chat_id) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description',$id_chat)";
     mysqli_query($database, $query);
     $id=mysqli_insert_id($database);
+    modif_nb_files($group,1);
     return $id;
 }
 
@@ -106,5 +107,12 @@ function is_liked($file,$user){
     $res = mysqli_query($database, $query);
     //var_dump($query,"test",$res,(mysqli_num_rows($res) >= 1));
     return (mysqli_num_rows($res) >= 1);
+}
+
+function is_creator($user,$id){
+    global $database;
+    $query="SELECT * FROM file WHERE creator_id=$user AND id=$id";
+    $res=mysqli_query($database,$query);
+    return mysqli_num_rows($res)>0;
 }
 ?>

@@ -5,7 +5,6 @@ require_once dirname(__FILE__)."/../folderFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 require_once dirname(__FILE__) . "/../messageFunction.php";
 
-
 $_post = json_decode(file_get_contents("php://input"));
 
 $res["folder"]=array();
@@ -55,11 +54,14 @@ switch($_post->action){
             
             if (empty($parents)){
                 $res["error"] = 4004; //dossier parent inexistant
-            /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FOLDER)) {
-                $res["error"] = 3004;*/
+            }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->parent),ROLE_CREATE_FOLDER)) {
+                $res["error"] = 3004;
             }else{
+                global $database;
+                $nom=mysqli_real_escape_string($database,$_post->nom);
+                $description=mysqli_real_escape_string($database,$_post->description);
                 $res["parent"] = $parents;
-                $res["success"]=create_folder($_post->nom,$parents['group_id'],$_post->parent,$_post->description);
+                $res["success"]=create_folder($nom,$parents['group_id'],$_post->parent,$description);
                 $res["id"]=mysqli_insert_id($database);
             }
         }

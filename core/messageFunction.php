@@ -205,16 +205,17 @@ function recup_message($id){
 }
 function is_author($user,$id){
     global $database;
-    $query="SELECT * FROM message WHERE author='$user',id=$id";
+    $query="SELECT * FROM message WHERE author=$user AND id=$id";
     $res=mysqli_query($database,$query);
     return mysqli_num_rows($res)>0;
 }
-function ajouter_message($chat,$message,$idUtilisateur) {
+function ajouter_message($group_id,$chat,$message,$idUtilisateur) {
     global $database;
     $time = (int) (microtime(true) * 1000);
     $message=mysqli_real_escape_string($database, $message);
     $query="INSERT INTO message (message,author,chat_id,last_update,creation_date) VALUES('$message',$idUtilisateur,$chat,$time,$time)";
-    $res=mysqli_query($database,$query);
+    mysqli_query($database,$query);
+    modif_nb_messages($group_id,1);
     return mysqli_insert_id($database);
 }
 function supprimer_message($id) {

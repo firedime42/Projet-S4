@@ -57,7 +57,7 @@ switch ($_post->action) {
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???
-                    "nb_membres" => nb_members($group["id"]),
+                    "nb_membres" => $group["root"],//nb_members($group["id"]),
                     "nb_messages" => 0,//(int) $group["nb_messages"],
                     "nb_files" => 0,//(int) $group["nb_files"],
                     "renamed" => $group["renamed"],
@@ -82,7 +82,7 @@ switch ($_post->action) {
                     "nom" => $group["name"],
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
-                    "nb_membres"=> nb_members($group["id"]),//$group["nb_membres"],
+                    "nb_membres"=> $group["nb_members"],//nb_members($group["id"]),//$group["nb_membres"],
                     "nb_messages" => 0,//$group["nb_messages"]
                 );
             }
@@ -280,6 +280,19 @@ switch ($_post->action) {
         }else {
             $res["success"]=modif_groupe($_post->id,$_post->nom,$_post->description);
         }
+        break;
+    case "dashboard":
+        $dashboard=recup_dashboard($_post->group);
+        $res["dashboard"]=array(
+        "nb_members" => (int)$dashboard["nb_members"], 
+        "nb_messages" => (int)$dashboard["nb_messages_files"]+(int)$dashboard["nb_messages_folder"],
+        "nb_membres_rejoint" => $dashboard["nb_members_overall"],
+        "nb_messages_sent" => (int)$dashboard["nb_messages_overall"],
+        "nb_files_uploaded" => (int)$dashboard["nb_files_overall"],
+        "nb_files" => (int)$dashboard["nb_files"],
+        "nb_folders" => (int)$dashboard["nb_folders"],
+        "nb_folders_created" => (int)$dashboard["nb_folders_overall"]
+        );
         break;
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;

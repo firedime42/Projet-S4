@@ -3,6 +3,7 @@ header("Content-Type: application/json");
 require_once dirname(__FILE__) . "/../fileFunction.php";
 require_once dirname(__FILE__) . "/../folderFunction.php";
 require_once dirname(__FILE__) . "/../messageFunction.php";
+require_once dirname(__FILE__) . "/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 
 $_post = json_decode(file_get_contents("php://input"));
@@ -13,17 +14,20 @@ $res = array(
 
 switch ($_post->action) {
     case "create":
-        if ($_post->nom == NULL) {
+        if (isset($_post->nom)) {
             $res["error"] = 3001; //Nom de fichier vide
-        } elseif ($_post->folder == NULL) {
+        } elseif (isset($_post->folder)) {
             $res["error"] = 3002; //Dossier vide
         } elseif (empty(recup_folder_id($_post->folder))) {
             $res["error"]=3003;
-        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_CREATE_FILE)) {
-            $res["error"] = 3004;*/
+        }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->folder),ROLE_CREATE_FILE)) {
+            $res["error"] = 3004;
         }else{
+            global $database;
+            $nom=mysqli_real_escape_string($database,$_post->nom);
+            $description=mysqli_real_escape_string($database,$_post->description);
             $res["success"]=true;
-            $res["id"]=create_file($_post->folder,$_post->nom,$_post->type,$_post->size,$_post->description,$_session["user"]["id"]);
+            $res["id"]=create_file(recup_group_folder($_post->folder),$_post->folder,$nom,$_post->type,$_post->size,$description,$_session["user"]["id"]);
         }
         break;
     case "end-upload":
@@ -76,8 +80,9 @@ switch ($_post->action) {
             $file=recup_file_id($_post->id);
             if(empty($file)){
                 $res["error"] = 3006;
-            /*}elseif ((!is_allowed($_session["user"]["id"],$test,ROLE_REMOVE_FILE))&&(!is_allowed($_session["user"]["id"],$test,ROLE_REMOVE_ANY_FILE))) {
-                $res["error"] = 3006;*/
+            }elseif (!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_ANY_FILE)) {
+                if(is_creator($_session["user"]["id"],$_post->id)&&(!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_FILE)))
+                    $res["error"] = 3006;
             }else {
                 $res["success"]=supprime_file($_post->id);
             }
@@ -92,10 +97,13 @@ switch ($_post->action) {
             $res["error"] = 3005; //description vide
         }elseif (empty(recup_file_id($id))) {
             $res["error"] = 3006; //Fichier inexistant
-        /*}elseif (!is_allowed($_session["user"]["id"],,ROLE_RENAME_FILE)) {
-            $res["error"] = 3004;*/
+        }elseif (!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_RENAME_FILE)) {
+            $res["error"] = 3004;
         } else {
-            $res["success"] = modifie_file($_post->id,$_post->nom,$_post->description);
+            global $database;
+            $nom=mysqli_real_escape_string($database,$_post->nom);
+            $description=mysqli_real_escape_string($database,$_post->description);
+            $res["success"] = modifie_file($_post->id,$nom,$description);
         }
         break;
     case "search":
@@ -106,7 +114,9 @@ switch ($_post->action) {
             $res["error"]=2005; //Recherche invalide(champ vide)
         }else{
             $res["success"]=true;
-            $res["results"] = search_files($_post->query, $_post->page_first, (int)$_post->nb_results);
+            global $database;
+            $query=mysqli_real_escape_string($database,$_post->query);
+            $res["results"] = search_files($query, $_post->page_first, (int)$_post->nb_results);
         }
         break;
     case "like":
