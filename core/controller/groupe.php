@@ -51,19 +51,42 @@ switch ($_post->action) {
             else {
                 $res["success"]=true;
                 $res["groupe"]= array(
-                    "id" => $group["id"],
-                    "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
+                    "id" => $group["id_group"],
+                    "nom" => $group["group_name"],
+                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id_group"]),
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
                     "root" => $group["root"], //???
                     "nb_membres" => $group["root"],//nb_members($group["id"]),
                     "nb_messages" => 0,//(int) $group["nb_messages"],
                     "nb_files" => 0,//(int) $group["nb_files"],
-                    "renamed" => $group["renamed"],
-                    "delete" => $group["deleted"],
                     "creator_id" => $group["id_creator"],
-                    "lastUpdate" => $group["last_update"]
+                    "lastUpdate" => $group["last_update"],
+                    "permissions" => array(
+                        "write_message" => ($group["write_message"]==1),
+                        "remove_message" => ($group["remove_message"]==1),
+                        "remove_any_message" => ($group["remove_any_message"]==1),
+                        // file
+                        "download_file" => ($group["download_file"]==1),
+                        "create_file" => ($group["create_file"]==1),
+                        "rename_file" => ($group["rename_file"]==1),
+                        "remove_file" => ($group["remove_file"]==1),
+                        "remove_any_file" => ($group["remove_any_file"]==1),
+                        // folder
+                        "create_folder" => ($group["create_folder"]==1),
+                        "rename_folder" => ($group["rename_folder"]==1),
+                        "remove_folder" => ($group["remove_folder"]==1),
+                        "remove_any_folder" => ($group["remove_any_folder"]==1),
+                        // user
+                        "accept_user" => ($group["accept_user"]==1),
+                        "kick_user" => ($group["kick_user"]==1),
+                        "manage_role" => ($group["manage_role"]==1),
+                        // role
+                        "edit_role" => ($group["edit_role"]==1),
+                        // groupe
+                        "edit_name" => ($group["edit_name"]==1),
+                        "edit_description" => ($group["edit_description"]==1)
+                    )
                 );
                 }
         }
@@ -172,7 +195,6 @@ switch ($_post->action) {
                     "id" => (int)$val["id"],
                     "nom" => $val["name"],
                     // chat
-                    "read_message" => ($val["read_message"]==1),
                     "write_message" => ($val["write_message"]==1),
                     "remove_message" => ($val["remove_message"]==1),
                     "remove_any_message" => ($val["remove_any_message"]==1),
@@ -210,7 +232,7 @@ switch ($_post->action) {
         }else{
             if(isset($_post->edited)){
                 foreach($_post->edited as $value){
-                    edit_role($value->id,$value->nom,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
+                    edit_role($value->id,$value->nom,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
                     (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
                     (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
                 }
@@ -220,7 +242,7 @@ switch ($_post->action) {
             }
             if(isset($_post->added)){
                 foreach($_post->added as $value){
-                    create_role($_post->group_id,$value->nom,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
+                    create_role($_post->group_id,$value->nom,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
                     (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
                     (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);}
             }

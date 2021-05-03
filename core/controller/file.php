@@ -65,7 +65,7 @@ switch ($_post->action) {
                     "nb_likes" => (int)$file["nb_likes"],
 
                     "chat"=>$file["chat_id"],
-                    "liked" => $file["liked"],
+                    "liked" =>(bool) $file["liked"],
                     "lastUpdate" => $file["last_update"]
                 );
             }

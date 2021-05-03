@@ -52,6 +52,8 @@
         #nb_messages;
         #nb_files;
 
+        #permissions;
+
         #lastCheck;
 
         constructor(id) {
@@ -64,10 +66,9 @@
 
         /**
          * Récupère les informations depuis le serveur et les actualise si elles ont changées
+         * @param {Boolean} forced indique si la requête doit imperativement être effectué
          */
-        async pull() {
-            //if (Date.now() - this.#lastCheck < 1000) return this;
-
+        async pull(forced=false) {
             //let r = await __getGroupeInfo(this.#id, this.#lastUpdate);
             let r = await request("/core/controller/groupe.php", {
                 action: 'info',
@@ -284,6 +285,7 @@
             this.#nb_membres = exists(groupe['nb_membres'], this.#nb_membres);
             this.#nb_messages = exists(groupe['nb_messages'], this.#nb_messages);
             this.#nb_files = exists(groupe['nb_files'], this.#nb_files);
+            this.#permissions = exists(groupe['permissions'], this.#permissions);
             this.#lastUpdate = exists(groupe['lastUpdate'], this.#lastUpdate);
 
             this.emit(Groupe.EVENT_UPDATE);
@@ -298,6 +300,7 @@
         get nb_files() { return this.#nb_files; }
         get nb_membres() { return this.#nb_membres; }
         get nb_messages() { return this.#nb_messages; }
+        get permissions() { return this.#permissions; }
 
         get lastPullRequest() { return this.#lastCheck; }
 

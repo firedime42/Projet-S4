@@ -3,6 +3,7 @@ header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 require_once dirname(__FILE__)."/../messageFunction.php";
+require_once dirname(__FILE__)."/../roleFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
@@ -108,13 +109,13 @@ switch ($_post->action) {
 	case "send":
 		if(!isset($_post->id)){
 			$res["error"]=5000;
-		}elseif (!is_allowed($_session["user"]["id"],recup_group_chat($_post->group_id),ROLE_WRITE_MESSAGE)) {
+		}elseif (!is_allowed($_session["user"]["id"],recup_group_chat($_post->id),ROLE_WRITE_MESSAGE)) {
 			$res["error"]=5000;
 		}elseif (empty(recup_chat($_post->id))) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$res["id"]=ajouter_message(recup_group_chat($_post->group_id),$_post->id,$_post->content,$_session["user"]["id"]);
+			$res["id"]=ajouter_message(recup_group_chat($_post->id),$_post->id,$_post->content,$_session["user"]["id"]);
 		}
 		break;
 	default :

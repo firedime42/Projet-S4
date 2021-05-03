@@ -35,8 +35,8 @@ Roles :
 Gerer creation couleur
 
 PHP :
-Echapper Caracteres
-Permissions File/Groupe
+Separer edit Nom/Description Groupe
+Modification dossier racine
 
 HTML :
 Fenetre de preview d'un document

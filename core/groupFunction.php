@@ -33,7 +33,7 @@ function recup_group_id($id) {
 function recup_group($id,$user) {
     // retourne les info du group passé en paramètre sous forme d'un tableau
     global $database;
-    $query = "SELECT g.*, (r.remove_file) AS deleted, (r.rename_file) AS renamed FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user";
+    $query = "SELECT g.*,r.*, g.id AS id_group,g.name AS group_name FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user";
     $res = mysqli_query($database, $query);
 	$group_data=mysqli_fetch_assoc($res);
     return $group_data;

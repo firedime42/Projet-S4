@@ -15,12 +15,13 @@
 <div class="content dropzone">
     {{ MARK this "dropzone" }}
     <div class="browse-main" data-visible="true">
-        <center><em>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</em></center>
+        <em data-visible="{{ permissions.create_file }}"><center>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</center></em>
+        <em data-visible="{{ NOT permissions.create_file }}"><center>Bouffes tes morts. --Théo</center></em>
         <h3>Dossiers</h3>
         <div class="folders row-container">
             {{ MARK this "folders" }}
         </div>
-        <div class="addButton">
+        <div class="addButton" data-visible="{{ permissions.create_folder }}">
             {{ ADDLISTENER this.currentNode "click" create_folder }}
             <span class="icon icon-add"></span>
         </div>
@@ -28,7 +29,7 @@
         <div class="files row-container">
             {{ MARK this "files" }}
         </div>
-        <div class="addButton">
+        <div class="addButton" data-visible="{{ permissions.create_file }}">
             {{ ADDLISTENER this.currentNode "click" create_file }}
             <span class="icon icon-add"></span>
         </div>
@@ -45,6 +46,7 @@
 
     var groupe = -1;
     var folder = null;
+    var permissions = null;
     var uploads = {}; // id => Upload
 
     /**
@@ -75,6 +77,9 @@
             }
         }
         
+        let grp = await GROUPES.get(groupe_id);
+        permissions = grp.permissions;
+        doc.update({ permissions });
     }
 
     /**
@@ -100,6 +105,8 @@
     }
 
     doc.update({
+        permissions: {},
+
         /**
          * creer un dossier dans le dossier courant
          */
@@ -147,9 +154,7 @@
         // on empeche le navigateur de le gerer par defaut : tanter d'ouvrir le fichier dans le navigateur
         e.preventDefault(); e.stopPropagation();
         
-        console.log(e.dataTransfer.files);
-
-        upload_files(e.dataTransfer.files);
+        if (permissions.create_file) upload_files(e.dataTransfer.files);
     });
 
     /**
