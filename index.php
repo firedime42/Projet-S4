@@ -24,9 +24,14 @@
     <script src="/assets/lib/urlmanager.js"></script>
     <script src="/assets/lib/listenable.js"></script>
     <script src="/assets/lib/htmllist.js"></script>
+<<<<<<< HEAD
+=======
+    <script src="/assets/lib/autotime.js"></script>
+>>>>>>> Matteo
 
     <!-- script -->
     <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/autotime.func.js"></script>
     <script src="/assets/js/utemplate.func.js"></script>
 
     <!-- models -->
@@ -36,6 +41,7 @@
     <script src="/assets/js/models/wazapfile.js"></script>
 
     <script src="/assets/js/models/groupe.js"></script>
+    <script src="/assets/js/models/chat.js"></script>
     <script src="/assets/js/models/search.js"></script>
 
     <!-- feuille de style -->
@@ -51,6 +57,10 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/group.settings.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/account.params.compte.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/profil.css"></link>
+<<<<<<< HEAD
+=======
+    <link rel="stylesheet" type="text/css" href="/assets/css/preview.css"></link>
+>>>>>>> Matteo
 
 </head>
 <body data-theme="light">

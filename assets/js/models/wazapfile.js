@@ -149,8 +149,6 @@
         #etat;              // etat du fichier : pending / uploading / online
         #size;              // taille du fichier en octet
 
-        #rename;            // boolean indiquant si le fichier peut être modifié
-        #delete;            // boolean indiquant si le fichier peut être suprimé
         #liked;             // boolean indiquant si l'utilisateur a aimé le fichier
 
         #nb_likes;          // nombre de "like" du fichier
@@ -219,7 +217,6 @@
         async push() {
             if (this.#id == null) return _error(-1);
             if (this.#newNom == null && this.#newDescription == null) return _error(-1);
-            if (this.#rename == false) return _error(-1);
 
             let r = await request("/core/controller/file.php", {
                 action: 'push',
@@ -228,7 +225,7 @@
                 description: this.#newDescription
             });
 
-            if (r instanceof Error) {
+            if (!(r instanceof Error)) {
                 this.#nom = this.#newNom;
                 this.#description = this.#newDescription;
             }
@@ -263,8 +260,7 @@
         }
 
         async remove() {
-            if (this.#id != null) return _error(-1); // identifiant null
-            if (!this.#delete) return _error(-1);    // autorisation manquante
+            if (this.#id == null) return _error(-1); // identifiant null
 
             let r = await request("/core/controller/file.php", {
                 action: 'remove',
@@ -321,9 +317,9 @@
         get size() { return this.#size; }
         get type() { return this.#type; }
         get etat() { return this.#etat; }
+        get chat() { return this.#chat; }
 
         get isLiked () { return this.#liked; }
-        get canRemove () { return this.#delete; }
 
         get nb_likes() { return this.#nb_likes; }
         get nb_comments() { return this.#nb_comments; }
@@ -341,8 +337,11 @@
 
             if (r instanceof Error) return r;
 
+            this.#nb_likes++;
             this.#liked = true;
             this.emit(WazapFile.EVENT_UPDATE);
+
+            console.log('Je l\'aime !', this, WazapFile.EVENT_UPDATE);
 
             return this;
         }
@@ -361,13 +360,12 @@
 
             if (r instanceof Error) return r;
 
+            this.#nb_likes--;
             this.#liked = false;
             this.emit(WazapFile.EVENT_UPDATE);
 
             return this;
         }
-
-        getChat() { return null; }
 
         __parseData(data) {
             let exists = (a, b) => (a != null && a != undefined) ? a : b;
@@ -379,10 +377,9 @@
             this.#size = exists(data['size'], this.#size);
             this.#nb_likes = exists(data['nb_likes'], this.#nb_likes);
             this.#nb_comments = exists(data['nb_comments'], this.#nb_comments);
-            this.#rename = exists(data['rename'], this.#rename);
-            this.#delete = exists(data['delete'], this.#delete);
             this.#liked = exists(data['liked'], this.#liked);
             this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
+            this.#chat = exists(data['chat'], this.#chat);
 
             this.emit(WazapFile.EVENT_UPDATE);
         }

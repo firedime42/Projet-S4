@@ -17,17 +17,13 @@
         #newDescription;
 
         #groupe;     // identifiant du groupe auquel appartient le dossier
+        #parent;
 
         #folders;    // tous les identifiants des dossiers contenu dans le dossier
         #files;      // tous les identifiants des fichiers contenu dans le dossier
+        #nb_messages;
 
         #chat;       // identifiant du chat
-
-        #rename;     // boolean indiquant si l'utilisateur peut renomer le dossier
-        #delete;     // boolean indiquant si l'utilisateur peut supprimer le dossier
-
-        #add;        // add files in the folder
-        #create;     // create folder
 
         constructor(id = null) {
             super();
@@ -36,6 +32,7 @@
             this.#nom = null;
             this.#description = null;
             this.#groupe = null;
+            this.#parent = null;
 
             this.#folders = [];
             this.#files = [];
@@ -47,21 +44,18 @@
         get nom() { return this.#newNom || this.#nom; }
         get description() { return this.#newDescription || this.#description; }
         get groupe() { return this.#groupe; }
+        get parent() { return this.#parent; }
+        get chat() { return this.#chat; }
 
         get nb_folders() { return this.#folders.length; }
         get nb_files() { return this.#files.length; }
+        get nb_messages() { return this.#nb_messages; }
 
         get folders() { return this.#folders; }
         get files() { return this.#files; }
 
-        set nom(nom) { if (this.#rename) this.#newNom = nom; }
-        set description(descr) { if (this.#rename) this.#newDescription = descr; }
-
-        canRemove() { return this.#delete; }
-        canRename() { return this.#rename; }
-
-        canAdd() { return this.#add; }
-        canCreate() { return this.#create; }
+        set nom(nom) { this.#newNom = nom; }
+        set description(descr) { this.#newDescription = descr; }
 
 
         /**
@@ -72,10 +66,9 @@
             this.#nom = data.nom;
             this.#description = data.description;
             this.#groupe = data.groupe;
-            this.#rename = data.rename;
-            this.#delete = data.delete;
-            this.#add = true;
-            this.#create = true;
+            this.#parent = data.parent;
+            this.#chat = data.chat;
+            this.#nb_messages = data.nb_messages;
 
             let mutationsFolders = arrayMutations(this.#folders, data.folders);
             let mutationsFiles = arrayMutations(this.#files, data.files);
@@ -133,7 +126,6 @@
          * @param {WazapFile} wfile 
          */
         async addFile(wfile) {
-            if (!this.#add) return _error(-1);
             this.#files.push(wfile.id);
             this.emit(Folder.EVENT_NEW_FILE, wfile.id);
         }
@@ -142,13 +134,12 @@
          * créer un dossier dans le dossier courant
          */
         async createFolder(nom, description) {
-            if (!this.#create) return _error(-1);
-            if (!(nom instanceof String && nom.length > 2 && nom.length < 50)) return _error(-1);
-            if (!(description instanceof String && nom.length < 300)) return _error(-1);
+            if (!(typeof nom == 'string' && nom.length > 2 && nom.length < 50)) return _error(-1);
+            if (!(typeof description == 'string' && nom.length < 300)) return _error(-1);
 
             let r = await request("/core/controller/folder.php", {
                 action: 'create',
-                parent_folder: this.#id,
+                parent: this.#id,
                 nom: nom,
                 description: description
             });
@@ -156,6 +147,7 @@
             if (r instanceof Error) { return r; }
 
             this.#folders.push(r.id);
+            this.emit(Folder.EVENT_NEW_FOLDER, r.id);
 
             return r;
         }
@@ -171,18 +163,37 @@
         __valideID(id) { return Number.isInteger(id) && id >= 0; }
 
         /**
-         * Recupère un fichier
-         * @param {Number} id l'identifiant du fichier
+         * Recupère un dossier
+         * @param {Number} id l'identifiant du dossier
          */
         async get(id) {
             // verification du type de l'id
             if (!this.__valideID(id)) return null;
 
-            // on crée le fichier s'il n'existe pas
+            // on crée le dossier s'il n'existe pas
             if (!this.#folders[id]) this.#folders[id] = new Folder(id);
 
             // on récupère les données depuis le serveur
             return await this.#folders[id].pull();
+        }
+
+        /**
+         * récupère le dossier sans mettre à jour.
+         * @param {Number} id 
+         * @returns 
+         */
+        async _get(id) {
+            // verification du type de l'id
+            if (!this.__valideID(id)) return null;
+
+            // on crée le dossier s'il n'existe pas
+            if (!this.#folders[id]) { 
+                this.#folders[id] = new Folder(id);
+                await this.#folders[id].pull();
+            }
+
+            // on récupère les données depuis le serveur
+            return this.#folders[id];
         }
 
         /**

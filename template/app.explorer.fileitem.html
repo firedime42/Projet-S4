@@ -13,8 +13,14 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item like" data-visible="{{ NOT element.isLiked }}">{{ ADDLISTENER this.currentNode "click" like }}Aimer</a>
                 <a class="dropdown-item unlike" data-visible="{{ element.isLiked }}">{{ ADDLISTENER this.currentNode "click" unlike }}Ne plus aimer</a>
+<<<<<<< HEAD
                 <a class="dropdown-item download">{{ ADDLISTENER this.currentNode "click" download }}telecharger</a>
                 <!--<a class="dropdown-item rename">Renommer</a>-->
+=======
+                <a class="dropdown-item preview-btn">{{ ADDLISTENER this.currentNode "click" preview }}Prévisualiser</a>
+                <a class="dropdown-item download">{{ ADDLISTENER this.currentNode "click" download }}telecharger</a>
+                <a class="dropdown-item rename">{{ ADDLISTENER this.currentNode "click" rename }}Renommer</a>
+>>>>>>> Matteo
                 <a class="dropdown-item delete" data-visible="{{ element.canRemove }}">{{ ADDLISTENER this.currentNode "click" delete }}Supprimer</a>
             </div>
         </div>

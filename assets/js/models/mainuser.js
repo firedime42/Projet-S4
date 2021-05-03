@@ -13,6 +13,15 @@
 
 
     class MainUser extends Listenable {
+        
+        static EVENT_LOGGED_IN = "loggedIn";       // utilisateur connecté
+        static EVENT_LOGGED_OUT = "loggedOut";     // utilisateur déconnecté
+        static EVENT_STATE_CHANGE = "statechange"; // utilisateur l'état de l'utilisateur change : loggedIn true/false
+        
+        static STATE_LOGGED_OUT = 0;
+        static STATE_LOGGED_IN  = 1;
+        static STATE_PROCESSING = 2;
+
         #id;
         #username;
         #email;
@@ -228,7 +237,7 @@
                     this.#state = state;
                     this.emit(MainUser.EVENT_STATE_CHANGE);
                 break;
-                default: break;// n'est pas un état valide
+                default: break; // n'est pas un état valide
             }
         }
 
@@ -238,15 +247,6 @@
             this.#email = user.email;
         }
     }
-
-    // Constantes
-    MainUser.EVENT_LOGGED_IN = "loggedIn";       // utilisateur connecté
-    MainUser.EVENT_LOGGED_OUT = "loggedOut";     // utilisateur déconnecté
-    MainUser.EVENT_STATE_CHANGE = "statechange"; // utilisateur l'état de l'utilisateur change : loggedIn true/false
-
-    MainUser.STATE_LOGGED_OUT = 0;
-    MainUser.STATE_LOGGED_IN  = 1;
-    MainUser.STATE_PROCESSING = 2;
 
     window.MainUser = MainUser;
 })(window);

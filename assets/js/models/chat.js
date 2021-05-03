@@ -1,44 +1,86 @@
 (function () {
 
-    const MAX_MESSAGES_PER_LOAD = 100;
+    const MAX_MESSAGES_PER_LOAD = 5;//100;
+    const MAX_MESSAGES_DISPLAYED = 15;//300;
+
     const MAX_TIME_BETWEEN_UPDATE = 1000;
-    const MIN_TIME_BETWEEN_UPDATE = 200;
+    const MIN_TIME_BETWEEN_UPDATE = 500;
 
     const LOAD_DIRECTION_OLDER = -1;
     const LOAD_DIRECTION_NEWER = 1;
 
-    /**
-     * Ajoute un element à un tableau trié de facons à preserver l'ordre et de ne pas avoir de doublons.
-     * @param {Array<Number>} arr
-     * @param {Number} e 
-     */
-    function _pushUniqueSorted(arr, e) {
-        let i = arr.length - 1;
-        while (i >= 0 && arr[i] > e) i--;
-        if (arr[i] != e) arr.splice(i+1, 0, e);
+    function _removeFromSortedList(arr, removed) {
+        let nb_removed = removed.length;
+        let nb_elements = arr.length;
+
+        let i = 0, j = 0;
+        while (i < nb_removed && j < nb_elements) {
+            if (removed[i] == arr[j]) {
+                arr.splice(j, 1);
+                nb_elements--;
+                i++;
+            } else if (removed[i] < arr[j]) i++;
+            else if (removed[i] > arr[j]) j++;
+        }
     }
-    function _unshiftUniqueSorted(arr, e) {
+
+    function _sortedIndexOf(arr, e) {
+        let nb_elements = arr.length;
+        if (nb_elements == 0 || arr[0] > e || arr[nb_elements - 1] < e) return -1;
+
         let i = 0;
-        let len = arr.length;
-        while (i < len && arr[i] < e) i--;
-        if (arr[i] != e) arr.splice(i, 0, e);
+        while (i < nb_elements && arr[i] < e) i++;
+
+        return arr[i] == e ? i : -1;
+    }
+
+    function _pushMaxLength(arr, values, max_length) {
+        let len_arr = arr.length;
+        let nb_values = values.length;
+        arr.push(...values);
+        let total_length = len_arr + nb_values;
+        let nb_removed = (total_length > max_length) ? total_length - max_length : 0;
+        return arr.splice(0, nb_removed);
+    }
+
+    function _unshiftMaxLength(arr, values, max_length) {
+        let len_arr = arr.length;
+        let nb_values = values.length;
+        arr.unshift(...values);
+        let total_length = len_arr + nb_values;
+        let nb_removed = (total_length > max_length) ? total_length - max_length : 0;
+        return (nb_removed > 0) ? arr.splice(-nb_removed) : [];
     }
 
     class Message extends Listenable {
         static EVENT_UPDATE = 'update';
+        static EVENT_REMOVE = 'remove';
 
-        constructor (id, author, content) {
-            this.id = id;
-            this.author = author;
-            this.content = content;
+        constructor(data) {
+            super();
+            this.id = null;
+            this.author = null;
+            this.content = null;
+            this.publication_date = Date.now();
+
+            this.update(data);
         }
 
-        update (msg_data) {
-            if (this.id !== null && this.id != msg_data.id) return;
+        update(data) {
+            if (this.id != null && this.id != data.id) return;
 
-            this.id = msg_data.id;
-            this.author = msg_data.author;
-            this.content = msg_data.content;
+            if (Number.isInteger(data.id) && data.id >= 0) this.id = data.id;
+            if (data.author != null
+                && Number.isInteger(data.author.id) && data.author.id >= 0
+                && typeof data.author.name == 'string' && data.author.name.length > 0
+            )
+                this.author = {
+                    id: data.author.id,
+                    name: data.author.name
+                };
+
+            if (typeof data.content == 'string' && data.content.length > 0) this.content = data.content;
+            if (Number.isFinite(data.publish_date)) this.publish_date = data.publish_date;
 
             this.emit(Message.EVENT_UPDATE);
         }
@@ -48,43 +90,43 @@
 
         static EVENT_UPDATE = 'update';
         static EVENT_NEW_MESSAGE = 'new_message';
+        static EVENT_NEW_MESSAGE_DISPLAYED = 'new_message_displayed';
         static EVENT_RM_MESSAGE = 'rm_message';
-        static EVENT_REBASE_HEAD = 'rebase_head';
+        static EVENT_REBASE = 'rebase';
 
         static LOAD_DIRECTION_OLDER = LOAD_DIRECTION_OLDER;
         static LOAD_DIRECTION_NEWER = LOAD_DIRECTION_NEWER;
 
         #id;
 
-        #messages;
-        #disp;// liste contenant les messages affichés
-        #head;// liste contenant les messages sur la tête de liste
-        #tail;
+        #messages; // objets contenant les données des messages sur le chat
+        #disp;     // liste contenant les identifiant des messages affichés sur le chats
+        #head;     // liste contenant les identifiant des messages en tête du chat (les derniers messages)
+        #isTail;   // on a atteint le premier message du chat
 
+        #last_request_update
         #lastUpdate;
-
-        #last_request_update;
+        #update;
 
         constructor (id) {
+            super();
             this.#id = id;
             this.#head = [];
             this.#disp = [];
+            this.#isTail = false;
             this.#messages = {};
             this.#lastUpdate = 0;
             this.#last_request_update = 0;
+            this.#update = new SuperPromise().resolve();
+
+            this.keepHead = true; // indique s'il faut rester en tête ou abandonner la tête
         }
 
-        /* Propriété de la partie affichée */
-        isTail () { return this.#tail >= this.#disp[0]; }
-        isHead () { return this.#head[this.#head.length - 1] <= this.#disp[this.#disp.length - 1]; }
-
+        isTail() { return this.#isTail; }
+        isHead() { return this.#disp[this.#disp.length - 1] == this.#head[this.#head.length - 1]; }
+        
         get id() { return this.#id; }
-
-        /**
-         * renvoi la liste des messages affichés
-         * @returns {Array<Message>}
-         */
-        getDisplayedMessages () {
+        get displayed() {
             let nb_messages = this.#disp.length;
             var msgs = new Array(nb_messages);
             for (let i = 0; i < nb_messages; i++)
@@ -93,258 +135,326 @@
         }
 
         /**
-         * Force la mise à jour des données du chat.
+         * Affiche la tête de discussion du chat
+         * @returns 
          */
-        async forceUpdate () {
-            let r = await request('/core/controller/chat.php', {
-                action: 'update',
-                id: this.#id,
-                resp_max: MAX_MESSAGES_PER_LOAD,
-                lastUpdate: this.#lastUpdate
-            });
-            /**
-             * renvoi :
-             * {
-             *  rebaseHead: Boolean, // s'il faut recharger (trop de nouveaux messages)
-             *  head: [ {}, ... ],
-             *  removed: [ Number, ... ],
-             *  edited: [ {}, ... ],
-             *  lastUpdate: Number
-             * }
-             */
+        displayHead() {
+            this.keepHead = true;
 
-            if (r instanceof Error) {
+            let nb_messages_displayed = this.#disp.length;
+            let nb_messages_head = this.#head.length;
 
-                return r;
-            }
+            // on retire les messages
+            for (let i = 0; i < nb_messages_displayed; i++)
+                if (this.#disp[i] < this.#head[0])
+                    delete this.#disp[i];
 
-            this.__updateFromData(r);
+            // on remplace par les messages de head
+            this.#disp = new Array(nb_messages_head);
+            for (let i = 0; i < nb_messages_head; i++)
+                this.#disp[i] = this.#head[i];
+
+            this.#isTail = nb_messages_head < MAX_MESSAGES_PER_LOAD;
+
+            this.emit(Chat.EVENT_REBASE);
+
+            return this;
         }
 
         /**
-         * Tente de mettre à jour les données provenant du serveur
+         * Realise possiblement une mise à jour si la dernière n'est pas trop recente
+         * @returns 
          */
         update() {
-            // on verifie l'age de la dernière requête
-            if (Date.now() - this.#last_request_update < MIN_TIME_BETWEEN_UPDATE) return false;
-
+            if (Date.now() - this.#last_request_update < MIN_TIME_BETWEEN_UPDATE) return this;
+            
             return this.forceUpdate();
         }
 
-        async loadMore(dir = LOAD_DIRECTION_OLDER) {
-            let r = await request('/core/controller/chat.php', {
-                action: 'loadMore',
+        /**
+         * Force la mise à jour
+         * @returns 
+         */
+        async forceUpdate() {
+            if (this.#update.state == SuperPromise.STATE_PENDING)
+                return await this.#update.promise;
+            
+            this.#last_request_update = Date.now();
+            this.#update.renew();
+            let v = this.#update.nb_renew;
+
+            // creation de la requete
+            let r = await request('/core/controller/message.php', {
+                action: 'update',
                 id: this.#id,
-                oldest_message: this.#disp[0],
-                newest_message: this.#disp[this.#disp.length - 1],
+                oldest_message: this.#disp[0] || -1,
+                newest_message: this.#disp[this.#disp.length - 1] || -1,
                 resp_max: MAX_MESSAGES_PER_LOAD,
-                direction: dir,
                 lastUpdate: this.#lastUpdate
             });
 
-            if (r instanceof Error) {
-                return r;
-            }
+            // cas : une autre update à été forcé
+            if (this.#update.nb_renew != v) return await this.#update.promise;
+            
+            // cas : une erreur c'est produite
+            if (r instanceof Error) { this.#update.resolve(r); return r; }
 
-            // ajout des messages avant ou après
-            let nb_messages = r.messages.length;
-            if (dir == LOAD_DIRECTION_OLDER)
-                for (let i = nb_messages - 1; i >= 0; i--) {
-                    this.__addMessage(r.messages[i]);
-                    _unshiftUniqueSorted(this.#disp, r.messages[i].id);
-                }
-            else 
-                for (let i = 0; i < nb_messages; i++) {
-                    this.__addMessage(r.messages[i]);
-                    _pushUniqueSorted(this.#disp, r.messages[i].id);
-                }
-
-            // traitement du reste des données
+            // On effectu l'update normalement
             this.__updateFromData(r);
+
+            this.#update.resolve(this);
+            this.#last_request_update = Date.now();
+            return this;
         }
 
         /**
-         * Envoi un message
-         * @param {String} msg_content
+         * Ajoute un message à #messages
+         * @param {Object} msg 
          */
-        async send(msg_content) {
-            let r = await request('/core/controller/chat.php', {
+        __addMessage(msg) {
+            if (!this.#messages[msg.id])
+                this.#messages[msg.id] = new Message(msg);
+            else
+                this.#messages[msg.id].update(msg);
+        }
+
+        /**
+         * Supprime un messages de #disp, #head, #messages
+         * @param {Array<Number>} removed 
+         */
+        __deleteMessages(removed) {
+            let nb_removed = removed.length;
+
+            _removeFromSortedList(this.#disp, removed);
+            _removeFromSortedList(this.#head, removed);
+
+            for (let i = 0; i < nb_removed; i++)
+                if (this.#messages[removed[i]]) {
+                    this.emit(Chat.EVENT_RM_MESSAGE, removed[i]);
+                    delete this.#messages[removed[i]];
+                }
+        }
+
+        /**
+         * Supprime les messages qui ne sont plus utilisés
+         */
+        __garbageCollect() {
+            let ids = Object.keys(this.#messages).sort((a,b) => a - b);
+
+            _removeFromSortedList(ids, this.#disp);
+            _removeFromSortedList(ids, this.#head);
+
+            let nb_ids = ids.length;
+            for (let i = 0; i < nb_ids; i++)
+                delete this.#messages[ids[i]];
+        }
+
+        /**
+         * 
+         * @param {Object} data 
+         */
+        __updateFromData(data) {
+            if (this.#lastUpdate >= data.lastUpdate) return;
+
+            let isHead = this.isHead();
+
+            let nb_news = data.head.length;
+            let nb_edited = data.edited.length;
+
+            // messages en tête de liste
+            var head_id = new Array(nb_news);
+            for (let i = 0; i < nb_news; i++) {
+                head_id[i] = data.head[i].id;
+                this.__addMessage(data.head[i]);
+            }
+            _pushMaxLength(this.#head, head_id, MAX_MESSAGES_PER_LOAD);
+            
+
+            // messages édités
+            for (let i = 0; i < nb_edited; i++)
+                if (this.#messages[data.edited[i].id])
+                    this.#messages[data.edited[i].id].update(data.edited[i]);
+
+            // messages supprimés
+            this.__deleteMessages(data.removed);
+
+            if (isHead) {
+                if (nb_news == MAX_MESSAGES_PER_LOAD && this.keepHead) this.displayHead();
+                else if (nb_news < MAX_MESSAGES_PER_LOAD) {
+                    let nb_disp = this.#disp.length
+                    if (nb_disp + nb_news > MAX_MESSAGES_DISPLAYED && !this.keepHead) {
+                        // on décroche : on n'est plus à la tête
+                        for (let i = 0; i < MAX_MESSAGES_DISPLAYED - nb_disp; i++) {
+                            this.#disp.push(head_id[i]);
+                            this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]]);
+                        }
+                    } else {
+                        for (let i = 0; i < nb_news; i++)
+                            this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[head_id[i]]);
+                            
+
+                        let rm = _pushMaxLength(this.#disp, head_id, MAX_MESSAGES_DISPLAYED);
+                        for (let i = 0, nb_rm = rm.length; i < nb_rm; i++)
+                            this.emit(Chat.EVENT_RM_MESSAGE, rm[i]);
+                    }
+                }
+            }
+
+            // suppression des messages inutiles
+            this.__garbageCollect();
+
+            this.#lastUpdate = data.lastUpdate;
+        }
+
+        /**
+         * Envoi un message au serveur
+         * @param {Message}
+         */
+        async send(msg) {
+            if (!(msg instanceof Message)) return _error(-1);
+
+            let r = await request('/core/controller/message.php', {
                 action: 'send',
                 id: this.#id,
-                content: msg_content,
+                content: msg.content
+            });
+
+            if (r instanceof Error) return r;
+
+            msg.id = r.id;
+            this.#messages[r.id] = msg;
+            
+            this.forceUpdate();
+        }
+
+        /**
+         * Supprime un message par son identifiant
+         * @param {Number} msg_id 
+         * @returns 
+         */
+        async remove(msg_id) {
+            let r = await request('/core/controller/message.php', {
+                action: 'remove',
+                chat_id: this.#id,
+                msg_id: msg_id
+            });
+
+            if (r instanceof Error) return r;
+
+            this.__deleteMessages([ msg_id ]);
+
+            return true;
+        }
+
+        /**
+         * Modifie un message via son identifiant
+         * @param {Number} msg_id identifiant du message
+         * @param {String} content le contenu du message
+         * @returns 
+         */
+        async edit(msg_id, content) {
+            let r = await request('/core/controller/message.php', {
+                action: 'edit',
+                chat_id: this.#id,
+                msg_id: msg_id,
+                content: content
+            });
+
+            if (r instanceof Error) return r;
+
+            if (this.#messages[msg_id])
+                this.#messages[msg_id].update({ content });
+
+            return true;
+        }
+
+        /**
+         * Charge plus de message
+         * @param {-1|1} direction la direction dans laquel chargé plus de message
+         * @returns 
+         */
+        async loadMore(direction = LOAD_DIRECTION_OLDER) {
+            if (direction != LOAD_DIRECTION_OLDER && direction != LOAD_DIRECTION_NEWER) return _error(-1);
+
+            let r = await request('/core/controller/message.php', {
+                action: 'loadMore',
+                id: this.#id,
+                oldest_message: this.#disp[0] || 0,
+                newest_message: this.#disp[this.#disp.length - 1] || 0,
+                direction,
                 resp_max: MAX_MESSAGES_PER_LOAD,
                 lastUpdate: this.#lastUpdate
             });
 
-            if (r instanceof Error) {
-                return r;
+            if (r instanceof Error) return r;
+
+            // ajout des données sur la liste d'affichage
+            let nb_messages = r.messages.length;
+            var msgs_id = new Array(nb_messages);
+
+            for (let i = 0; i < nb_messages; i++) {
+                msgs_id[i] = r.messages[i].id;
+                this.__addMessage(r.messages[i]);
             }
 
+            if (direction == LOAD_DIRECTION_OLDER)
+                for (let i = nb_messages - 1; i >= 0; i--)
+                    this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[r.messages[i].id], true);
+            else
+                for (let i = 0; i < nb_messages; i++)
+                    this.emit(Chat.EVENT_NEW_MESSAGE_DISPLAYED, this.#messages[r.messages[i].id], false);
+            
+
+            let rm = (direction == LOAD_DIRECTION_OLDER) ?
+                _unshiftMaxLength(this.#disp, msgs_id, MAX_MESSAGES_DISPLAYED):
+                _pushMaxLength(this.#disp, msgs_id, MAX_MESSAGES_DISPLAYED);
+            
+            let nb_rm = rm.length;
+
+            if (direction == LOAD_DIRECTION_OLDER)
+                this.#isTail = nb_messages < MAX_MESSAGES_PER_LOAD;
+            else
+                this.#isTail = this.#isTail && nb_rm == 0;
+
+            for (let i = 0; i < nb_rm; i++)
+                this.emit(Chat.EVENT_RM_MESSAGE, rm[i]);
+
+            this.__garbageCollect();
+
+            // mise à jour du reste des données
             this.__updateFromData(r);
 
-            return this.#messages[r.id];
         }
-
-        goToHead() {
-            this.unloaddisplayed();
-
-            let nb_messages = this.#head.length;
-            this.#disp = new Array(nb_messages);
-
-            for (let i = 0; i < nb_messages; i++)
-                this.#disp[i] = this.#head[i];
-        }
-
-        unloaddisplayed() {
-            let first = this.#head[0];
-            let i = 0;
-            let nb_msg_in_disp = this.#disp.length;
-
-            // on passe tous les messages présent dans le display.
-            while (i < nb_msg_in_disp && this.#disp[i] < first) this.__removeMessage(this.#disp[i++]);
-
-            // on reinitialise l'entête
-            this.#disp = [];
-        }
-
-        unloadhead() {
-            let last = this.#disp[this.#disp.length - 1];
-            let i = 0;
-            let nb_msg_in_head = this.#head.length;
-
-            // on passe tous les messages présent dans le display.
-            while (i < nb_msg_in_head && this.#head[i] <= last) i++;
-            
-            // on retire les messages restant
-            for (;i<nb_msg_in_head;i++) this.__removeMessage(this.#head[i]);
-
-            // on reinitialise l'entête
-            this.#head = [];
-
-            // on n'a plus de donnée
-            this.#lastUpdate = 0;
-        }
-
-        /**
-         * (privé) Ajoute un message
-         * @param {Object} msg_data donnée du messages
-         */
-        __addMessage(msg_data) {
-            if (!this.#messages[msg_data.id])
-                this.#messages[msg_data.id] = new Message(msg_data.id, msg_data.author, msg_data.content);
-            else
-                this.#messages[msg_data.id].update(msg_data);
-        }
-
-        /**
-         * (privé) Supprime un messages de la liste par son identifiant
-         * @param {Number} msg_id 
-         */
-        __removeMessage(msg_id) {
-            if (!this.#messages[msg_id]) return;
-
-            // remove from this.#messages
-            delete this.#messages[msg_id];
-
-            // remove from this.#head
-            let nb_messages = this.#head.length;
-            if (this.#head[0] <= msg_id && msg_id <= this.#head[nb_messages - 1]) {
-                let i = 0;
-                while (i < nb_messages && this.#head[i] != msg_id) i++;
-                if (i < nb_messages) this.#head.splice(i, 1);
-            }
-
-            // remove from this.#disp
-            nb_messages = this.#disp.length;
-            if (this.#disp[0] <= msg_id && msg_id <= this.#disp[nb_messages - 1]) {
-                let i = 0;
-                while (i < nb_messages && this.#disp[i] != msg_id) i++;
-                if (i < nb_messages) this.#disp.splice(i, 1);
-            }
-
-            this.emit(Chat.EVENT_RM_MESSAGE, msg_id);
-        }
-
-        /**
-         * (privé) update à partir d'un jeu de donnée issu d'une requête au serveur.
-         * @param {Object} r les données
-         */
-        __updateFromData (r) {
-            let displaying_head = this.isHead();
-            
-            if (r.rebaseHead) {
-                let last = this.#disp[this.#disp.length - 1];
-                let i = 0;
-                let nb_msg_in_head = this.#head.length;
-
-                // on passe tous les messages présent dans le display.
-                while (i < nb_msg_in_head && this.#head[i] <= last) i++;
-                
-                // on retire les messages restant
-                for (;i<nb_msg_in_head;i++) this.__removeMessage(this.#head[i]);
-
-                // on reinitialise l'entête
-                this.#head = [];
-            }
-
-            // definir le head.
-            let nb_messages = r.head.length;
-            for (let i = 0; i < nb_messages; i++) {
-                this.__addMessage(r.head[i]);
-                _pushUniqueSorted(this.#head, r.head[i].id);
-            }
-            
-            // ajouter les messages à la liste affichés si le chat est en tête
-            if (displaying_head)
-                for (let i = 0; i < nb_messages; i++) {
-                    let added = _pushUniqueSorted(this.#disp, r.head[i].id);
-                    if (added) this.emit(Chat.EVENT_NEW_MESSAGE, this.#messages[r.head[i].id]);
-                }
-
-            // modifier tous les messages modifiés
-            let nb_edited = r.edited.length;
-            for (let i = 0; i < nb_edited; i++)
-                if (this.#messages[r.edited[i].id])
-                    this.#messages[r.edited[i].id].update(r.edited[i]);
-
-            // retirer tous les messages retirés
-            let nb_removed = r.removed.length;
-            for (let i = 0; i < nb_removed; i++)
-                this.__removeMessage(r.removed[i]);
-
-            // maintenir la taille du head
-            let nb_out_head = this.#head.length - MAX_MESSAGES_PER_LOAD;
-            if (nb_out_head > 0) {
-                let rm = this.#head.splice(0, nb_out_head);
-                let last_message = this.#disp[this.#disp.length - 1];
-                
-                for (let i = 0; i < nb_out_head; i++)
-                    if (rm[i] > last_message)
-                        this.__removeMessage(rm[i]);
-            }
-
-            if (r.rebaseHead) this.emit(Chat.EVENT_REBASE_HEAD);
-
-            this.#lastUpdate = r.lastUpdate;
-        }
-
 
     }
 
+
     class ChatManager {
         #chats;
-        #waiting;
 
         constructor () {
             this.#chats = {};
         }
 
-        get(id) {
+        /**
+         * récupère un chat par son identifiant
+         * @param {*} id 
+         * @returns 
+         */
+        async get(id) {
+            if (!this.#chats[id])  {
+                let chat = new Chat(id);
+                let r = await chat.update();
+                if (r instanceof Error) return r;
 
+                this.#chats[id] = chat;
+            }
+
+            return this.#chats[id];
         }
     }
 
+    window.Message = Message;
     window.Chat = Chat;
-    window.ChatManager = new ChatManager();
-
+    window.CHATS = new ChatManager();
 })();

@@ -11,9 +11,18 @@
 <script>
     await doc.update({ confirme: false, title: "", content: "" });
     let wait = ExPromise();
+<<<<<<< HEAD
 
     Dom.addListener(doc.ctx.markedElement['giveup'], 'click', function () { wait.resolve(false); });
     Dom.addListener(doc.ctx.markedElement['pursue'], 'click', function () { wait.resolve(true); });
+=======
+    wait.resolve();
+    
+    console.log(doc.ctx.markedElement['giveup']);
+
+    Dom.addListener(doc.ctx.markedElement['giveup'], 'click', function () { doc.update({ confirme: false }); wait.resolve(false); });
+    Dom.addListener(doc.ctx.markedElement['pursue'], 'click', function () { doc.update({ confirme: false }); wait.resolve(true); });
+>>>>>>> Matteo
 
     /**
      * Demande la confirmation à l'utilisateur

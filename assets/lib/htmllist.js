@@ -34,7 +34,7 @@
          * @returns 
          */
         async add(id, element, data, prepend = false) {
-            if (this.#elements[id]) return;
+            if (this.#elements[id]) return await this.update(element);
 
             let dom_element = Dom.create(`<div></div>`).children[0];
             
@@ -49,11 +49,15 @@
             if (r != this.#version) return;
 
             this.#elements[id].element = element;
-            this.#elements[id].dom_element = this.#parser.parse({ element, ...data }).children[0];
-            Dom.replace(dom_element, this.#elements[id].dom_element);
+
+            dom_element = this.#parser.parse({ element, ...data }).children[0];
+            
+            Dom.replace(this.#elements[id].dom_element, dom_element);
+            
+            this.#elements[id].dom_element = dom_element;
 
             if (element instanceof Listenable)
-                element.addListener('upload', this.#updateFunction);
+                element.addListener('update', this.#updateFunction);
         }
 
 
@@ -91,7 +95,7 @@
 
             let dom_element = this.#elements[element.id].dom_element;
             let data = this.#elements[element.id].data;
-            this.#elements[element.id].dom_element = this.#parser.parse({ element, ...data });
+            this.#elements[element.id].dom_element = this.#parser.parse({ element, ...data }).children[0];
             Dom.replace(dom_element, this.#elements[element.id].dom_element);
         }
 
@@ -107,9 +111,11 @@
             let dom_element = this.#elements[element_id].dom_element;
 
             if (element instanceof Listenable)
-                element.removeListener('upload', this.#updateFunction);
-
+                element.removeListener('update', this.#updateFunction);
+            
+            this.#elements[element_id] = null;
             delete this.#elements[element_id];
+
             Dom.remove(dom_element);
         }
 
