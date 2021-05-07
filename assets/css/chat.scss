@@ -70,8 +70,11 @@
 
     .loading-top, .loading-bottom {
         height: 100%;
-
+        display: flex;
+        justify-content: center;
     }
+    .loading-top { align-items: flex-end; }
+    .loading-bottom { align-items: flex-start; }
 
     .controles {
         height: 100px;

@@ -22,17 +22,18 @@ function recup_file_filename($filename){
     global $database;
     $user =  "SELECT * FROM file WHERE name = '$filename'";
     $result = mysqli_query($database, $user);
-	$user_data=mysqli_fetch_assoc($result);
+	$user_data = mysqli_fetch_assoc($result);
 	
 	return $user_data;
 }
-function supprime_file($id){
+function supprime_file($id) {
     global $database;
     $query = "DELETE FROM file WHERE id=$id";
     $res=mysqli_query($database, $query);
-
-    if (is_int($id))
-        unlink(dirname(__FILE__)."/../files/$id.bin");
+    $filename = dirname(__FILE__)."/../files/$id.bin";
+    if (is_int($id)) {
+        if (file_exists($filename)) unlink($filename);
+    }
 
     return $res;
 }

@@ -198,7 +198,6 @@ function modif_nb_files($group_id,$val){
 	global $database;
 	$query = "UPDATE `group` SET nb_files=nb_files+$val WHERE id=$group_id";
 	$res = mysqli_query($database,$query);
-	$res=mysqli_num_rows($res);
 	return $res;
 }
 function modif_nb_messages($group_id,$val){

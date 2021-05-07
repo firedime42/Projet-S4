@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json");
 require_once dirname(__FILE__) . "/../fileFunction.php";
+require_once dirname(__FILE__) . "/../roleFunction.php";
 require_once dirname(__FILE__) . "/../folderFunction.php";
 require_once dirname(__FILE__) . "/../messageFunction.php";
 require_once dirname(__FILE__) . "/../groupFunction.php";
@@ -14,9 +15,9 @@ $res = array(
 
 switch ($_post->action) {
     case "create":
-        if (isset($_post->nom)) {
+        if (!isset($_post->nom)) {
             $res["error"] = 3001; //Nom de fichier vide
-        } elseif (isset($_post->folder)) {
+        } elseif (!isset($_post->folder)) {
             $res["error"] = 3002; //Dossier vide
         } elseif (empty(recup_folder_id($_post->folder))) {
             $res["error"]=3003;
