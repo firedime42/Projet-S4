@@ -1,4 +1,4 @@
-.file {
+.fileviewer {
   position: absolute;
   z-index: 2;
   top: 0;
@@ -15,7 +15,7 @@
           flex-direction: column;
 }
 
-.file .header {
+.fileviewer .header {
   background-color: #1e2530;
   padding: 2px;
   display: -webkit-box;
@@ -24,24 +24,24 @@
   color: #fff;
 }
 
-.file .header a[href] {
+.fileviewer .header a[href] {
   color: #fff;
   text-decoration: none;
 }
 
-.file .header a[href]:hover {
+.fileviewer .header a[href]:hover {
   -webkit-transform: scale(1.1);
           transform: scale(1.1);
   text-shadow: -2px 2px 7px #fff;
 }
 
-.file .header .back-link {
+.fileviewer .header .back-link {
   width: 50px;
   text-align: center;
   padding: 10px;
 }
 
-.file .header .title {
+.fileviewer .header .title {
   width: calc(100% - 100px);
   padding: 10px 20px;
   overflow: hidden;
@@ -49,17 +49,17 @@
   white-space: nowrap;
 }
 
-.file .header .buttons {
+.fileviewer .header .buttons {
   width: 50px;
   text-align: center;
   padding: 10px;
 }
 
-.file .header .spaceforchatbtn {
+.fileviewer .header .spaceforchatbtn {
   width: 50px;
 }
 
-.file .body {
+.fileviewer .body {
   height: 100%;
   padding: 20px 40px;
   display: -webkit-box;
@@ -70,7 +70,7 @@
           justify-content: center;
 }
 
-.file .body .info {
+.fileviewer .body .info {
   background-color: var(--site-background-color);
   padding: 10px;
   border-radius: 5px;
@@ -79,7 +79,7 @@
   height: fit-content;
 }
 
-.file .body .info .data {
+.fileviewer .body .info .data {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -87,20 +87,20 @@
       flex-wrap: wrap;
 }
 
-.file .body .info .data div {
+.fileviewer .body .info .data div {
   width: 50%;
 }
 
-.file .body .info .data div .icon {
+.fileviewer .body .info .data div .icon {
   padding: 0 5px;
 }
 
-.file .body .preview-box {
+.fileviewer .body .preview-box {
   width: 100%;
   height: 100%;
 }
 
-.file .body .preview-box .image-preview {
+.fileviewer .body .preview-box .image-preview {
   width: 100%;
   height: 100%;
   display: -webkit-box;
@@ -115,7 +115,7 @@
           flex-direction: column;
 }
 
-.file .body .preview-box .image-preview .image {
+.fileviewer .body .preview-box .image-preview .image {
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -123,7 +123,7 @@
   height: 100%;
 }
 
-.file .body .preview-box .image-preview .control {
+.fileviewer .body .preview-box .image-preview .control {
   position: relative;
   background: #1e2530;
   border-radius: 10px;
@@ -137,25 +137,25 @@
   margin-top: -50px;
 }
 
-.file .body .preview-box .image-preview .control .ctrl-btn {
+.fileviewer .body .preview-box .image-preview .control .ctrl-btn {
   color: #fff;
   width: 30px;
   text-align: center;
   cursor: pointer;
 }
 
-.file .body .preview-box .image-preview .control .ctrl-btn:hover {
+.fileviewer .body .preview-box .image-preview .control .ctrl-btn:hover {
   -webkit-transform: scale(1.1);
           transform: scale(1.1);
   text-shadow: -2px 2px 7px #fff;
   margin-top: -2px;
 }
 
-.file .body .preview-box .image-preview .control .ctrl-btn:active {
+.fileviewer .body .preview-box .image-preview .control .ctrl-btn:active {
   margin-top: 0px;
 }
 
-.file .body .preview-box .text-preview pre {
+.fileviewer .body .preview-box .text-preview pre {
   margin-top: 0px;
   border-radius: 10px;
   position: relative;
