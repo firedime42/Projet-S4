@@ -1,0 +1,198 @@
+
+<div class="header">
+    <a class="back-link" href="/app/groupes/{{ group.id }}/{{ folder_id }}"><span class="icon icon-arrow-left"></span></a>
+    <div class="title">{{ file.nom }}</div>
+    <div class="buttons">
+        <a class="preview-link" href="/app/groupes/{{ group.id }}/{{ folder_id }}/{{ file.id }}/preview" data-visible="{{ EQUALS option 'info' }}"><span class="icon icon-eye"></span></a>
+        <a class="info-link" href="/app/groupes/{{ group.id }}/{{ folder_id }}/{{ file.id }}/info" data-visible="{{ EQUALS option 'preview' }}"><span class="icon icon-information-outline"></span></a>
+    </div>
+    <div class="spaceforchatbtn"></div>
+</div>
+<div class="body scrollable">
+    <div class="info" data-visible="{{ EQUALS option 'info' }}">
+        <div class="nom">{{ file.nom }}</div>
+        <div class="description">
+            <h1>Description</h1>
+            <div class="filetype" data-file-type="">{{ file.type }}</div>
+            <p>{{ file.description }}</p>
+        </div>
+        <div class="data">
+            <div class="author"><span class="icon icon-quill"></span>test1</div>
+            <div class="publish_date"><span class="icon icon-clock1"></span>le 05/05/2021</div>
+            <div class="size"><span class="icon icon-save-disk"></span>{{ file.size }}o</div>
+            <div class="nb_downloads"><span class="icon icon-download"></span>10</div>
+            <div class="nb_messages"><span class="icon icon-chat"></span>{{ file.nb_comments }}</div>
+            <div class="nb_likes"><span class="icon icon-favorite"></span>{{ file.nb_likes }}</div>
+        </div>
+    </div>
+    <div class="preview-box" data-visible="{{ EQUALS option 'preview' }}">
+        <div class="image-preview" data-visible="{{ EQUALS preview 'image' }}">
+            <div class="image">{{ MARK this "image" }}</div>
+            <div class="control">
+                <div class="zoom-default ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_default }}<span class="icon icon-resize"></span></div>
+                <div class="zoom-in ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_in }}<span class="icon icon-zoom_in"></span></div>
+                <div class="zoom-out ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_out }}<span class="icon icon-zoom_out"></span></div>
+            </div>
+        </div>
+        <div class="video-preview" data-visible="{{ EQUALS preview 'video' }}">
+
+        </div>
+        <div class="text-preview" data-visible="{{ EQUALS preview 'text' }}">
+            <pre><code class="language-xxxx">{{ MARK this "text-code" }}</code></pre>
+        </div>
+        <div class="no-preview" data-visible="{{ EQUALS preview 'no' }}">
+
+        </div>
+    </div>
+</div>
+<script>
+    const Ko = 1000;
+    const Mo = 1000 * Ko;
+    const PREVIEW_TYPE = Object.freeze({
+        image: { types: ['image/bmp', 'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/tiff', 'image/webp'], max_size: 30 * Mo },
+        text: {
+        types: [/^text\/.*/],
+            max_size: 10 * Ko,
+            language: {
+
+            }
+        }
+    });
+
+    var group = null;
+    var file = null;
+
+    var zoom = 100;
+    var image_preview = null;
+    var text_preview = null;
+
+    function previewTypeMatch(types, type) {
+        let nb_types = types.length;
+        let i = 0;
+        while (i < nb_types && !( (types[i] instanceof RegExp) ? types[i].test(type) : types[i] == type ) ) i++;
+        return i < nb_types;
+    }
+    
+    /**
+     * indique quel preview utiliser pour le fichier
+     */
+    function whichPreview(type) {
+
+        let previews = Object.keys(PREVIEW_TYPE);
+        let nb_previews = previews.length;
+        let i = 0;
+        while (i < nb_previews && !previewTypeMatch(PREVIEW_TYPE[previews[i]].types, type)) i++;
+
+        return (i < nb_previews) ? previews[i] : 'no';
+    }
+
+    function zoom_default() {
+        zoom = 100;
+        Dom.css(image_preview, {
+            'background-size': 'contain'
+        });
+    }
+    function zoom_in() {
+        if (zoom >= 500) return;
+        zoom += 10;
+        Dom.css(image_preview, {
+            'background-size': `auto ${zoom}%`
+        });
+    }
+    function zoom_out() {
+        zoom -= 10;
+        if (zoom <= 2) zoom = 2;
+        Dom.css(image_preview, {
+            'background-size': `auto ${zoom}%`
+        });
+    }
+
+
+    async function previewImage(file) {
+        doc.update({ loading: true });
+
+        console.log('debug', file, file.size * 1, PREVIEW_TYPE.image.max_size);
+        if (file.size * 1 > PREVIEW_TYPE.image.max_size) {
+
+        } else {
+            console.log('debug', file, file.size, PREVIEW_TYPE.image.max_size);
+            let f = await file.download();
+            let blob_url = window.URL.createObjectURL(f);
+            Dom.css(image_preview, {
+                'background-image': `url(${blob_url})`,
+                'background-size': 'contain',
+                'background-position-x': 'calc(50% - 0px)',
+                'background-position-y': 'calc(50% - 0px)'
+            });
+        }
+
+        doc.update({ loading: false });
+    }
+
+    async function previewText(file) {
+        doc.update({ loading: true });
+
+        if (file.size * 1 > PREVIEW_TYPE.text.max_size) {
+
+        } else {
+            let language = file.nom.split('.').pop();
+            let f = await file.download();
+            let f_text = await f.text();
+            console.log(f);
+            console.log(f_text);
+            Dom.html(text_preview, f_text.replace(/\n/gi, '<br/>'));
+            text_preview.className = `language-${language}`;
+            Prism.highlightAll();
+        }
+
+        doc.update({ loading: false });
+    }
+
+    function filePreview() {
+        if (file == null) return;
+
+        let preview = whichPreview(file.type);
+
+        // il va avoir beaucoup à faire ici
+        if (preview == 'image') previewImage(file);
+        else if (preview == 'text') previewText(file);
+
+        doc.update({ preview });
+    }
+
+    async function fileChange({ group_id, folder_id,  file_id, option }) {
+        
+        group_id *= 1;
+        folder_id *= 1;
+        file_id *= 1;
+        option = option || "info";
+        
+        if (!group || group_id != group.id) {
+            group = await GROUPES.get(group_id);
+            if (group instanceof Error) {
+                console.error(group);
+                group = null;
+            }
+        }
+
+        if (!file || file_id != file.id) {
+            doc.update({ preview: null });
+            file = await WFILES.get(file_id);
+            if (file instanceof Error) {
+                console.error(file);
+                file = null;
+            }
+            filePreview();
+        }
+
+        doc.update({ group, file, folder_id, option });
+    }
+
+
+    doc.update({ zoom_default, zoom_in, zoom_out });
+    image_preview = doc.ctx.markedElement['image'];
+    text_preview = doc.ctx.markedElement['text-code'];
+    
+    let number = /^[0-9]+$/;
+    URLrooter.addListener("/app/groupes/$group_id/$folder_id/$file_id/$option", fileChange, null, { group_id : number, folder_id: number, file_id: number, option: /^(?:info|preview|)$/ });
+</script>

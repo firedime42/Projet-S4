@@ -1,0 +1,132 @@
+.file {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        background-color: #1e2530;
+        padding: 2px;
+        display: flex;
+        color: #fff;
+        a[href] {
+            color: #fff;
+            text-decoration: none;
+        }
+        a[href]:hover {
+            transform: scale(1.1);
+            text-shadow: -2px 2px 7px #fff;
+        }
+
+        .back-link {
+            width: 50px;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .title {
+            width: calc(100% - 100px);
+            padding: 10px 20px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .buttons {
+            width: 50px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .spaceforchatbtn {
+            width: 50px;
+        }
+        
+    }
+
+    .body {
+        height: 100%;
+        padding: 20px 40px;
+        display: flex;
+        justify-content: center;
+
+        .info {
+            background-color: var(--site-background-color);
+            padding: 10px;
+            border-radius: 5px;
+            height: fit-content;
+
+            .data {
+                display: flex;
+                flex-wrap: wrap;
+
+                div {
+                    width: 50%;
+                    .icon {
+                        padding: 0 5px;
+                    }
+                }
+            }
+        }
+
+        .preview-box {
+            width: 100%;
+            height: 100%;
+
+            .image-preview {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+
+                .image {
+                    background-repeat: no-repeat;
+                    background-size: contain;
+                    background-position: center;
+                    width: 100%;
+                    height: 100%;
+                }
+                
+                .control {
+                    position: relative;
+                    background: #1e2530;
+                    border-radius: 10px;
+                    padding: 10px;
+                    display: flex;
+                    align-items: center;
+                    margin-top: -50px;
+
+                    .ctrl-btn {
+                        color: #fff;
+                        width: 30px;
+                        text-align: center;
+                        cursor: pointer;
+                    }
+                    .ctrl-btn:hover {
+                        transform: scale(1.1);
+                        text-shadow: -2px 2px 7px #fff;
+                        margin-top: -2px;
+                    }
+                    .ctrl-btn:active {
+                        margin-top: 0px;
+                    }
+                }
+            }
+
+            .text-preview {
+                pre {
+                    margin-top: 0px;
+                    border-radius: 10px;
+                    position: relative;
+                    padding: 10px 20px;
+                }
+            }
+        }
+    }
+}

@@ -9,8 +9,8 @@
         <div class="explorer column scrollable">
             {{ INCLUDE this.currentNode "/template/app.groupes.main.explorer.html" }}
         </div>
-        <div class="preview column scrollable" data-visible="{{ CURRENT_URL_MATCH '/app/groupes/$group/$folder/$file/*' var_tests }}">
-            {{ INCLUDE this.currentNode "/template/app.groupes.main.preview.html" }}
+        <div class="file column scrollable" data-visible="{{ CURRENT_URL_MATCH '/app/groupes/$group/$folder/$file/*' var_tests }}">
+            {{ INCLUDE this.currentNode "/template/app.groupes.main.file.html" }}
         </div>
         <div class="chat-btn">
             {{ ADDLISTENER this.currentNode "click" toggleChat }}
