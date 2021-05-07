@@ -190,7 +190,6 @@
          * et au serveur de gérer le cache pour ces données lourdes
          */
         download() {
-            console.log(this);
             if (this.#id == null) return _error(-1);
             if (this.#etat != 'online') return _error(-1);
 

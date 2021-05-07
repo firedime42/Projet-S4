@@ -14,7 +14,8 @@
             <em class="icon icon-menu"></em>
             <div class="dropdown-menu dropdown-menu-right">
                 <!--<a class="dropdown-item">Renommer</a>-->
-                <a class="dropdown-item">Supprimer</a>
+                <a class="dropdown-item">{{ ADDLISTENER this.currentNode "click" open }}Ouvrir</a>
+                <a class="dropdown-item" data-visible="{{ permissions.remove_folder }}">Supprimer</a>
             </div>
         </div>
     </div>
