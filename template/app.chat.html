@@ -28,7 +28,7 @@
 </div>
 
 <script>
-    var groupe = null;
+    var group = null;
     var folder = null;
     var file = null;
     var chat = null;
@@ -62,7 +62,7 @@
 
     async function send() {
         let text = Dom.text(doc.ctx.markedElement['text-input']);
-        if (!permissions.write_message) console.error('vous ne pouvez pas ecrire de message !');
+        if (!group.permissions.write_message) console.error('vous ne pouvez pas ecrire de message !');
         else if (text.length < 1) console.error('message trop court !');
         else if (text.length > 500) console.error('message trop long !');
         else {
@@ -76,12 +76,12 @@
         }
     }
 
-    async function urlChange({ groupe_id, folder_id, file_id }) {
+    async function urlChange({ group_id, folder_id, file_id }) {
         let chat_about_file = file_id !== undefined && file_id.length > 0;
         let new_chat_id = -1;
 
-        if (!groupe || groupe.id !== groupe_id) {
-            groupe = await GROUPES.get(groupe_id);
+        if (!group || group.id !== group_id) {
+            group = await GROUPES.get(group_id);
         }
 
         if (chat_about_file && (!file || file.id != file_id * 1)) {
@@ -101,7 +101,7 @@
         if (new_chat_id >= 0) {
             removeListeners(chat);
             messagesList.clear();
-            doc.update({ permissions: groupe.permissions, isHead: true, isTail: true });
+            doc.update({ permissions: group.permissions, isHead: true, isTail: true });
             chat = await CHATS.get(new_chat_id);
 
             if (chat instanceof Error) {
@@ -119,9 +119,9 @@
     async function onNewMessage(chat, msg, prepend=false) {
         var ongoing_action = false;
         messagesList.add(msg.id, msg, {
-            permissions: groupe.permissions,
-            canRemove: (groupe.permissions.remove_message && msg.author.id == user.id * 1) || groupe.permissions.remove_any_message,
-            canEdit: groupe.permissions.write_message && msg.author.id == user.id * 1,
+            permissions: group.permissions,
+            canRemove: (group.permissions.remove_message && msg.author.id == user.id * 1) || group.permissions.remove_any_message,
+            canEdit: group.permissions.write_message && msg.author.id == user.id * 1,
             remove: async function () {
                 if (ongoing_action) return;
                 ongoing_action = true;
@@ -267,5 +267,5 @@
         messagesList.add(msg2.id, msg2, {}, true);
     }*/
 
-    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/$file_id/*", urlChange, null, { groupe_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
+    URLrooter.addListener("/app/groupes/$group_id/$folder_id/$file_id/*", urlChange, null, { group_id: /^[0-9]+$/, folder_id: /^[0-9]+$/, file_id: /^[0-9]*/ });
 </script>

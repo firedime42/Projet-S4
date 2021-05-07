@@ -41,7 +41,10 @@
             <pre><code class="language-xxxx">{{ MARK this "text-code" }}</code></pre>
         </div>
         <div class="no-preview" data-visible="{{ EQUALS preview 'no' }}">
-
+            <div>Aucune previsualisation possible : format non supporté</div>
+        </div>
+        <div class="too-heavy" data-visible="{{ EQUALS preview 'too-heavy' }}">
+            <div>Aucune previsualisation possible : fichier trop lourd</div>
         </div>
     </div>
 </div>
@@ -112,9 +115,7 @@
         doc.update({ loading: true });
 
         console.log('debug', file, file.size * 1, PREVIEW_TYPE.image.max_size);
-        if (file.size * 1 > PREVIEW_TYPE.image.max_size) {
-
-        } else {
+        if (file.size * 1 < PREVIEW_TYPE.image.max_size) {
             console.log('debug', file, file.size, PREVIEW_TYPE.image.max_size);
             let f = await file.download();
             let blob_url = window.URL.createObjectURL(f);
@@ -132,9 +133,7 @@
     async function previewText(file) {
         doc.update({ loading: true });
 
-        if (file.size * 1 > PREVIEW_TYPE.text.max_size) {
-
-        } else {
+        if (file.size * 1 < PREVIEW_TYPE.text.max_size) {
             let language = file.nom.split('.').pop();
             let f = await file.download();
             let f_text = await f.text();
