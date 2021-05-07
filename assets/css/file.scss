@@ -52,23 +52,30 @@
     .body {
         height: 100%;
         padding: 20px 40px;
-        display: flex;
-        justify-content: center;
 
-        .info {
-            background-color: var(--site-background-color);
-            padding: 10px;
-            border-radius: 5px;
-            height: fit-content;
+        .info-box {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
 
-            .data {
-                display: flex;
-                flex-wrap: wrap;
+            .info {
+                background-color: var(--site-background-color);
+                padding: 10px;
+                border-radius: 5px;
+                height: fit-content;
+                min-width: 300px;
+                width: 80%;
+                max-width: 500px;
 
-                div {
-                    width: 50%;
-                    .icon {
-                        padding: 0 5px;
+                .data {
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    div {
+                        width: 50%;
+                        .icon {
+                            padding: 0 5px;
+                        }
                     }
                 }
             }
@@ -86,6 +93,7 @@
                 flex-direction: column;
 
                 .image {
+                    transition: all 0.5s cubic-bezier(0, 0, 0.43, 0.99);
                     background-repeat: no-repeat;
                     background-size: contain;
                     background-position: center;
