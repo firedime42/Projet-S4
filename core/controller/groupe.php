@@ -76,7 +76,6 @@ switch ($_post->action) {
                         "create_folder" => ($group["create_folder"]==1),
                         "rename_folder" => ($group["rename_folder"]==1),
                         "remove_folder" => ($group["remove_folder"]==1),
-                        "remove_any_folder" => ($group["remove_any_folder"]==1),
                         // user
                         "accept_user" => ($group["accept_user"]==1),
                         "kick_user" => ($group["kick_user"]==1),
@@ -208,7 +207,6 @@ switch ($_post->action) {
                     "create_folder" => ($val["create_folder"]==1),
                     "rename_folder" => ($val["rename_folder"]==1),
                     "remove_folder" => ($val["remove_folder"]==1),
-                    "remove_any_folder" => ($val["remove_any_folder"]==1),
                     // user
                     "accept_user" => ($val["accept_user"]==1),
                     "kick_user" => ($val["kick_user"]==1),
@@ -233,7 +231,7 @@ switch ($_post->action) {
             if(isset($_post->edited)){
                 foreach($_post->edited as $value){
                     edit_role($value->id,$value->nom,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
-                    (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
+                    (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,
                     (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
                 }
             }
@@ -243,7 +241,7 @@ switch ($_post->action) {
             if(isset($_post->added)){
                 foreach($_post->added as $value){
                     create_role($_post->group_id,$value->nom,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
-                    (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,(int)$value->remove_any_folder,
+                    (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,
                     (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);}
             }
             $res["success"]=true;
@@ -293,7 +291,19 @@ switch ($_post->action) {
             $res["error"]=0001;
         }elseif (empty(recup_group_id($_post->id))) {
             $res["error"]=0001;
-        }elseif (!isset($_post->nom)) {
+        }elseif(isset($_post->nom)){
+            if(is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_NAME))
+                $res["success"]=modif_nom_group($_post->id,$_post->nom);
+            else
+                $res["error"]=2008;
+        }elseif(isset($_post->description)){
+            if(is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_DESCRIPTION))
+                $res["success"]=modif_description_group($_post->id,$_post->description);
+            else
+                $res["error"]=2008;
+        }else
+            $res["error"]=2000;
+        /*}elseif (!isset($_post->nom)) {
             $res["error"]=0001;
         }elseif (!isset($_post->description)) {
             $res["error"]=0001;
@@ -302,6 +312,20 @@ switch ($_post->action) {
         }else {
             $res["success"]=modif_groupe($_post->id,$_post->nom,$_post->description);
         }
+    }elseif(isset($_post->nom)){
+        if(is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_NAME)){
+            $res["success"]=modif_nom_group($_post->id,$_post_nom);
+        }
+        else
+            $res["error"]=2008;
+    }elseif(isset($_post->description)){
+        if(is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_DESCRIPTION))
+            $res["success"]=modif_description_group($_post->id,$_post->description);
+        else{
+            $res["error"]=2008;
+        }else{
+            $res["error"]=2000;
+        };*/
         break;
     case "dashboard":
         $dashboard=recup_dashboard($_post->group);

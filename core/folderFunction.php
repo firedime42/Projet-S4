@@ -66,9 +66,9 @@ function recup_folder_nom_descr($nom,$description){
 function supprimer_dossier($id){
 	global $database;
 	supprime_chat_folder($id);
-    $query = "DELETE FROM folder f WHERE f.id = $id";
-    $res = mysqli_query($database, $query);
-    return $res;
+    $query = "DELETE FROM folder WHERE id = $id";
+	var_dump($query);
+    return mysqli_query($database, $query);
 }
 
 function nb_files($id){

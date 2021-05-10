@@ -82,8 +82,10 @@ switch ($_post->action) {
             if(empty($file)){
                 $res["error"] = 3006;
             }elseif (!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_ANY_FILE)) {
-                if(is_creator($_session["user"]["id"],$_post->id)&&(!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_FILE)))
-                    $res["error"] = 3006;
+                $res["error"] = 3006;
+            }if(is_creator($_session["user"]["id"],$_post->id)&&(!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_FILE))){
+                $res["error"] = 3006;
+            }
             }else {
                 $res["success"]=supprime_file($_post->id);
             }

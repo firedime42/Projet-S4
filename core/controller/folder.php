@@ -4,6 +4,8 @@ header("Content-Type: application/json");
 require_once dirname(__FILE__)."/../folderFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 require_once dirname(__FILE__) . "/../messageFunction.php";
+require_once dirname(__FILE__) . "/../roleFunction.php";
+require_once dirname(__FILE__) . "/../groupFunction.php";
 
 $_post = json_decode(file_get_contents("php://input"));
 
@@ -64,6 +66,15 @@ switch($_post->action){
                 $res["success"]=create_folder($nom,$parents['group_id'],$_post->parent,$description);
                 $res["id"]=mysqli_insert_id($database);
             }
+        }
+        break;
+    case "remove":
+        if(!isset($_post->id)){
+            $res["error"]=4000;
+        }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->id),ROLE_REMOVE_FOLDER)) {
+            $res["error"]=4000;
+        }else{
+            $res["success"]=supprimer_dossier($_post->id);
         }
         break;
     default:

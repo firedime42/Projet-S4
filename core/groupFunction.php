@@ -151,6 +151,25 @@ function modif_groupe($id,$nom,$description){
 	return $res;
 }
 
+function modif_nom_group($id,$nom){
+	global $database;
+	$query=
+	$query="UPDATE `group` SET name = '$nom' WHERE id=$id";
+	$res=mysqli_query($database,$query);
+	$query="UPDATE folder SET name='$nom' WHERE group_id=$id AND parent_id IS NULL";
+	mysqli_query($database,$query);
+	return $res;
+}
+
+function modif_description_group($id,$description){
+	global $database;
+	$query="UPDATE `group` SET description='$description' WHERE id=$id";
+	$res=mysqli_query($database,$query);
+	$query="UPDATE folder SET description='$description' WHERE group_id=$id IS NULL";
+	mysqli_query($database,$query);
+	return $res;
+}
+
 function recup_membres($group){
 	global $database;
 	$query="SELECT g.user_id,u.username,g.role_id FROM groupUser g JOIN user u ON u.id=g.user_id WHERE g.group_id=$group AND g.status='accepted'";
@@ -204,7 +223,6 @@ function modif_nb_messages($group_id,$val){
 	global $database;
 	$query = "UPDATE `group` SET nb_messages=nb_messages+$val WHERE id=$group_id";
 	$res = mysqli_query($database,$query);
-	$res=mysqli_num_rows($res);
 	return $res;
 }
 ?>
