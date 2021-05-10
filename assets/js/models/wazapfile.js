@@ -268,7 +268,7 @@
 
             if (r instanceof Error) return r;
 
-            WFILES.free(this.#id);
+            WFILES.free([this.#id]);
 
             return true;
         }

@@ -64,7 +64,7 @@
                     try {
                         this.#listeners[eventname][i](this, ...data);
                     } catch (e) {
-                        console.error(e);
+                        console.error(e, this.#listeners[eventname][i]);
                     }
             }
     
