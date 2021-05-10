@@ -16,7 +16,7 @@
     {{ MARK this "dropzone" }}
     <div class="browse-main" data-visible="true">
         <em data-visible="{{ permissions.create_file }}"><center>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</center></em>
-        <em data-visible="{{ NOT permissions.create_file }}"><center>Bouffes tes morts. --Théo</center></em>
+        <em data-visible="{{ NOT permissions.create_file }}"><center>Denied</center></em>
         <h3>Dossiers</h3>
         <div class="folders row-container">
             {{ MARK this "folders" }}
@@ -364,7 +364,13 @@
         listFolders.add(folder_id, folder, {
             permissions: groupe.permissions,
             open: function () { setURL(`/app/groupes/${groupe.id}/${folder_id}`); },
-            delete: function () { console.log('supprimer le dossier'); }
+            remove: async function () {
+                let f = await folder;
+                let r = await f.remove();
+
+                if (r instanceof Error) console.error(r);
+                else removeFolder(null, folder.id);
+            }
         });
     }
 

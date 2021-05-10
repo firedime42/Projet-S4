@@ -2,6 +2,7 @@
 
     class Folder extends Listenable {
         static EVENT_UPDATE = "update";
+        static EVENT_REMOVED = "removed";
         static EVENT_NEW_FILE = "newFile";
         static EVENT_NEW_FOLDER = "newFolder";
         static EVENT_REMOVE_FILE = "removeFile";
@@ -150,6 +151,23 @@
             this.emit(Folder.EVENT_NEW_FOLDER, r.id);
 
             return r;
+        }
+
+        async remove() {
+            if (this.#id == null) return error(-1);
+            
+            let r = await request("/core/controller/folder.php", {
+                action: 'remove',
+                id: this.#id
+            });
+
+            if (r instanceof Error) { return r; }
+
+            this.emit(Folder.EVENT_REMOVED, r.id);
+            
+            FOLDERS.free([this.#id]);
+
+            return true;
         }
     }
 

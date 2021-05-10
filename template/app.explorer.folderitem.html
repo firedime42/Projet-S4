@@ -15,7 +15,7 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <!--<a class="dropdown-item">Renommer</a>-->
                 <a class="dropdown-item">{{ ADDLISTENER this.currentNode "click" open }}Ouvrir</a>
-                <a class="dropdown-item" data-visible="{{ permissions.remove_folder }}">Supprimer</a>
+                <a class="dropdown-item" data-visible="{{ permissions.remove_folder }}">{{ ADDLISTENER this.currentNode "click" remove }}Supprimer</a>
             </div>
         </div>
     </div>
