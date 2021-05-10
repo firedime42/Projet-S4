@@ -9,46 +9,46 @@
     <div class="spaceforchatbtn"></div>
 </div>
 <div class="body scrollable">
-        <div class="info-box" data-visible="{{ EQUALS option 'info' }}">
-            <div class="info">
-                <div class="nom">{{ file.nom }}</div>
-                <div class="description">
-                    <h1>Description</h1>
-                    <div class="filetype" data-file-type="">{{ file.type }}</div>
-                    <p>{{ file.description }}</p>
-                </div>
-                <div class="data">
-                    <div class="author"><span class="icon icon-quill"></span>test1</div>
-                    <div class="publish_date"><span class="icon icon-clock1"></span>le 05/05/2021</div>
-                    <div class="size"><span class="icon icon-save-disk"></span>{{ file.size }}o</div>
-                    <div class="nb_downloads"><span class="icon icon-download"></span>10</div>
-                    <div class="nb_messages"><span class="icon icon-chat"></span>{{ file.nb_comments }}</div>
-                    <div class="nb_likes"><span class="icon icon-favorite"></span>{{ file.nb_likes }}</div>
-                </div>
+    <div class="info-box" data-visible="{{ EQUALS option 'info' }}">
+        <div class="info">
+            <div class="nom">{{ file.nom }}</div>
+            <div class="description">
+                <h1>Description</h1>
+                <div class="filetype" data-file-type="">{{ file.type }}</div>
+                <p>{{ file.description }}</p>
+            </div>
+            <div class="data">
+                <div class="author"><span class="icon icon-quill"></span>test1</div>
+                <div class="publish_date"><span class="icon icon-clock1"></span>le 05/05/2021</div>
+                <div class="size"><span class="icon icon-save-disk"></span>{{ file.size }}o</div>
+                <div class="nb_downloads"><span class="icon icon-download"></span>10</div>
+                <div class="nb_messages"><span class="icon icon-chat"></span>{{ file.nb_comments }}</div>
+                <div class="nb_likes"><span class="icon icon-favorite"></span>{{ file.nb_likes }}</div>
             </div>
         </div>
-        <div class="preview-box" data-visible="{{ EQUALS option 'preview' }}">
-            <div class="image-preview" data-visible="{{ EQUALS preview 'image' }}">
-                <div class="image">{{ MARK this "image" }}</div>
-                <div class="control">
-                    <div class="zoom-default ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_default }}<span class="icon icon-resize"></span></div>
-                    <div class="zoom-in ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_in }}<span class="icon icon-zoom_in"></span></div>
-                    <div class="zoom-out ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_out }}<span class="icon icon-zoom_out"></span></div>
-                </div>
-            </div>
-            <div class="video-preview" data-visible="{{ EQUALS preview 'video' }}">
-
-            </div>
-            <div class="text-preview" data-visible="{{ EQUALS preview 'text' }}">
-                <pre><code class="language-xxxx">{{ MARK this "text-code" }}</code></pre>
-            </div>
-            <div class="no-preview" data-visible="{{ EQUALS preview 'no' }}">
-                <div>Aucune previsualisation possible : format non supporté</div>
-            </div>
-            <div class="too-heavy" data-visible="{{ EQUALS preview 'too-heavy' }}">
-                <div>Aucune previsualisation possible : fichier trop lourd</div>
+    </div>
+    <div class="preview-box" data-visible="{{ EQUALS option 'preview' }}">
+        <div class="image-preview" data-visible="{{ EQUALS preview 'image' }}">
+            <div class="image">{{ MARK this "image" }}</div>
+            <div class="control">
+                <div class="zoom-default ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_default }}<span class="icon icon-resize"></span></div>
+                <div class="zoom-in ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_in }}<span class="icon icon-zoom_in"></span></div>
+                <div class="zoom-out ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_out }}<span class="icon icon-zoom_out"></span></div>
             </div>
         </div>
+        <div class="video-preview" data-visible="{{ EQUALS preview 'video' }}">
+            <video src=""></video>
+        </div>
+        <div class="text-preview" data-visible="{{ EQUALS preview 'text' }}">
+            <pre><code class="language-xxxx">{{ MARK this "text-code" }}</code></pre>
+        </div>
+        <div class="no-preview" data-visible="{{ EQUALS preview 'no' }}">
+            <div>Aucune previsualisation possible : format non supporté</div>
+        </div>
+        <div class="too-heavy" data-visible="{{ EQUALS preview 'too-heavy' }}">
+            <div>Aucune previsualisation possible : fichier trop lourd</div>
+        </div>
+    </div>
 </div>
 <script>
     const Ko = 1000;
@@ -58,10 +58,9 @@
         text: {
         types: [/^text\/.*/],
             max_size: 10 * Ko,
-            language: {
-
-            }
-        }
+            language: {}
+        },
+        video: { types: ['video/mp4', 'video/ogg', 'video/webm'], max_size: 1000 * Mo }
     });
 
     var group = null;
@@ -147,6 +146,10 @@
         }
 
         doc.update({ loading: false });
+    }
+
+    async function previewVideo(file) {
+        
     }
 
     function filePreview() {
