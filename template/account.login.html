@@ -19,9 +19,7 @@
     let emailOrUname_input = Dom.find("[name=emailOrUname]", form)[0];
     let password_input = Dom.find("[name=password]", form)[0];
     let button = Dom.find("[name=submit]", form)[0];
-
-    // update new data
-    Dom.addListener(button, "click", async function () {
+    async function connect () {
         let emailOrUname = emailOrUname_input.value;
         let password = password_input.value;
 
@@ -36,5 +34,11 @@
             emailOrUname_input.value = "";
             password_input.value = "";
         }
+    }
+
+    // update new data
+    Dom.addListener(button, "click", connect);
+    Dom.addListener(password_input, "keydown", function (e) {
+        if (e.keyCode == 13) connect();
     });
 </script>

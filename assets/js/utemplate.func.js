@@ -51,6 +51,21 @@
             return !((typeof f == 'function') ? f(...args) : f);
         },
 
+        OR: function (a, ...args) {
+            let nb_args = args.length;
+            let res = a;
+            for (let i = 0; i < nb_args; i++)
+                res ||= args[i];
+            return res;
+        },
+        AND: function (a, ...args) {
+            let nb_args = args.length;
+            let res = a;
+            for (let i = 0; i < nb_args; i++)
+                res &&= args[i];
+            return res;
+        },
+
         /**
          * Inclu un fichier 1 fois : n'est plus inclu par la suite
          * @param {Node} node l'endroit où inserer le code

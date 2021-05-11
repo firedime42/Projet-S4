@@ -18,6 +18,8 @@
     
     <!-- librairies -->
     <script src="/assets/lib/Dom.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/lib/prism.css"></link>
+    <script src="/assets/lib/prism.min.js"></script>
     <script src="/assets/lib/sha256.min.js"></script>
     <script src="/assets/lib/pattern.js"></script>
     <script src="/assets/lib/uTemplate.js"></script>
@@ -54,7 +56,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/group.settings.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/account.params.compte.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/profil.css"></link>
-    <link rel="stylesheet" type="text/css" href="/assets/css/preview.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/file.css"></link>
 
 </head>
 <body data-theme="light">

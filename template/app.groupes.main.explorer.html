@@ -15,12 +15,13 @@
 <div class="content dropzone">
     {{ MARK this "dropzone" }}
     <div class="browse-main" data-visible="true">
-        <center><em>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</em></center>
+        <em data-visible="{{ permissions.create_file }}"><center>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</center></em>
+        <em data-visible="{{ NOT permissions.create_file }}"><center>Denied</center></em>
         <h3>Dossiers</h3>
         <div class="folders row-container">
             {{ MARK this "folders" }}
         </div>
-        <div class="addButton">
+        <div class="addButton" data-visible="{{ permissions.create_folder }}">
             {{ ADDLISTENER this.currentNode "click" create_folder }}
             <span class="icon icon-add"></span>
         </div>
@@ -28,7 +29,7 @@
         <div class="files row-container">
             {{ MARK this "files" }}
         </div>
-        <div class="addButton">
+        <div class="addButton" data-visible="{{ permissions.create_file }}">
             {{ ADDLISTENER this.currentNode "click" create_file }}
             <span class="icon icon-add"></span>
         </div>
@@ -52,9 +53,12 @@
      */
     async function setDir({ groupe_id, folder_id }) {
         if (!folder_id) return;
-
-        groupe = groupe_id;
+        groupe_id *= 1;
         folder_id *= 1;
+        
+        if (!groupe || groupe.id !== groupe_id) {
+            groupe = await GROUPES.get(groupe_id);
+        }
 
         if (folder != null && folder_id == folder.id) {// actualise data on the folder
             folder.pull();
@@ -75,6 +79,7 @@
             }
         }
         
+        doc.update({ permissions: groupe.permissions });
     }
 
     /**
@@ -92,7 +97,7 @@
             else
                 Dom.prepend(
                     path,
-                    `<div class="path-item"><a href="/app/groupes/${groupe}/${dir.id}">${dir.nom}</a></div>`
+                    `<div class="path-item"><a href="/app/groupes/${groupe.id}/${dir.id}">${dir.nom}</a></div>`
                 );
 
             dir = (dir.parent !== null) ? await FOLDERS._get(dir.parent) : null;
@@ -100,6 +105,8 @@
     }
 
     doc.update({
+        permissions: {},
+
         /**
          * creer un dossier dans le dossier courant
          */
@@ -147,9 +154,7 @@
         // on empeche le navigateur de le gerer par defaut : tanter d'ouvrir le fichier dans le navigateur
         e.preventDefault(); e.stopPropagation();
         
-        console.log(e.dataTransfer.files);
-
-        upload_files(e.dataTransfer.files);
+        if (groupe.permissions.create_file) upload_files(e.dataTransfer.files);
     });
 
     /**
@@ -289,8 +294,10 @@
      */
     function addFile(parent, file_id) {
         let file = WFILES.get(file_id);
+        console.log(groupe.permissions);
         listFiles.add(file_id, file,
             {
+                permissions: groupe.permissions,
                 download: async function () {
                     let f = await file;
 
@@ -312,9 +319,13 @@
                 rename: function () {
                     console.log('rename pas encore disponnible');
                 },
+                open: async function () {
+                    let f = await file;
+                    setURL(`/app/groupes/${groupe.id}/${parent.id}/${f.id}`, `Prévisualisation : ${f.nom}`);
+                },
                 preview: async function () {
                     let f = await file;
-                    setURL(`/app/groupes/${groupe}/${parent.id}/${f.id}`, `Prévisualisation : ${f.nom}`);
+                    setURL(`/app/groupes/${groupe.id}/${parent.id}/${f.id}/preview`, `Prévisualisation : ${f.nom}`);
                 },
                 delete: async function () {
                     let f = await file;
@@ -351,8 +362,15 @@
     function addFolder(parent, folder_id) {
         let folder = FOLDERS.get(folder_id);
         listFolders.add(folder_id, folder, {
-            open: function () { setURL(`/app/groupes/${groupe}/${folder_id}`); },
-            delete: function () { console.log('supprimer le dossier'); }
+            permissions: groupe.permissions,
+            open: function () { setURL(`/app/groupes/${groupe.id}/${folder_id}`); },
+            remove: async function () {
+                let f = await folder;
+                let r = await f.remove();
+
+                if (r instanceof Error) console.error(r);
+                else removeFolder(null, folder.id);
+            }
         });
     }
 

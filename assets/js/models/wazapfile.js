@@ -149,8 +149,6 @@
         #etat;              // etat du fichier : pending / uploading / online
         #size;              // taille du fichier en octet
 
-        #rename;            // boolean indiquant si le fichier peut être modifié
-        #delete;            // boolean indiquant si le fichier peut être suprimé
         #liked;             // boolean indiquant si l'utilisateur a aimé le fichier
 
         #nb_likes;          // nombre de "like" du fichier
@@ -192,7 +190,6 @@
          * et au serveur de gérer le cache pour ces données lourdes
          */
         download() {
-            console.log(this);
             if (this.#id == null) return _error(-1);
             if (this.#etat != 'online') return _error(-1);
 
@@ -219,7 +216,6 @@
         async push() {
             if (this.#id == null) return _error(-1);
             if (this.#newNom == null && this.#newDescription == null) return _error(-1);
-            if (this.#rename == false) return _error(-1);
 
             let r = await request("/core/controller/file.php", {
                 action: 'push',
@@ -228,7 +224,7 @@
                 description: this.#newDescription
             });
 
-            if (r instanceof Error) {
+            if (!(r instanceof Error)) {
                 this.#nom = this.#newNom;
                 this.#description = this.#newDescription;
             }
@@ -264,7 +260,6 @@
 
         async remove() {
             if (this.#id == null) return _error(-1); // identifiant null
-            if (!this.#delete) return _error(-2);    // autorisation manquante
 
             let r = await request("/core/controller/file.php", {
                 action: 'remove',
@@ -273,7 +268,7 @@
 
             if (r instanceof Error) return r;
 
-            WFILES.free(this.#id);
+            WFILES.free([this.#id]);
 
             return true;
         }
@@ -324,7 +319,6 @@
         get chat() { return this.#chat; }
 
         get isLiked () { return this.#liked; }
-        get canRemove () { return this.#delete; }
 
         get nb_likes() { return this.#nb_likes; }
         get nb_comments() { return this.#nb_comments; }
@@ -382,8 +376,6 @@
             this.#size = exists(data['size'], this.#size);
             this.#nb_likes = exists(data['nb_likes'], this.#nb_likes);
             this.#nb_comments = exists(data['nb_comments'], this.#nb_comments);
-            this.#rename = exists(data['rename'], this.#rename);
-            this.#delete = exists(data['delete'], this.#delete);
             this.#liked = exists(data['liked'], this.#liked);
             this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
             this.#chat = exists(data['chat'], this.#chat);

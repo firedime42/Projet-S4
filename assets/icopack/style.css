@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?tkswox');
-  src:  url('fonts/icomoon.eot?tkswox#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?tkswox') format('truetype'),
-    url('fonts/icomoon.woff?tkswox') format('woff'),
-    url('fonts/icomoon.svg?tkswox#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?1xyori');
+  src:  url('fonts/icomoon.eot?1xyori#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?1xyori') format('truetype'),
+    url('fonts/icomoon.woff?1xyori') format('woff'),
+    url('fonts/icomoon.svg?1xyori#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,11 +25,71 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-spinner:before {
+.icon-resize:before {
+  content: "\e92d";
+}
+.icon-lock-rounded:before {
   content: "\e91d";
+}
+.icon-arrow-left:before {
+  content: "\e930";
+}
+.icon-clock:before {
+  content: "\e91f";
+}
+.icon-clock1:before {
+  content: "\e920";
+}
+.icon-quill:before {
+  content: "\e921";
+}
+.icon-eye:before {
+  content: "\e922";
+}
+.icon-views:before {
+  content: "\e922";
+}
+.icon-vision:before {
+  content: "\e922";
+}
+.icon-visit:before {
+  content: "\e922";
+}
+.icon-spinner:before {
+  content: "\e923";
+}
+.icon-loading:before {
+  content: "\e923";
+}
+.icon-loading-wheel:before {
+  content: "\e923";
+}
+.icon-refresh:before {
+  content: "\e923";
+}
+.icon-repeat:before {
+  content: "\e923";
+}
+.icon-busy:before {
+  content: "\e923";
+}
+.icon-wait:before {
+  content: "\e923";
+}
+.icon-arrow:before {
+  content: "\e923";
 }
 .icon-dots-three-vertical:before {
   content: "\e91c";
+}
+.icon-save-disk:before {
+  content: "\e924";
+}
+.icon-information-solid:before {
+  content: "\e925";
+}
+.icon-information-outline:before {
+  content: "\e926";
 }
 .icon-cloud-upload:before {
   content: "\e901";
@@ -48,6 +108,21 @@
 }
 .icon-trash-2:before {
   content: "\e90e";
+}
+.icon-zoom_out:before {
+  content: "\e92e";
+}
+.icon-zoom_in:before {
+  content: "\e92f";
+}
+.icon-keyboard_arrow_left:before {
+  content: "\e927";
+}
+.icon-file_download_done:before {
+  content: "\e928";
+}
+.icon-file_download:before {
+  content: "\e929";
 }
 .icon-arrow_forward_ios:before {
   content: "\e91e";
@@ -96,6 +171,15 @@
 }
 .icon-folder:before {
   content: "\e900";
+}
+.icon-floppy-o:before {
+  content: "\e92a";
+}
+.icon-bar-chart:before {
+  content: "\e92b";
+}
+.icon-pie-chart:before {
+  content: "\e92c";
 }
 .icon-file-o:before {
   content: "\e91b";

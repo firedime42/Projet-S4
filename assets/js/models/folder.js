@@ -2,6 +2,7 @@
 
     class Folder extends Listenable {
         static EVENT_UPDATE = "update";
+        static EVENT_REMOVED = "removed";
         static EVENT_NEW_FILE = "newFile";
         static EVENT_NEW_FOLDER = "newFolder";
         static EVENT_REMOVE_FILE = "removeFile";
@@ -24,12 +25,6 @@
         #nb_messages;
 
         #chat;       // identifiant du chat
-
-        #rename;     // boolean indiquant si l'utilisateur peut renomer le dossier
-        #delete;     // boolean indiquant si l'utilisateur peut supprimer le dossier
-
-        #add;        // add files in the folder
-        #create;     // create folder
 
         constructor(id = null) {
             super();
@@ -60,14 +55,8 @@
         get folders() { return this.#folders; }
         get files() { return this.#files; }
 
-        set nom(nom) { if (this.#rename) this.#newNom = nom; }
-        set description(descr) { if (this.#rename) this.#newDescription = descr; }
-
-        canRemove() { return this.#delete; }
-        canRename() { return this.#rename; }
-
-        canAdd() { return this.#add; }
-        canCreate() { return this.#create; }
+        set nom(nom) { this.#newNom = nom; }
+        set description(descr) { this.#newDescription = descr; }
 
 
         /**
@@ -81,10 +70,6 @@
             this.#parent = data.parent;
             this.#chat = data.chat;
             this.#nb_messages = data.nb_messages;
-            this.#rename = data.rename;
-            this.#delete = data.delete;
-            this.#add = true;
-            this.#create = true;
 
             let mutationsFolders = arrayMutations(this.#folders, data.folders);
             let mutationsFiles = arrayMutations(this.#files, data.files);
@@ -142,7 +127,6 @@
          * @param {WazapFile} wfile 
          */
         async addFile(wfile) {
-            if (!this.#add) return _error(-1);
             this.#files.push(wfile.id);
             this.emit(Folder.EVENT_NEW_FILE, wfile.id);
         }
@@ -151,7 +135,6 @@
          * créer un dossier dans le dossier courant
          */
         async createFolder(nom, description) {
-            if (!this.#create) return _error(-1);
             if (!(typeof nom == 'string' && nom.length > 2 && nom.length < 50)) return _error(-1);
             if (!(typeof description == 'string' && nom.length < 300)) return _error(-1);
 
@@ -168,6 +151,23 @@
             this.emit(Folder.EVENT_NEW_FOLDER, r.id);
 
             return r;
+        }
+
+        async remove() {
+            if (this.#id == null) return error(-1);
+            
+            let r = await request("/core/controller/folder.php", {
+                action: 'remove',
+                id: this.#id
+            });
+
+            if (r instanceof Error) { return r; }
+
+            this.emit(Folder.EVENT_REMOVED, r.id);
+            
+            FOLDERS.free([this.#id]);
+
+            return true;
         }
     }
 

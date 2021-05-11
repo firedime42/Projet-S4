@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json");
 require_once dirname(__FILE__) . "/../fileFunction.php";
+require_once dirname(__FILE__) . "/../roleFunction.php";
 require_once dirname(__FILE__) . "/../folderFunction.php";
 require_once dirname(__FILE__) . "/../messageFunction.php";
 require_once dirname(__FILE__) . "/../groupFunction.php";
@@ -14,9 +15,9 @@ $res = array(
 
 switch ($_post->action) {
     case "create":
-        if (isset($_post->nom)) {
+        if (!isset($_post->nom)) {
             $res["error"] = 3001; //Nom de fichier vide
-        } elseif (isset($_post->folder)) {
+        } elseif (!isset($_post->folder)) {
             $res["error"] = 3002; //Dossier vide
         } elseif (empty(recup_folder_id($_post->folder))) {
             $res["error"]=3003;
@@ -65,7 +66,7 @@ switch ($_post->action) {
                     "nb_likes" => (int)$file["nb_likes"],
 
                     "chat"=>$file["chat_id"],
-                    "liked" => $file["liked"],
+                    "liked" =>(bool) $file["liked"],
                     "lastUpdate" => $file["last_update"]
                 );
             }
@@ -81,8 +82,9 @@ switch ($_post->action) {
             if(empty($file)){
                 $res["error"] = 3006;
             }elseif (!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_ANY_FILE)) {
-                if(is_creator($_session["user"]["id"],$_post->id)&&(!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_FILE)))
-                    $res["error"] = 3006;
+                $res["error"] = 3006;
+            }if(is_creator($_session["user"]["id"],$_post->id)&&(!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_REMOVE_FILE))){
+                $res["error"] = 3006;
             }else {
                 $res["success"]=supprime_file($_post->id);
             }

@@ -33,7 +33,7 @@ function recup_group_id($id) {
 function recup_group($id,$user) {
     // retourne les info du group passé en paramètre sous forme d'un tableau
     global $database;
-    $query = "SELECT g.*, (r.remove_file) AS deleted, (r.rename_file) AS renamed FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user";
+    $query = "SELECT g.*,r.*, g.id AS id_group,g.name AS group_name FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user";
     $res = mysqli_query($database, $query);
 	$group_data=mysqli_fetch_assoc($res);
     return $group_data;
@@ -151,6 +151,25 @@ function modif_groupe($id,$nom,$description){
 	return $res;
 }
 
+function modif_nom_group($id,$nom){
+	global $database;
+	$query=
+	$query="UPDATE `group` SET name = '$nom' WHERE id=$id";
+	$res=mysqli_query($database,$query);
+	$query="UPDATE folder SET name='$nom' WHERE group_id=$id AND parent_id IS NULL";
+	mysqli_query($database,$query);
+	return $res;
+}
+
+function modif_description_group($id,$description){
+	global $database;
+	$query="UPDATE `group` SET description='$description' WHERE id=$id";
+	$res=mysqli_query($database,$query);
+	$query="UPDATE folder SET description='$description' WHERE group_id=$id IS NULL";
+	mysqli_query($database,$query);
+	return $res;
+}
+
 function recup_membres($group){
 	global $database;
 	$query="SELECT g.user_id,u.username,g.role_id FROM groupUser g JOIN user u ON u.id=g.user_id WHERE g.group_id=$group AND g.status='accepted'";
@@ -198,14 +217,12 @@ function modif_nb_files($group_id,$val){
 	global $database;
 	$query = "UPDATE `group` SET nb_files=nb_files+$val WHERE id=$group_id";
 	$res = mysqli_query($database,$query);
-	$res=mysqli_num_rows($res);
 	return $res;
 }
 function modif_nb_messages($group_id,$val){
 	global $database;
 	$query = "UPDATE `group` SET nb_messages=nb_messages+$val WHERE id=$group_id";
 	$res = mysqli_query($database,$query);
-	$res=mysqli_num_rows($res);
 	return $res;
 }
 ?>
