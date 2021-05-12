@@ -20,6 +20,7 @@
     <script src="/assets/lib/Dom.js"></script>
     <link rel="stylesheet" type="text/css" href="/assets/lib/prism.css"></link>
     <script src="/assets/lib/prism.min.js"></script>
+    <script src="/assets/lib/wavesurfer.min.js"></script>
     <script src="/assets/lib/sha256.min.js"></script>
     <script src="/assets/lib/pattern.js"></script>
     <script src="/assets/lib/uTemplate.js"></script>

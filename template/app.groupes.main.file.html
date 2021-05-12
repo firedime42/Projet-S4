@@ -8,8 +8,8 @@
     </div>
     <div class="spaceforchatbtn"></div>
 </div>
-<div class="body scrollable">
-    <div class="info-box" data-visible="{{ EQUALS option 'info' }}">
+<div class="body">
+    <div class="info-box scrollable" data-visible="{{ EQUALS option 'info' }}">
         <div class="info">
             <div class="nom">{{ file.nom }}</div>
             <div class="description">
@@ -27,7 +27,7 @@
             </div>
         </div>
     </div>
-    <div class="preview-box" data-visible="{{ EQUALS option 'preview' }}">
+    <div class="preview-box scrollable" data-visible="{{ EQUALS option 'preview' }}">
         <div class="image-preview" data-visible="{{ EQUALS preview 'image' }}">
             <div class="image">{{ MARK this "image" }}</div>
             <div class="control">
@@ -36,11 +36,31 @@
                 <div class="zoom-out ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_out }}<span class="icon icon-zoom_out"></span></div>
             </div>
         </div>
-        <div class="video-preview" data-visible="{{ EQUALS preview 'video' }}">
-            <video src=""></video>
-        </div>
         <div class="text-preview" data-visible="{{ EQUALS preview 'text' }}">
             <pre><code class="language-xxxx">{{ MARK this "text-code" }}</code></pre>
+        </div>
+        <div class="video-preview" data-visible="{{ EQUALS preview 'video' }}">
+            {{ MARK this "video" }}
+            <video controls src=""></video>
+        </div>
+        <div class="audio-preview" data-visible="{{ EQUALS preview 'audio' }}">
+            <div class="audio-box">
+                <div class="audio-controls">
+                    <div class="play-btn" data-state="play">
+                        {{ ADDLISTENER this.currentNode "click" togglePlay }}
+                        <span class="icon icon-play"></span>
+                        <span class="icon icon-pause"></span>
+                    </div>
+                </div>
+                <div class="audio-time">-:--/-:--</div>
+                <div class="audio-display">
+                    {{ MARK this "audio" }}
+                </div>
+            </div>
+        </div>
+        <div class="pdf-preview" data-visible="{{ EQUALS preview 'pdf' }}">
+            {{ MARK this "pdf" }}
+            <iframe src=""></iframe>
         </div>
         <div class="no-preview" data-visible="{{ EQUALS preview 'no' }}">
             <div>Aucune previsualisation possible : format non supporté</div>
@@ -60,7 +80,9 @@
             max_size: 10 * Ko,
             language: {}
         },
-        video: { types: ['video/mp4', 'video/ogg', 'video/webm'], max_size: 1000 * Mo }
+        video: { types: ['video/mp4', 'video/ogg', 'video/webm'], max_size: 1000 * Mo },
+        audio: { types: ['audio/mpeg', 'audio/webm', 'audio/mp4', 'audio/vnd.wave', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/x-pn-wav'], max_size: 1000 * Mo },
+        pdf: { types: ['application/pdf'], max_size: 500 * Mo }        
     });
 
     var group = null;
@@ -69,6 +91,10 @@
     var zoom = 100;
     var image_preview = null;
     var text_preview = null;
+    var video_preview = null;
+    var audio_preview = null;
+    var audio_preview_element = null;
+    var pdf_preview = null;
 
     function previewTypeMatch(types, type) {
         let nb_types = types.length;
@@ -149,7 +175,47 @@
     }
 
     async function previewVideo(file) {
-        
+        doc.update({ loading: true });
+
+        let video_container = video_preview.children[0];
+        video_container.src = `/core/controller/download.php?file_id=${file.id}`;
+
+        doc.update({ loading: false });
+    }
+
+    function togglePlay(e) {
+        console.log(audio_preview);
+
+        let was_playing = audio_preview.isPlaying();
+
+        if (was_playing) audio_preview.pause();
+        else audio_preview.play();
+
+        Dom.attribute(this, {
+            'data-state': (was_playing ? 'play' : 'pause')
+        });
+    }
+
+    async function previewAudio(file) {
+        doc.update({ loading: true });
+
+        audio_preview.load(`/core/controller/download.php?file_id=${file.id}`);
+
+        doc.update({ loading: false });
+    }
+
+    function previewPDF(file) {
+        console.log(pdf_preview);
+        pdf_preview.children[0].src = `/core/controller/download.php?file_id=${file.id}`;
+    }
+
+    function closeVideoPreview() {
+        let video_container = video_preview.children[0];
+        video_container.pause();
+    }
+
+    function closeAudioPreview() {
+        audio_preview.pause();
     }
 
     function filePreview() {
@@ -160,8 +226,19 @@
         // il va avoir beaucoup à faire ici
         if (preview == 'image') previewImage(file);
         else if (preview == 'text') previewText(file);
+        else if (preview == 'video') previewVideo(file);
+        else if (preview == 'audio') previewAudio(file);
+        else if (preview == 'pdf') previewPDF(file);
 
         doc.update({ preview });
+    }
+
+    function closePreview() {
+        if (file == null) return;
+
+        let preview = whichPreview(file.type);
+        if (preview == 'video') closeVideoPreview();
+        else if (preview == 'audio') closeAudioPreview();
     }
 
     async function fileChange({ group_id, folder_id,  file_id, option }) {
@@ -193,10 +270,37 @@
     }
 
 
-    doc.update({ zoom_default, zoom_in, zoom_out });
+    doc.update({ zoom_default, zoom_in, zoom_out, togglePlay });
     image_preview = doc.ctx.markedElement['image'];
     text_preview = doc.ctx.markedElement['text-code'];
-    
+    video_preview = doc.ctx.markedElement['video'];
+    audio_preview_element = doc.ctx.markedElement['audio'];
+    pdf_preview = doc.ctx.markedElement['pdf'];
+
+    audio_preview = WaveSurfer.create({
+        container: doc.ctx.markedElement['audio'],
+        cursorColor: 'rgb(255 193 7)',
+        progressColor: 'hsla(205deg, 65%, 45%, 0.5)',
+        waveColor: '#ddd',
+        height: 40,
+        barWidth: 2,
+        responsive: true
+    });
+
+    function convert_time(time) {
+        let sec = time % 60;
+        let min = (time - sec) / 60;
+        let s_sec = ('0' + sec).slice(-2);
+        return `${min}:${s_sec}`;
+    }
+
+    function time_display() {
+        let current_time = ~~audio_preview.getCurrentTime();
+        let duration = ~~audio_preview.getDuration();
+        Dom.text(audio_preview_element.parentElement.children[1], `${convert_time(current_time)}/${convert_time(duration)}`);
+    }
+    audio_preview.on('audioprocess', time_display);
+    audio_preview.on('ready', time_display);    
     let number = /^[0-9]+$/;
-    URLrooter.addListener("/app/groupes/$group_id/$folder_id/$file_id/$option", fileChange, null, { group_id : number, folder_id: number, file_id: number, option: /^(?:info|preview|)$/ });
+    URLrooter.addListener("/app/groupes/$group_id/$folder_id/$file_id/$option", fileChange, closePreview, { group_id : number, folder_id: number, file_id: number, option: /^(?:info|preview|)$/ });
 </script>

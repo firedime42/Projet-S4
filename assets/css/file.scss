@@ -50,13 +50,13 @@
     }
 
     .body {
-        height: 100%;
-        padding: 20px 40px;
+        height: calc(100% - 1.5em - 24px);
 
         .info-box {
             display: flex;
             align-items: center;
             flex-direction: column;
+            padding: 20px 40px;
 
             .info {
                 background-color: var(--site-background-color);
@@ -84,6 +84,7 @@
         .preview-box {
             width: 100%;
             height: 100%;
+            padding: 20px 40px;
 
             .image-preview {
                 width: 100%;
@@ -93,7 +94,7 @@
                 flex-direction: column;
 
                 .image {
-                    transition: all 0.5s cubic-bezier(0, 0, 0.43, 0.99);
+                    transition: all 0.5s cubic-bezier(0, 0, 0.09, 0.74);
                     background-repeat: no-repeat;
                     background-size: contain;
                     background-position: center;
@@ -128,11 +129,92 @@
             }
 
             .text-preview {
+                box-sizing: content-box;
+
                 pre {
                     margin-top: 0px;
                     border-radius: 10px;
                     position: relative;
                     padding: 10px 20px;
+                }
+            }
+
+            .video-preview {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .audio-preview {
+                
+
+                .audio-box {
+                    max-width: 800px;
+                    border-radius: 10px;
+                    padding: 5px;
+                    background-color: #fff;
+                    display: flex;
+                    align-items: center;
+
+                    .audio-controls {
+                        width: 50px;
+                        display: flex;
+                        justify-content: center;
+
+                        .play-btn {
+                            //transition: .2s cubic-bezier(0.5, -3, 0.5, 4);// boing boing
+                            border-radius: 1em;
+                            cursor: pointer;
+                            background-color: transparent;
+                            color: rgba(40, 127, 189, 0.9);
+                            width: 2em;
+                            height: 2em;
+                            text-align: center;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+
+                        .play-btn:hover {
+                            background-color: rgba(40, 127, 189, 0.5);
+                            color: #fff;
+                        }
+                        .play-btn:active {
+                            margin-top: 4px;
+                        }
+
+                        .play-btn[data-state="play"] .icon-pause { display: none; }
+                        .play-btn[data-state="pause"] .icon-play { display: none; }
+                    }
+
+                    .audio-display {
+                        width: calc(100% - 150px);
+                        height: 40px;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+
+                        > wave {
+                            width: 100%;
+                        }
+                    }
+
+                    .audio-time {
+                        width: 100px;
+                        padding: 5px;
+                        text-align: center;
+                    }
+                }
+            }
+
+            .pdf-preview {
+                width: 100%;
+                height: 100%;
+                
+                iframe {
+                    width: 100%;
+                    height: 100%;
                 }
             }
         }

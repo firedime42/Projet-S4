@@ -194,15 +194,7 @@
             if (this.#etat != 'online') return _error(-1);
 
             let r = ExPromise();
-            fetch("/core/controller/download.php", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: this.#id
-                })
-            })
+            fetch(`/core/controller/download.php?file_id=${this.#id}`)
             .then(res => res.blob())
             .catch(err => r.resolve(err))
             .then(b => r.resolve(b));

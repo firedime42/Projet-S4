@@ -165,7 +165,7 @@ function modif_description_group($id,$description){
 	global $database;
 	$query="UPDATE `group` SET description='$description' WHERE id=$id";
 	$res=mysqli_query($database,$query);
-	$query="UPDATE folder SET description='$description' WHERE group_id=$id IS NULL";
+	$query="UPDATE folder SET description='$description' WHERE group_id=$id AND parent_id IS NULL";
 	mysqli_query($database,$query);
 	return $res;
 }
