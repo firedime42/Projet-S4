@@ -1,0 +1,143 @@
+l2_gr_6
+Chej7loh
+
+id16419041_info406
+^YE#>RNuaIGe_1@(
+
+# GLOBAL :
+0000 : Erreur inconnu
+0001 : Erreur connexion à la base de donnée
+0002 : id vide
+0003 : temps invalide
+
+0101 : Utilisateur non connecté
+
+# ACCOUNT:
+1000 : Erreur inconnu généré par account
+
+1100 : Erreur inconnu liée à la connexion
+1101 : Le mot de passe ne correspond pas
+1102 : Le timestamp est trop vieux
+1103 : Erreur l'identifiant ne correspond à aucun utilisateur
+1104 : Erreur l'email ne correspond à aucun utilisateur
+
+1200 : Erreur inconnu liée à l'inscription
+1201 : email invalide (mauvais format)
+1202 : username invalide (mauvais format)
+1203 : email déjà utilisé par un autre compte
+1204 : username déjà utilisé par un autre compte
+1205 : le mot de passe est vide
+1206 : le mot de passe n'est pas assez sécurisé (verification coté client)
+
+# GROUP
+2000 : erreur inconnu généré par groupe
+
+2002 : groupe inexistant
+2004 : nombre de resulats invalide
+2005 : recherche invalide(champ vide)
+
+2100 : le groupe n'existe pas
+2101 : vous ne faites pas parti du groupe
+
+# FILE
+3000: Erreur inconnu généré par file
+
+3001 : nom de fichier vide
+3002 : dossier vide
+3004 : un fichier a le meme nom
+3005 : description vide
+3006 : fichier inexistant
+3007 : temps invalide
+
+#FOLDER
+4000: Erreur inconnu généré par folder
+
+4001 : nom de dossier invalide
+4002 : Dossier Parent vide
+4003 : dossier inexistant
+4004 : Dossier Parent inexistant
+
+//USER
+
+Timestamp trop vieux
+Email Correspondance absente
+Mot de passe eronné
+Id Correspondance absente
+Erreur pas gérée
+
+Format email
+Format Username
+Email utilisée ailleurs
+Id utilisé ailleurs
+mot de passe vide
+
+Erreur Compte Random
+
+//DOWNLOAD
+
+Permission Denied
+file id inexistant
+file inexistant
+//FILE
+
+Nom de fichier vide
+dossier vide
+dossier inexistant
+Permissions denied
+file id vide
+Fichier inexistant
+Timestamp vide
+description vide
+Resultats negatifs
+Recherche vide
+est aimé
+n'est pas aimé
+
+//FOLDER
+
+id vide
+dossier inexistant
+temps vide
+nom invalide
+dossier parent inexistant
+permission denied
+
+//GROUPE
+
+Temps invalide
+id inexistant
+groupe vide
+Resultats negatifs
+Query invalide
+groupe vide
+quitter -> proprietaire
+nom invalide
+description invalide
+user inexistant
+groupe inexistant
+permission denied
+group id inexistant
+user id inexistant
+role inexistant
+role id inexistant
+nom vide
+description vide
+chat inexistant
+//MESSAGE
+
+nb messages negatifs
+id inexistant
+chat inexistant
+plus ancien message inexistant
+dernier message inexistant
+timestamp inexistant
+direction inexistante
+Permission denied
+message inexistant
+
+
+//UPLOAD
+
+Taille negative ou nulle
+fichier inexistant
+id invalide

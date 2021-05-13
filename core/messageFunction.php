@@ -214,8 +214,8 @@ function ajouter_message($group_id,$chat,$message,$idUtilisateur) {
     $time = (int) (microtime(true) * 1000);
     $message=mysqli_real_escape_string($database, $message);
     $query="INSERT INTO message (message,author,chat_id,last_update,creation_date) VALUES('$message',$idUtilisateur,$chat,$time,$time)";
-    mysqli_query($database,$query);
     modif_nb_messages($group_id,1);
+    mysqli_query($database,$query);
     return mysqli_insert_id($database);
 }
 function supprimer_message($id) {
