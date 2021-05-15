@@ -222,7 +222,6 @@ function supprimer_message($id) {
     global $database;
     $time = (int) (microtime(true) * 1000);
     $query="UPDATE message SET deleted=1, last_update=$time WHERE id=$id";
-    //$query="DELETE FROM message WHERE id=$id";
     $res=mysqli_query($database,$query);
     return $res;
 }
@@ -237,8 +236,9 @@ function edit_message($id,$message){
 
 function ajoute_chat(){
     global $database;
-    $query="INSERT INTO chat () VALUES()";
-    $res=mysqli_query($database,$query);
+    $time=(int)(microtime(true)*1000);
+    $query="INSERT INTO chat (last_update) VALUES($time)";
+    mysqli_query($database,$query);
     return mysqli_insert_id($database);
 }
 
@@ -269,6 +269,13 @@ function update_message($chat,$user){
     }
     mysqli_query($database,$query);
 }
+function update_chat($id){
+    global $database;
+    $time=(int) (microtime(true) * 1000);
+    $query="UPDATE chat (last_update) VALUES ($time) WHERE id=$id";
+    mysqli_query($database,$query);
+}
+
 function update_message_everyone($chat){
 	global $database;
     $group=recup_group_chat($chat);

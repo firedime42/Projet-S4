@@ -118,6 +118,7 @@ switch ($_post->action) {
 			$res["success"]=true;
 			$res["id"]=ajouter_message(recup_group_chat($_post->id),$_post->id,$_post->content,$_session["user"]["id"]);
 			update_message_everyone($_post->id);
+			update_chat($_post->id);
 		}
 		break;
 	default :

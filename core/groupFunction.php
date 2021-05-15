@@ -230,7 +230,7 @@ function notifs($group,$user){
 	global $database;
 	$query="SELECT COUNT(*) AS notif_folder FROM folderUser fu JOIN folder f ON f.id=fu.folder_id WHERE fu.last_update>=f.last_update AND fu.user_id = $user AND f.group_id=$group
 	UNION
-	SELECT COUNT(*) AS notif_message FROM chatUser cu WHERE cu.last_update>=0 AND user_id =$user";// AND chat_id=";
+	SELECT COUNT(*) AS notif_message FROM chatUser cu JOIN chat c ON c.id=cu.chat_id WHERE cu.last_update>=c.last_update AND cu.user_id =$user";
 	$res=mysqli_query($database,$query);
 	return mysqli_fetch_assoc($res);
 }
