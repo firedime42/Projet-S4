@@ -29,6 +29,7 @@ switch ($_post->action) {
             $description=mysqli_real_escape_string($database,$_post->description);
             $res["success"]=true;
             $res["id"]=create_file(recup_group_folder($_post->folder),$_post->folder,$nom,$_post->type,$_post->size,$description,$_session["user"]["id"]);
+            update_folder_everyone($_post->folder);
         }
         break;
     case "end-upload":
@@ -69,6 +70,7 @@ switch ($_post->action) {
                     "liked" =>(bool) $file["liked"],
                     "lastUpdate" => $file["last_update"]
                 );
+                update_folder($file["location"],$_session["user"]["id"]);
             }
         }
         break;

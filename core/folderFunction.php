@@ -23,13 +23,13 @@ function recupere_dossiers_dans_dossier($folderId){
 	// Retourne les information concernant les fichiers contenus dans le dossier donné
 
 	global $database;
-	$query = "SELECT id FROM folder WHERE parent_id = $folderId";
+	$query = "SELECT name FROM folder WHERE parent_id = $folderId";
 
 	$resq = mysqli_query($database, $query);
 	
 	$folderarray=array();
 	while($row = mysqli_fetch_assoc($resq)) {
-		$folderarray[] = (int) $row["id"];
+		$folderarray[] = (int) $row["name"];
 	}
 	return $folderarray;
 }
@@ -78,4 +78,31 @@ function nb_files($id){
 	return mysqli_num_rows($res);
 }
 
+function update_folder($folder,$user){
+    global $database;
+    $query="SELECT * FROM folderUser WHERE folder_id=$folder AND user_id=$user";
+    $res=mysqli_query($database,$query);
+    $time=(int) (microtime(true) * 1000);
+    if(mysqli_num_rows($res)>=1){
+        $query="UPDATE folderUser (last_update) VALUES($time) WHERE folder_id=$folder AND user_id=$user";
+    }else{
+        $query="INSERT INTO folderUser(folder_id,user_id,last_update) VALUES ($folder,$user,$time)";
+    }
+    $res=mysqli_query($database,$query);
+	return $res;
+}
+
+function update_folder_everyone($folder){
+	global $database;
+	$query="SELECT gu.user_id FROM folder f JOIN groupUser gu ON gu.group_id=f.group_id WHERE f.id=$folder";
+	$res=mysqli_query($database,$query);
+	$res=mysqli_fetch_array($res);
+	$query="INSERT INTO folderUser(folder_id,user_id,last_update) VALUES ";
+	foreach ($res as $user) {
+		$query.="($folder,$user,0),";
+	}
+	$query=substr($query,0,-1);
+	$res=mysqli_query($database,$query);
+	return $res;
+}
 ?>

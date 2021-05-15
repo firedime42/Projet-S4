@@ -254,7 +254,33 @@ function supprime_chat_folder($id){
     global $database;
     $querry = "DELETE FROM chat WHERE folder_id=$id";
     $res=mysqli_query($database, $querry);
-    
     return $res;
+}
+
+function update_message($chat,$user){
+    global $database;
+    $query="SELECT * FROM chatUser WHERE chat_id=$chat AND user_id=$user";
+    $res=mysqli_query($database,$query);
+    $time=(int) (microtime(true) * 1000);
+    if(mysqli_num_rows($res)>=1){
+        $query="UPDATE chatUser (last_update) VALUES($time) WHERE chat_id=$chat AND user_id=$user";
+    }else{
+        $query="INSERT INTO chatUser(chat_id,user_id,last_update) VALUES ($chat,$user,$time)";
+    }
+    mysqli_query($database,$query);
+}
+function update_message_everyone($chat){
+	global $database;
+    $group=recup_group_chat($chat);
+	$query="SELECT user_id FROM groupUser WHERE group_id=$group";
+	$res=mysqli_query($database,$query);
+	$res=mysqli_fetch_array($res);
+	$query="INSERT INTO chatUser(chat_id,user_id,last_update) VALUES ";
+	foreach ($res as $user) {
+		$query.="($chat,$user,0),";
+	}
+	$query=substr($query,0,-1);
+	$res=mysqli_query($database,$query);
+	return $res;
 }
 ?>

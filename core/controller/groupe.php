@@ -23,16 +23,19 @@ switch ($_post->action) {
             $group_data=recup_groups_since($_session["user"]["id"],$_post->time);
             $groups=array();
             foreach($group_data as $group){
+                $notif=notifs($group["id"],$_session["user"]["id"]);
                 $groups[]=array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
                     "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
-                    "new_docs" => 0,
+                    /*"new_docs" => 0,
                     "unread_docs" => 0,
-                    "new_messages" => 0,
+                    "new_messages" => 0,*/
                     "description" => $group["description"],
                     "creator_id" => $group["id_creator"],
-                    "lastUpdate" => $group["last_update"]
+                    "lastUpdate" => $group["last_update"],
+                    "notif_folder" => (int)$notif["notif_folder"]>0,
+                    "notif_message" => (int)$notif["notif_message"]>0
                 );
             }
             $res["groups"] = $groups; 
@@ -50,6 +53,7 @@ switch ($_post->action) {
             }
             else {
                 $res["success"]=true;
+                $notif=notifs($group["id"],$_session["user"]["id"]);
                 $res["groupe"]= array(
                     "id" => $group["id_group"],
                     "nom" => $group["group_name"],
@@ -62,6 +66,8 @@ switch ($_post->action) {
                     "nb_files" => 0,//(int) $group["nb_files"],
                     "creator_id" => $group["id_creator"],
                     "lastUpdate" => $group["last_update"],
+                    "notif_folder" => (int)$notif["notif_folder"]>0,
+                    "notif_message" => (int)$notif["notif_message"]>0,
                     "permissions" => array(
                         "write_message" => ($group["write_message"]==1),
                         "remove_message" => ($group["remove_message"]==1),

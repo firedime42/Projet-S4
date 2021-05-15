@@ -33,7 +33,7 @@ function recup_group_id($id) {
 function recup_group($id,$user) {
     // retourne les info du group passé en paramètre sous forme d'un tableau
     global $database;
-    $query = "SELECT g.*,r.*, g.id AS id_group,g.name AS group_name FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user";
+    $query = "SELECT g.*,r.*, g.id AS id_group,g.name AS group_name FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user ";
     $res = mysqli_query($database, $query);
 	$group_data=mysqli_fetch_assoc($res);
     return $group_data;
@@ -114,7 +114,8 @@ function recup_status_by_user_and_group($id_user, $id_group){
 
 function recup_groups_since ($id_user,$time){
 	global $database;
-		$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
+		$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator FROM `group` g JOIN groupUser gu 
+		ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
 		$resq = mysqli_query($database, $query);
 		$grouplist=array();
 		while($row = mysqli_fetch_assoc($resq)) {
@@ -224,5 +225,13 @@ function modif_nb_messages($group_id,$val){
 	$query = "UPDATE `group` SET nb_messages=nb_messages+$val WHERE id=$group_id";
 	$res = mysqli_query($database,$query);
 	return $res;
+}
+function notifs($group,$user){
+	global $database;
+	$query="SELECT COUNT(*) AS notif_folder FROM folderUser fu JOIN folder f ON f.id=fu.folder_id WHERE fu.last_update>=f.last_update AND fu.user_id = $user AND f.group_id=$group
+	UNION
+	SELECT COUNT(*) AS notif_message FROM chatUser cu WHERE cu.last_update>=0 AND user_id =$user";// AND chat_id=";
+	$res=mysqli_query($database,$query);
+	return mysqli_fetch_assoc($res);
 }
 ?>

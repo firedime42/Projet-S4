@@ -141,3 +141,17 @@ message inexistant
 Taille negative ou nulle
 fichier inexistant
 id invalide
+
+FolderUser
+
+Ajout fichier -> modif lastUpadte dossier
+LastUpdate<folder lastUpadte THEN notification
+pull -> mise a jour Folderuser
+
+ChatUser
+
+ajout message-> modif lastUpdate chat
+LastUpdate<chat lastUpadte THEN notification
+getMessage -> mise a jour du timestamp
+
+UPDATE chatUSER SET lastUpdate=12 WHERE NOT EXISTS(SELECT * FROM chatUser WHERE id=4 and chat_id=12) AND id=4 and chat_id=12

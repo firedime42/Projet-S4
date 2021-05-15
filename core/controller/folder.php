@@ -31,6 +31,7 @@ switch($_post->action){
                 $res["success"] = true;
             } else {
                 $res["success"] = true;
+                update_folder($_post->id,$_session["user"]["id"]);
                 $res["folder"] = array(
                     //"id" => $folder["id"],
                     "nom" => $folder["name"],
@@ -43,6 +44,7 @@ switch($_post->action){
                     "nb_messages" => (int) $folder["nb_messages"],
                     "lastUpdate" => $folder["last_update"]
                 );
+                update_folder($folder["id"],$_session["user"]["id"]);
             }
         }
         break;
@@ -65,6 +67,7 @@ switch($_post->action){
                 $res["parent"] = $parents;
                 $res["success"]=create_folder($nom,$parents['group_id'],$_post->parent,$description);
                 $res["id"]=mysqli_insert_id($database);
+                update_folder_everyone($folder["id"]);
             }
         }
         break;

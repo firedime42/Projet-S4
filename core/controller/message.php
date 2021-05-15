@@ -47,6 +47,7 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
+			update_message($_post->id,$_session["user"]["id"]);
 			$res["lastUpdate"] = microtime(true)*1000;
 			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
 			$res["edited"] = $updates["edited"];
@@ -116,6 +117,7 @@ switch ($_post->action) {
 		}else{
 			$res["success"]=true;
 			$res["id"]=ajouter_message(recup_group_chat($_post->id),$_post->id,$_post->content,$_session["user"]["id"]);
+			update_message_everyone($_post->id);
 		}
 		break;
 	default :
