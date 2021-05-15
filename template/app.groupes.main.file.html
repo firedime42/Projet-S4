@@ -11,17 +11,53 @@
 <div class="body">
     <div class="info-box scrollable" data-visible="{{ EQUALS option 'info' }}">
         <div class="info">
-            <div class="nom">{{ file.nom }}</div>
-            <div class="description">
-                <h1>Description</h1>
-                <div class="filetype" data-file-type="">{{ file.type }}</div>
-                <p>{{ file.description }}</p>
+            <div class="option">
+                <a href="./edit-info"><span class="icon icon-edit-3"></span></a>
+            </div>
+            <div class="my-row nom">
+                <div class="col1">Nom :</div>
+                <div class="col2">{{ file.nom }}</div>
+            </div>
+            <div class="my-row filetype">
+                <div class="col1">Type : </div>
+                <div class="col2">{{ file.type }}</div>
+            </div>
+            <div class="my-row description">
+                <div class="col1">description:</div>
+                <div class="col2">{{ file.description }}</div>
             </div>
             <div class="data">
                 <div class="author"><span class="icon icon-quill"></span>test1</div>
-                <div class="publish_date"><span class="icon icon-clock1"></span>le 05/05/2021</div>
-                <div class="size"><span class="icon icon-save-disk"></span>{{ file.size }}o</div>
-                <div class="nb_downloads"><span class="icon icon-download"></span>10</div>
+                <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" UNITS.SECONDE }}</div>
+                <div class="size"><span class="icon icon-save-disk"></span>{{ size file.size }}</div>
+                <div class="nb_downloads"><span class="icon icon-download"></span>{{ file.nb_downloads }}</div>
+                <div class="nb_messages"><span class="icon icon-chat"></span>{{ file.nb_comments }}</div>
+                <div class="nb_likes"><span class="icon icon-favorite"></span>{{ file.nb_likes }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="info-box scrollable"  data-visible="{{ EQUALS option 'edit-info' }}">
+        <div class="info">
+            <div class="option">
+                <span class="icon icon-save-disk">{{ ADDLISTENER this.currentNode 'click' save }}</span>
+            </div>
+            <div class="my-row nom">
+                <div class="col1">Nom :</div>
+                <div class="col2" data-erreur="{{ false }}" contenteditable>{{ MARK this "filename" }}<!---->{{ file.nom }}</div>
+            </div>
+            <div class="my-row filetype">
+                <div class="col1">Type : </div>
+                <div class="col2">{{ file.type }}</div>
+            </div>
+            <div class="my-row description">
+                <div class="col1">description:</div>
+                <div class="col2" data-erreur="{{ false }}" contenteditable>{{ MARK this "description" }}<!---->{{ file.description }}</div>
+            </div>
+            <div class="data">
+                <div class="author"><span class="icon icon-quill"></span>test1</div>
+                <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" UNITS.SECONDE }}</div>
+                <div class="size"><span class="icon icon-save-disk"></span>{{ size file.size }}</div>
+                <div class="nb_downloads"><span class="icon icon-download"></span>{{ file.nb_downloads }}</div>
                 <div class="nb_messages"><span class="icon icon-chat"></span>{{ file.nb_comments }}</div>
                 <div class="nb_likes"><span class="icon icon-favorite"></span>{{ file.nb_likes }}</div>
             </div>
@@ -34,7 +70,7 @@
                 <div class="zoom-default ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_default }}<span class="icon icon-resize"></span></div>
                 <div class="zoom-in ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_in }}<span class="icon icon-zoom_in"></span></div>
                 <div class="zoom-out ctrl-btn">{{ ADDLISTENER this.currentNode "click" zoom_out }}<span class="icon icon-zoom_out"></span></div>
-            </div>
+            </div> 
         </div>
         <div class="text-preview" data-visible="{{ EQUALS preview 'text' }}">
             <pre><code class="language-xxxx">{{ MARK this "text-code" }}</code></pre>
@@ -76,7 +112,7 @@
     const PREVIEW_TYPE = Object.freeze({
         image: { types: ['image/bmp', 'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/tiff', 'image/webp'], max_size: 30 * Mo },
         text: {
-        types: [/^text\/.*/],
+            types: [/^text\/.*/],
             max_size: 10 * Ko,
             language: {}
         },
@@ -87,6 +123,9 @@
 
     var group = null;
     var file = null;
+
+    var nom = null;
+    var description = null;
 
     var zoom = 100;
     var image_preview = null;
@@ -241,7 +280,43 @@
         else if (preview == 'audio') closeAudioPreview();
     }
 
-    async function fileChange({ group_id, folder_id,  file_id, option }) {
+    /** modification info **/
+
+    async function save() {
+        if (file == null || (file.auteur.id != user.id && !grp.permissions.rename_file)) return false;
+
+        let nom = Dom.text(filename);
+        let descr = Dom.text(description);
+
+        Dom.attribute(filename, { 'data-erreur': false });
+        Dom.attribute(description, { 'data-erreur': false });
+
+        if (nom.length < 3 || nom.length > 50) {
+            Dom.attribute(filename, { 'data-erreur': true });
+            filename.focus();
+        }
+        if (descr.length > 500) {
+            Dom.attribute(description, { 'data-erreur': true });
+            description.focus();
+        }
+        if (nom.length >= 3 && nom.length <= 50 && descr.length <= 500) {
+            file.nom = nom;
+            file.description = descr;
+
+            let r = file.push();
+
+            if (r instanceof Error) {
+                switch (r.code) {
+                    default: break;
+                }
+            } else {
+                setURL('./info');
+            }
+        }
+    }
+
+    /** modification url **/
+    async function fileChange({ group_id, folder_id, file_id, option }) {
         
         group_id *= 1;
         folder_id *= 1;
@@ -270,12 +345,26 @@
     }
 
 
-    doc.update({ zoom_default, zoom_in, zoom_out, togglePlay });
+    /** ajout des fonctions à la vue **/
+    doc.update({ zoom_default, zoom_in, zoom_out, togglePlay, save, size: function (size) {
+        let units = ['o', 'Ko', 'Mo', 'Go']
+        let unit = 0;
+        let final_size = size;
+        while (unit < 3 && 1000 < final_size) {
+            final_size /= 1000;
+            unit++;
+        }
+        return `${(''+final_size).substr(0, 5)} ${units[unit]}`;
+    }});
+
     image_preview = doc.ctx.markedElement['image'];
     text_preview = doc.ctx.markedElement['text-code'];
     video_preview = doc.ctx.markedElement['video'];
     audio_preview_element = doc.ctx.markedElement['audio'];
     pdf_preview = doc.ctx.markedElement['pdf'];
+
+    filename = doc.ctx.markedElement['filename'];
+    description = doc.ctx.markedElement['description'];
 
     audio_preview = WaveSurfer.create({
         container: doc.ctx.markedElement['audio'],
@@ -299,8 +388,9 @@
         let duration = ~~audio_preview.getDuration();
         Dom.text(audio_preview_element.parentElement.children[1], `${convert_time(current_time)}/${convert_time(duration)}`);
     }
+
     audio_preview.on('audioprocess', time_display);
     audio_preview.on('ready', time_display);    
     let number = /^[0-9]+$/;
-    URLrooter.addListener("/app/groupes/$group_id/$folder_id/$file_id/$option", fileChange, closePreview, { group_id : number, folder_id: number, file_id: number, option: /^(?:info|preview|)$/ });
+    URLrooter.addListener("/app/groupes/$group_id/$folder_id/$file_id/$option", fileChange, closePreview, { group_id : number, folder_id: number, file_id: number, option: /^(?:info|preview|edit-info|)$/ });
 </script>

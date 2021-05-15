@@ -211,6 +211,10 @@
   background-image: linear-gradient(86deg, var(--upload-color) 0%, var(--upload-color) calc(var(--progress) - 1px), transparent calc(var(--progress) + 1px), transparent 100%);
 }
 
+.explorer .browse-main .nb_likes {
+  cursor: pointer;
+}
+
 .explorer .browse-main .nb_messages:before {
   content: "\e914";
 }

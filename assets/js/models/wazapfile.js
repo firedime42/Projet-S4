@@ -309,6 +309,7 @@
         get type() { return this.#type; }
         get etat() { return this.#etat; }
         get chat() { return this.#chat; }
+        get auteur() { return { id: this.#auteur, name: 'tripitaka' };}
 
         get isLiked () { return this.#liked; }
 
@@ -372,6 +373,7 @@
             this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
             this.#chat = exists(data['chat'], this.#chat);
 
+            console.log('auteur: ', data.auteur);
             this.emit(WazapFile.EVENT_UPDATE);
         }
     }

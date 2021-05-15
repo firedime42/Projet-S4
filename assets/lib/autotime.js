@@ -32,7 +32,9 @@
                 let mode_name = Dom.attribute(element, 'data-mode');
                 let time = Dom.attribute(element, 'data-time') * 1 || now;
                 let mode = modes[mode_name] || modes["default"];
-                Dom.text(element, mode(element, now, time));
+                let new_text = mode(element, now, time);
+                let old_text = Dom.text(element);
+                if (old_text != new_text) Dom.text(element, new_text);
             } catch (e) { console.error(e); }
         }
     }

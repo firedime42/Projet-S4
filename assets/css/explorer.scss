@@ -188,6 +188,8 @@
             }
         }
 
+        .nb_likes { cursor: pointer; }
+
         .nb_messages:before { content: "\e914"; }
         .nb_files:before { content: "\e909"; }
         .nb_folders:before { content: "\e900"; }

@@ -15,7 +15,7 @@
 <div class="content dropzone">
     {{ MARK this "dropzone" }}
     <div class="browse-main" data-visible="true">
-        <em data-visible="{{ permissions.create_file }}"><center>Glisser/deposer des fichiers sur cette section pour les ajouters dans ce dossier.</center></em>
+        <em data-visible="{{ permissions.create_file }}"><center>Glisser/deposer des fichiers sur cette section pour les ajouter dans ce dossier.</center></em>
         <em data-visible="{{ NOT permissions.create_file }}"><center>Denied</center></em>
         <h3>Dossiers</h3>
         <div class="folders row-container">
@@ -348,6 +348,13 @@
                     let result = await f.unlike();
                     if (result instanceof Error) {
                         console.log('ah ah heu...');
+                    }
+                },
+                togglelike: async function () {
+                    let f = await file;
+                    let result = await (f.isLiked ? f.unlike() : f.like());
+                    if (result instanceof Error) {
+                        console.log('echec de la mission mon capitaine !');
                     }
                 }
             }

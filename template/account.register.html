@@ -3,11 +3,11 @@
     
     <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_EXIST_EMAIL }}">Un compte possède déjà cet email.</p>
     <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_EXIST_USERNAME }}">Un compte possède déjà ce nom d'utilisateur.</p>
-    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_USERNAME }}">Nom d'utilisateur incorrecte : caractères alphanumérique, "_" et ".".</p>
+    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_USERNAME }}">Nom d'utilisateur incorrect : caractères alphanumériques, "_" et ".".</p>
     <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_EMAIL }}">Email incorrecte.</p>
     <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_PASSWORD }}">
         <b>Mot de passe trop faible.</b>
-        Veillez à utiliser des majuscules, des chiffres et des caractères spéciaux (8 chars min).
+        Veillez à utiliser des majuscules, des chiffres et des caractères spéciaux (8 charactères minimum).
     </p>
     <p class="error" data-visible="{{ error_psws_diff }}">Les deux mots de passes sont différents.</p>
     
@@ -16,7 +16,7 @@
     <input name="email" type="email" class="form-control" placeholder="Email address" required="" autofocus="">
     <input name="psw1" type="password" class="form-control" placeholder="Password" required="">
     <input name="psw2" type="password" class="form-control" placeholder="Repeat password" required="">
-    <button name="submit" class="btn btn-lg btn-primary">Register</button>
+    <button name="submit" class="btn btn-lg btn-primary">S'inscrire</button>
     <!--<p class="mt-5 mb-3 text-muted">© 2021-2022</p>-->
 </div>
 <script>

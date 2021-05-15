@@ -72,11 +72,44 @@
                     flex-wrap: wrap;
 
                     div {
-                        width: 50%;
+                        width: 33%;
                         .icon {
                             padding: 0 5px;
                         }
                     }
+                }
+
+                .my-row {
+                    display: flex;
+
+                    > * { padding: 5px; }
+                    .col1 {
+                        width: 120px;
+                        text-align: right;
+                    }
+
+                    .col2 {
+                        width: calc(100% - 120px);
+                        overflow-wrap: break-word;
+                    }
+                }
+
+                *[contenteditable] {
+                    background-color: #fff;
+                    border-radius: 5px;
+                    border: 1px solid #ddd;
+                }
+
+                *[data-erreur="true"] {
+                    background-color:#e91e620d;
+                    border-color: #e91e63;
+                }
+
+                .description > .col2 {
+                    min-height: 3.625em;
+                }
+                .description > .col2:empty:before {
+                    content: "Aucune description";
                 }
             }
         }
@@ -144,14 +177,22 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+
+                video {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
             }
 
             .audio-preview {
-                
+                display: flex;
+                flex-direction: column;
+                align-items: center;
 
                 .audio-box {
+                    width: 100%;
                     max-width: 800px;
-                    border-radius: 10px;
+                    border-radius: 5px;
                     padding: 5px;
                     background-color: #fff;
                     display: flex;
@@ -214,6 +255,24 @@
                 
                 iframe {
                     width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .no-preview, .too-heavy {
+                height: 100%;
+                > div {
+                    text-align: center;
+                    font-size: x-large;
+                    color: #fff;
+                    background: rgba(0,0,0,0.3);
+                    padding: 20px;
+                    border-radius: 5px;
+                    background: url(/assets/img/T_3.svg);
+                    background-size: cover;
+                    background-position-y: center;
+                    background-position-x: center;
+                    background-repeat: no-repeat;
                     height: 100%;
                 }
             }
