@@ -20,7 +20,7 @@ function getUploadRequestData() {
 // fonction qui ajoute les données à la fin d'un fichier 
 function writeInFile($filename, $data) {
     # on ouvre le fichier en mode ajout
-    $file = fopen($filename, 'ab');
+    $file = fopen($filename, 'ab+');
 
     # on ajoute le bloc de données à la fin du fichier
     fwrite($file, $data);

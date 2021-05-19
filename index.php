@@ -36,6 +36,7 @@
 
     <!-- models -->
     <script src="/assets/js/models/mainuser.js"></script>
+    <script src="/assets/js/models/user.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
     <script src="/assets/js/models/folder.js"></script>
     <script src="/assets/js/models/wazapfile.js"></script>
@@ -49,6 +50,7 @@
 
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/nav.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/home.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/app.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>

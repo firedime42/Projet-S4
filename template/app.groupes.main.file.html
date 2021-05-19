@@ -347,7 +347,7 @@
 
     /** ajout des fonctions à la vue **/
     doc.update({ zoom_default, zoom_in, zoom_out, togglePlay, save, size: function (size) {
-        let units = ['o', 'Ko', 'Mo', 'Go']
+        let units = ['o', 'Ko', 'Mo', 'Go'];
         let unit = 0;
         let final_size = size;
         while (unit < 3 && 1000 < final_size) {

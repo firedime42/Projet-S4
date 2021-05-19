@@ -10,4 +10,11 @@
 		printf("Échec de la connexion : %s\n", mysqli_connect_error());
 		die();
 	}
+
+	// fonction pour le temps
+	
+	/**
+	 * retourne le timestamp actuel en milliseconds.
+	 */
+	function now() { return (int) (microtime(true) * 1000); }
  ?>

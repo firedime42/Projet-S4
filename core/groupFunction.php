@@ -4,20 +4,30 @@ require_once("sql.php");
 
 function create_group($nom, $description, $id_proprietaire) {
 	global $database;
+
+	# creation du groupe
 	$query = "INSERT INTO `group` (name, description, id_creator) VALUES ('$nom', '$description', $id_proprietaire)";//, $avatar )";
 	mysqli_query($database, $query);
-	$id_group=mysqli_insert_id($database);
-	create_folder($nom, $id_group);
-	$id_folder=mysqli_insert_id($database);
+	$id_group = mysqli_insert_id($database);
+
+	# creation du dossier associé au groupe
+	$id_folder = create_folder($id_group, $nom);
+	
+	# creation des roles de base du groupe
 	create_role($id_group,"Membre",1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-	$id=mysqli_insert_id($database);
-	$query="UPDATE `group` SET default_role=$id,root=$id_folder WHERE id=$id_group";
-	mysqli_query($database,$query);
+	$id_role_membre=mysqli_insert_id($database);
 	create_role_color($id_group,"Fondateur","dc3545",1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
-	$id=mysqli_insert_id($database);
-	apply_group($id_group,$id_proprietaire);
-	join_group($id_group,$id_proprietaire,$id_proprietaire);
-	add_role($id_group,$id_proprietaire,$id);
+	$id_role_fondateur=mysqli_insert_id($database);
+	
+	# ajout du role par défaut et du dossier racine
+	$query="UPDATE `group` SET default_role=$id_role_membre,root=$id_folder WHERE id=$id_group";
+	mysqli_query($database,$query);
+
+	# ajout de l'utilisateur au groupe
+	apply_group($id_group, $id_proprietaire);                  // candidature
+	join_group($id_group, $id_proprietaire);                   // accepte l'utilisateur
+	add_role($id_group, $id_proprietaire, $id_role_fondateur); // attribution du role fondateur
+
 	return $id_group;
 }
 
@@ -30,11 +40,11 @@ function recup_group_id($id) {
     return $group_data;
 }
 
-function recup_group($id,$user) {
+function recup_group($id, $user) {
     // retourne les info du group passé en paramètre sous forme d'un tableau
     global $database;
-    $query = "SELECT g.*,r.*, g.id AS id_group,g.name AS group_name FROM `group` g JOIN groupUser gu ON gu.group_id=g.id JOIN role r ON r.id=gu.role_id WHERE g.id = $id AND gu.user_id=$user";
-    $res = mysqli_query($database, $query);
+    $query = "SELECT g.*, r.*, g.id AS id_group, g.name AS group_name, u.username AS creator_name FROM `group` g JOIN groupUser gu ON gu.group_id = g.id JOIN role r ON r.id = gu.role_id JOIN user u ON u.id = g.id_creator WHERE g.id = $id AND gu.user_id = $user";
+	$res = mysqli_query($database, $query);
 	$group_data=mysqli_fetch_assoc($res);
     return $group_data;
 }
@@ -114,7 +124,8 @@ function recup_status_by_user_and_group($id_user, $id_group){
 
 function recup_groups_since ($id_user,$time){
 	global $database;
-		$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
+		$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator FROM `group` g JOIN groupUser gu 
+		ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
 		$resq = mysqli_query($database, $query);
 		$grouplist=array();
 		while($row = mysqli_fetch_assoc($resq)) {
@@ -165,7 +176,7 @@ function modif_description_group($id,$description){
 	global $database;
 	$query="UPDATE `group` SET description='$description' WHERE id=$id";
 	$res=mysqli_query($database,$query);
-	$query="UPDATE folder SET description='$description' WHERE group_id=$id AND parent_id IS NULL";
+	$query="UPDATE folder SET description='$description' WHERE group_id=$id IS NULL";
 	mysqli_query($database,$query);
 	return $res;
 }
@@ -223,6 +234,16 @@ function modif_nb_messages($group_id,$val){
 	global $database;
 	$query = "UPDATE `group` SET nb_messages=nb_messages+$val WHERE id=$group_id";
 	$res = mysqli_query($database,$query);
+	return $res;
+}
+function notifs($group,$user){
+	global $database;
+	$query="SELECT COUNT(*) FROM folderUser fu JOIN folder f ON f.id=fu.folder_id WHERE fu.last_update>=f.last_update AND fu.user_id = $user AND f.group_id=$group";
+	$tmp=mysqli_query($database,$query);
+	$res["notif_folder"]=mysqli_fetch_array($tmp)[0];
+	$query="SELECT COUNT(*) AS notif_message FROM chatUser cu JOIN chat c ON c.id=cu.chat_id WHERE cu.last_update>=c.last_update AND cu.user_id =$user";
+	$tmp=mysqli_query($database,$query);
+	$res["notif_message"]=mysqli_fetch_array($tmp)[0];
 	return $res;
 }
 ?>

@@ -1,35 +1,11 @@
 (function () {
 
-    function _indexOfProp(array, key, value) {
-        let nb_values = array.length;
-        let i = 0;
-
-        while (i < nb_values && array[i][key] != value) i++;
-
-        return (i < nb_values) ? i : -1;
-    }
-
-
-    async function __getGroupeInfo(id, time = 0) {
-        let r = await fetch("/core/controller/groupe.php", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'info',
-                id,
-                time
-            })
-        });
-
-        let rdata = await r.json();
-
-        if (!rdata.success)
-            return _error(rdata.error);
-
-        return rdata;
-    }
+    function valideID(id) { return Number.isInteger(id) && id >= 0; }
+    function notEmptyString(str) { return typeof str == 'string' && str.length > 0; }
+    function notNullOrUndefined(obj) { return obj !== null && obj !== undefined; }
+    function isString(str) { return typeof str == 'string'; }
+    function valideUser(user) { return typeof user == 'object' && valideID(user.id) && notEmptyString(user.name); }
+    function valideStatus(status) { return notEmptyString(status) && ['pending', 'accepted', 'refused', 'excluded', 'left'].indexOf(status) !== -1; }
 
     class Groupe extends Listenable {
         static FORMAT_NOM = /^[\w ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûüÂÊÁËÈÍÎÏÌÓÔÒÚÛÙ]{3,50}$/;
@@ -45,7 +21,7 @@
         #newNom;
         #newDescription;
 
-        #creator_id;
+        #creator;
         #status;
         #root;
         #nb_membres;
@@ -80,7 +56,7 @@
     
             if (r instanceof Error) return r;
 
-            if (r.groupe != null) this.setData(r.groupe);
+            if (r.groupe != null) this.__parseData(r.groupe);
 
             return this;
         }
@@ -275,18 +251,18 @@
             return true;
         }
 
-        setData(groupe) {
-            let exists = (a, b) => (a != null && a != undefined) ? a : b;
-            this.#nom = exists(groupe['nom'], this.#nom);
-            this.#description = exists(groupe['description'], this.#description);
-            this.#creator_id = exists(groupe['creator_id'], this.#creator_id);
-            this.#root = exists(groupe['root'], this.#root);
-            this.#status = exists(groupe['status'], this.#status);
-            this.#nb_membres = exists(groupe['nb_membres'], this.#nb_membres);
-            this.#nb_messages = exists(groupe['nb_messages'], this.#nb_messages);
-            this.#nb_files = exists(groupe['nb_files'], this.#nb_files);
-            this.#permissions = exists(groupe['permissions'], this.#permissions);
-            this.#lastUpdate = exists(groupe['lastUpdate'], this.#lastUpdate);
+        __parseData(data) {
+
+            if (notEmptyString(data.nom)) this.#nom = data.nom;
+            if (isString(data.description)) this.#description = data.description;
+            if (valideUser(data.creator)) this.#creator = USERS.getWithoutPull(data.creator.id).__parseData(data.creator);
+            if (valideID(data.root)) this.#root = data.root;
+            if (valideStatus(data.status)) this.#status = data.status;
+            if (Number.isInteger(data.nb_membres)) this.#nb_membres = data.members;
+            if (Number.isInteger(data.nb_messages)) this.#nb_messages = data.messages;
+            if (Number.isInteger(data.nb_files)) this.#nb_files = data.files;
+            if (notNullOrUndefined(data.permissions)) this.#permissions = data.permissions;
+            if (notNullOrUndefined(data.lastUpdate)) this.#lastUpdate = data.lastUpdate;
 
             this.emit(Groupe.EVENT_UPDATE);
         }
@@ -294,7 +270,7 @@
         get id() { return this.#id; }
         get nom() { return this.#newNom || this.#nom; }
         get description() { return this.#newDescription || this.#description; }
-        get creator_id() { return this.#creator_id; }
+        get creator() { return this.#creator; }
         get root() { return this.#root; }
         get status() { return this.#status; }
         get nb_files() { return this.#nb_files; }
@@ -346,7 +322,6 @@
             if (!Groupe.FORMAT_NOM.test(nom)) return _error(2301);
             if (!Groupe.FORMAT_DESCRIPTION.test(description)) return _error(2302);
 
-            console.log(nom, description);
             let r = await request("/core/controller/groupe.php", {
                 action: 'create',
                 nom: nom,

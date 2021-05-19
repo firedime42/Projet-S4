@@ -4,6 +4,7 @@ require_once dirname(__FILE__)."/../groupFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 require_once dirname(__FILE__)."/../messageFunction.php";
 require_once dirname(__FILE__)."/../roleFunction.php";
+require_once dirname(__FILE__)."/../folderFunction.php";
 $_post = json_decode(file_get_contents("php://input"));
 
 $res = array(
@@ -47,7 +48,8 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$res["lastUpdate"] = microtime(true)*1000;
+			read_chat($_post->id,$_session["user"]["id"]);
+			$res["lastUpdate"] = (int) microtime(true) * 1000;
 			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
 			$res["edited"] = $updates["edited"];
 			$res["removed"] = $updates["removed"];
@@ -71,7 +73,7 @@ switch ($_post->action) {
 			$res["error"]=5000;
 		}else{
 			$res["success"]=true;
-			$res["lastUpdate"] = microtime(true)*1000;
+			$res["lastUpdate"] = (int) microtime(true) * 1000;
 			$messages = loadMore($_post->id, $_post->resp_max, $_post->newest_message, $_post->oldest_message, $_post->direction);
 			$updates = getHeadEditedRemovedMessage($_post->id, $_post->lastUpdate, $_post->resp_max, $_post->newest_message, $_post->oldest_message);
 			$res["messages"] = $messages;
@@ -116,6 +118,7 @@ switch ($_post->action) {
 		}else{
 			$res["success"]=true;
 			$res["id"]=ajouter_message(recup_group_chat($_post->id),$_post->id,$_post->content,$_session["user"]["id"]);
+			read_chat($_post->id, $_session["user"]["id"]);
 		}
 		break;
 	default :

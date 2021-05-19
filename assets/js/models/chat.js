@@ -52,6 +52,11 @@
         return (nb_removed > 0) ? arr.splice(-nb_removed) : [];
     }
 
+    function valideID(id) { return Number.isInteger(id) && id >= 0; }
+    function notEmptyString(str) { return typeof str == 'string' && str.length > 0; }
+    function valideAuthor(author) { return valideID(author.id) && notEmptyString(author.name); }
+
+
     class Message extends Listenable {
         static EVENT_UPDATE = 'update';
         static EVENT_REMOVE = 'remove';
@@ -69,17 +74,9 @@
         update(data) {
             if (this.id != null && this.id != data.id) return;
 
-            if (Number.isInteger(data.id) && data.id >= 0) this.id = data.id;
-            if (data.author != null
-                && Number.isInteger(data.author.id) && data.author.id >= 0
-                && typeof data.author.name == 'string' && data.author.name.length > 0
-            )
-                this.author = {
-                    id: data.author.id,
-                    name: data.author.name
-                };
-
-            if (typeof data.content == 'string' && data.content.length > 0) this.content = data.content;
+            if (valideID(data.id)) this.id = data.id;
+            if (valideAuthor(data.author)) this.author = USERS.getWithoutPull(data.author.id).__parseData(data.author);
+            if (notEmptyString(data.content)) this.content = data.content;
             if (Number.isFinite(data.publish_date)) this.publish_date = data.publish_date;
 
             this.emit(Message.EVENT_UPDATE);

@@ -1,5 +1,20 @@
 (function () {
 
+    function valideID(id) { return Number.isInteger(id) && id >= 0; }
+    function notEmptyString(str) { return typeof str == 'string' && str.length > 0; }
+    function notNullOrUndefined(obj) { return typeof obj !== null && obj !== undefined; }
+    function isString(str) { return typeof str == 'string'; }
+    function isBoolean(bool) { return typeof bool == 'boolean';}
+
+    function ids(list) {
+        let nb_items = list.length;
+        var list_id = new Array(nb_items);
+
+        for (let i = 0; i < nb_items; i++) list_id[i] = list[i].id;
+
+        return list_id;
+    }
+
     class Folder extends Listenable {
         static EVENT_UPDATE = "update";
         static EVENT_REMOVED = "removed";
@@ -18,11 +33,12 @@
         #newDescription;
 
         #groupe;     // identifiant du groupe auquel appartient le dossier
-        #parent;
+        #path;
 
         #folders;    // tous les identifiants des dossiers contenu dans le dossier
         #files;      // tous les identifiants des fichiers contenu dans le dossier
         #nb_messages;
+        #new_messages;
 
         #chat;       // identifiant du chat
 
@@ -33,7 +49,9 @@
             this.#nom = null;
             this.#description = null;
             this.#groupe = null;
-            this.#parent = null;
+            this.#path = null;
+            this.#nb_messages = 0;
+            this.#new_messages = false;
 
             this.#folders = [];
             this.#files = [];
@@ -45,12 +63,13 @@
         get nom() { return this.#newNom || this.#nom; }
         get description() { return this.#newDescription || this.#description; }
         get groupe() { return this.#groupe; }
-        get parent() { return this.#parent; }
+        get path() { return this.#path; }
         get chat() { return this.#chat; }
 
         get nb_folders() { return this.#folders.length; }
         get nb_files() { return this.#files.length; }
         get nb_messages() { return this.#nb_messages; }
+        get new_messages() { return this.#new_messages; }
 
         get folders() { return this.#folders; }
         get files() { return this.#files; }
@@ -64,32 +83,73 @@
          * @param {*} data 
          */
         __parseData(data) {
-            this.#nom = data.nom;
-            this.#description = data.description;
-            this.#groupe = data.groupe;
-            this.#parent = data.parent;
-            this.#chat = data.chat;
-            this.#nb_messages = data.nb_messages;
+            if (notEmptyString(data.nom)) this.#nom = data.nom;
+            if (isString(data.description)) this.#description = data.description;
+            if (valideID(data.groupe)) this.#groupe = data.groupe;
+            if (valideID(data.chat)) this.#chat = data.chat;
+            if (Number.isInteger(data.nb_messages)) this.#nb_messages = data.nb_messages;
+            if (isBoolean(data.notif_new_messages)) this.#new_messages = data.notif_new_messages;
+            if (Array.isArray(data.path)) {
+                let nb_parents = data.path.length;
 
-            let mutationsFolders = arrayMutations(this.#folders, data.folders);
-            let mutationsFiles = arrayMutations(this.#files, data.files);
+                this.#path = new Array(nb_parents);
+                for (let i = 0; i < nb_parents; i++)
+                    this.#path[i] = data.path[i].id;
 
-            this.#folders = data.folders;
-            this.#files = data.files;
+                if (data.path.length > 0) {
+                    let parent = data.path.pop();
+                    parent.path = data.path;
+                    FOLDERS.getWithoutPull(parent.id).__parseData(parent);
+                }
+            }
 
-            // emit event for each folders
-            for (let i = 0, n = mutationsFolders.added.length; i < n; i++)
-                this.emit(Folder.EVENT_NEW_FOLDER, mutationsFolders.added[i]);
-
-            for (let i = 0, n = mutationsFolders.removed.length; i < n; i++)
-                this.emit(Folder.EVENT_REMOVE_FOLDER, mutationsFolders.removed[i]);
+            if (Number.isInteger(data.folders)) {
+                if (!notNullOrUndefined(this.#folders)) this.#folders = new Array(data.folders).fill(-1);
+            } else if (notNullOrUndefined(data.folders)) {
+                let folders = ids(data.folders);
                 
-            // emit event for each files    
-            for (let i = 0, n = mutationsFiles.added.length; i < n; i++)
-                this.emit(Folder.EVENT_NEW_FILE, mutationsFiles.added[i]);
+                // charger les données
+                for (let i = 0, nb_folders = folders.length; i < nb_folders; i++)
+                    FOLDERS.getWithoutPull(folders[i]).__parseData(data.folders[i]);
 
-            for (let i = 0, n = mutationsFiles.removed.length; i < n; i++)
-                this.emit(Folder.EVENT_REMOVE_FILE, mutationsFiles.removed[i]);
+                // detecter les changements
+                let mutationsFolders = arrayMutations(this.#folders, folders);
+
+                // changer la liste d'identifiant
+                this.#folders = folders;
+
+                // emit event for each folders
+                for (let i = 0, n = mutationsFolders.added.length; i < n; i++)
+                    this.emit(Folder.EVENT_NEW_FOLDER, mutationsFolders.added[i]);
+
+                for (let i = 0, n = mutationsFolders.removed.length; i < n; i++)
+                    this.emit(Folder.EVENT_REMOVE_FOLDER, mutationsFolders.removed[i]);
+            }
+
+            if (Number.isInteger(data.files)) {
+                if (!notNullOrUndefined(this.#files)) this.#files = new Array(data.files).fill(-1);
+            } else if (notNullOrUndefined(data.files)) {
+
+                let files = ids(data.files);
+
+                // charger les données
+                for (let i = 0, nb_files = files.length; i < nb_files; i++)
+                    WFILES.getWithoutPull(files[i]).__parseData(data.files[i]);
+
+                // detecter les changements
+                let mutationsFiles = arrayMutations(this.#files, files);
+
+                // changer la liste d'identifiant
+                this.#files = files;
+
+                // emit event for each files    
+                for (let i = 0, n = mutationsFiles.added.length; i < n; i++)
+                    this.emit(Folder.EVENT_NEW_FILE, mutationsFiles.added[i]);
+
+                for (let i = 0, n = mutationsFiles.removed.length; i < n; i++)
+                    this.emit(Folder.EVENT_REMOVE_FILE, mutationsFiles.removed[i]);
+
+            }
 
             // emit event for data
             this.emit(Folder.EVENT_UPDATE);
@@ -148,13 +208,19 @@
             if (r instanceof Error) { return r; }
 
             this.#folders.push(r.id);
+
+            let f = await FOLDERS.get(r.id);
             this.emit(Folder.EVENT_NEW_FOLDER, r.id);
 
-            return r;
+            return f;
         }
 
+        /**
+         * supprimer le dossier
+         * @returns 
+         */
         async remove() {
-            if (this.#id == null) return error(-1);
+            if (this.#id == null) return _error(-1);
             
             let r = await request("/core/controller/folder.php", {
                 action: 'remove',
@@ -211,6 +277,15 @@
             }
 
             // on récupère les données depuis le serveur
+            return this.#folders[id];
+        }
+
+        getWithoutPull(id) {
+            // verification du type de l'id
+            if (!this.__valideID(id)) return null;
+
+            if (!this.#folders[id]) this.#folders[id] = new Folder(id);
+
             return this.#folders[id];
         }
 

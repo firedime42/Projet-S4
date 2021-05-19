@@ -23,16 +23,19 @@ switch ($_post->action) {
             $group_data=recup_groups_since($_session["user"]["id"],$_post->time);
             $groups=array();
             foreach($group_data as $group){
+                $notif=notifs($group["id"],$_session["user"]["id"]);
                 $groups[]=array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
                     "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
-                    "new_docs" => 0,
+                    /*"new_docs" => 0,
                     "unread_docs" => 0,
-                    "new_messages" => 0,
+                    "new_messages" => 0,*/
                     "description" => $group["description"],
                     "creator_id" => $group["id_creator"],
-                    "lastUpdate" => $group["last_update"]
+                    "lastUpdate" => $group["last_update"],
+                    "notif_folder" => (int)$notif["notif_folder"]>0,
+                    "notif_message" => (int)$notif["notif_message"]>0
                 );
             }
             $res["groups"] = $groups; 
@@ -42,7 +45,7 @@ switch ($_post->action) {
         if(!isset($_post->id)) $res["error"]=2; //id vide
         else{
             $group=recup_group($_post->id,$_session["user"]["id"]);
-            if (empty($group)) $res["error"]=2002; //groupe inexistant
+            if (!$group) $res["error"]=2002; //groupe inexistant
             elseif (!isset($_post->time)) $res["error"]=0003; //temps invalide
             elseif( $_post->time==$group["last_update"]){
             $res["success"]=true;
@@ -50,18 +53,23 @@ switch ($_post->action) {
             }
             else {
                 $res["success"]=true;
+                $notif=notifs($group["id"],$_session["user"]["id"]);
                 $res["groupe"]= array(
-                    "id" => $group["id_group"],
+                    "id" => (int) $group["id_group"],
                     "nom" => $group["group_name"],
                     "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id_group"]),
                     "description" => $group["description"],
-                    "avatar" => $group["avatar"],
-                    "root" => $group["root"], //???
-                    "nb_membres" => $group["root"],//nb_members($group["id"]),
+                    "root" => (int) $group["root"], //???
+                    "nb_membres" => (int) $group["root"],//nb_members($group["id"]),
                     "nb_messages" => 0,//(int) $group["nb_messages"],
                     "nb_files" => 0,//(int) $group["nb_files"],
-                    "creator_id" => $group["id_creator"],
+                    "creator" => [
+                        "id" => (int) $group["id_creator"],
+                        "name" => $group["creator_name"]
+                    ],
                     "lastUpdate" => $group["last_update"],
+                    "notif_folder" => (bool) $notif["notif_folder"]>0,
+                    "notif_message" => (bool) $notif["notif_message"]>0,
                     "permissions" => array(
                         "write_message" => ($group["write_message"]==1),
                         "remove_message" => ($group["remove_message"]==1),
@@ -100,11 +108,11 @@ switch ($_post->action) {
             $groups=array();
             foreach($group_data as $group){
                 $groups[]=array(
-                    "id" => $group["id"],
+                    "id" => (int) $group["id"],
                     "nom" => $group["name"],
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
-                    "nb_membres"=> $group["nb_members"],//nb_members($group["id"]),//$group["nb_membres"],
+                    "nb_membres"=> (int) $group["nb_members"],//nb_members($group["id"]),//$group["nb_membres"],
                     "nb_messages" => 0,//$group["nb_messages"]
                 );
             }
@@ -230,9 +238,14 @@ switch ($_post->action) {
         }else{
             if(isset($_post->edited)){
                 foreach($_post->edited as $value){
-                    edit_role($value->id,$value->nom,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
-                    (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,
-                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
+                    edit_role($value->id,
+                    $value->nom,(int)$value->read_message,
+                    (int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,
+                    (int)$value->download_file,(int)$value->create_file,(int)$value->rename_file,
+                    (int)$value->remove_file,(int)$value->remove_any_file,
+                    (int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,
+                    (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,
+                    (int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);
                 }
             }
             if(isset($_post->removed)){
@@ -240,7 +253,7 @@ switch ($_post->action) {
             }
             if(isset($_post->added)){
                 foreach($_post->added as $value){
-                    create_role($_post->group_id,$value->nom,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
+                    create_role($_post->group_id,$value->nom,(int)$value->read_message,(int)$value->write_message,(int)$value->remove_message,(int)$value->remove_any_message,(int)$value->download_file,
                     (int)$value->create_file,(int)$value->rename_file,(int)$value->remove_file,(int)$value->remove_any_file,(int)$value->create_folder,(int)$value->rename_folder,(int)$value->remove_folder,
                     (int)$value->accept_user,(int)$value->kick_user,(int)$value->manage_role,(int)$value->edit_role,(int)$value->edit_name,(int)$value->edit_description);}
             }
@@ -303,29 +316,6 @@ switch ($_post->action) {
                 $res["error"]=2008;
         }else
             $res["error"]=2000;
-        /*}elseif (!isset($_post->nom)) {
-            $res["error"]=0001;
-        }elseif (!isset($_post->description)) {
-            $res["error"]=0001;
-        }elseif (!is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_NAME) || !is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_DESCRIPTION)) {
-            $res["error"]=0001;
-        }else {
-            $res["success"]=modif_groupe($_post->id,$_post->nom,$_post->description);
-        }
-    }elseif(isset($_post->nom)){
-        if(is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_NAME)){
-            $res["success"]=modif_nom_group($_post->id,$_post_nom);
-        }
-        else
-            $res["error"]=2008;
-    }elseif(isset($_post->description)){
-        if(is_allowed($_session["user"]["id"],$_post->id,ROLE_EDIT_DESCRIPTION))
-            $res["success"]=modif_description_group($_post->id,$_post->description);
-        else{
-            $res["error"]=2008;
-        }else{
-            $res["error"]=2000;
-        };*/
         break;
     case "dashboard":
         $dashboard=recup_dashboard($_post->group);

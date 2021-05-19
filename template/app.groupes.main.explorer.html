@@ -91,17 +91,22 @@
         // on supprime le chemin precedent
         Dom.html(path, "");
 
-        let dir = folder;
-        while (dir) {
-            if (dir instanceof Error) console.error(dir);
-            else
-                Dom.prepend(
-                    path,
-                    `<div class="path-item"><a href="/app/groupes/${groupe.id}/${dir.id}">${dir.nom}</a></div>`
-                );
 
-            dir = (dir.parent !== null) ? await FOLDERS._get(dir.parent) : null;
+        let _path = folder.path;
+        let nb_folders = _path.length;
+
+        for (let i = 0; i < nb_folders; i++) {
+            let dir = FOLDERS.getWithoutPull(_path[i]);
+            Dom.append(
+                path,
+                `<div class="path-item"><a href="/app/groupes/${groupe.id}/${dir.id}">${dir.nom}</a></div>`
+            );
         }
+
+        Dom.append(
+            path,
+            `<div class="path-item"><a href="/app/groupes/${groupe.id}/${folder.id}">${folder.nom}</a></div>`
+        );
     }
 
     doc.update({
@@ -293,23 +298,21 @@
      * @param {Number} file_id : l'identifiant du fichier
      */
     function addFile(parent, file_id) {
-        let file = WFILES.get(file_id);
-        console.log(groupe.permissions);
+        let file = WFILES.getWithoutPull(file_id);
         listFiles.add(file_id, file,
             {
                 permissions: groupe.permissions,
                 download: async function () {
-                    let f = await file;
 
                     // on telecharge les données du fichier
-                    let blob = await f.download();
+                    let blob = await file.download();
 
                     // on créer une url associé aux données
                     let blob_url = window.URL.createObjectURL(blob);
 
                     // on telecharge le fichier
                     let link = document.createElement('a'); // creation d'un lien
-                    link.download = f.nom;               // nom du fichier
+                    link.download = file.nom;               // nom du fichier
                     link.href = blob_url;                   // lien du fichier
                     Dom.append(Dom.body, link);             // ajout de l'element dans le dom
                     link.click();                           // fait cliquer l'utilisateur pour demarrer le telechargement
@@ -367,13 +370,12 @@
      * @param {Number} folder_id : l'identifiant du dossier
      */
     function addFolder(parent, folder_id) {
-        let folder = FOLDERS.get(folder_id);
+        let folder = FOLDERS.getWithoutPull(folder_id);
         listFolders.add(folder_id, folder, {
             permissions: groupe.permissions,
             open: function () { setURL(`/app/groupes/${groupe.id}/${folder_id}`); },
             remove: async function () {
-                let f = await folder;
-                let r = await f.remove();
+                let r = await folder.remove();
 
                 if (r instanceof Error) console.error(r);
                 else removeFolder(null, folder.id);

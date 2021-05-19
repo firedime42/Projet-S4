@@ -31,7 +31,7 @@ function supprime_file($id) {
     $query = "DELETE FROM file WHERE id=$id";
     $res=mysqli_query($database, $query);
     $filename = dirname(__FILE__)."/../files/$id.bin";
-    if (is_int($id)) {
+    if (is_numeric($id)) {
         if (file_exists($filename)) unlink($filename);
     }
 

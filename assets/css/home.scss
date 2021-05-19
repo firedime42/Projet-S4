@@ -1,0 +1,40 @@
+.home{
+	margin: 0px;
+	padding: 0px !important; 
+}
+
+.split{
+	display: flex;
+	flex-direction: row;
+	height: 70vh;
+	width: 100vw;
+}
+
+.half{
+	height: 100%;
+	width: 50%;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+
+	>div{
+		width: 80%;
+		>h1{
+			font-size: 5em !important;
+		}
+		>p{
+			font-size: 1.5em;
+		}
+	}
+}
+
+.oddbackground{
+
+	background-color: #1e2530;
+	color: white;
+}
+.evenbackground{
+
+	background-color: white;
+	color: #1e2530
+}

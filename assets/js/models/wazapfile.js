@@ -372,8 +372,7 @@
             this.#liked = exists(data['liked'], this.#liked);
             this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
             this.#chat = exists(data['chat'], this.#chat);
-
-            console.log('auteur: ', data.auteur);
+            
             this.emit(WazapFile.EVENT_UPDATE);
         }
     }
@@ -415,6 +414,20 @@
             return true;
         }
         
+        /**
+         * Récupère un fichier sans charger ses données depuis le serveur
+         * @param {Number} id 
+         * @returns 
+         */
+        getWithoutPull(id) {
+            // verification du type de l'id
+            if (!this.__valideID(id)) return null;
+
+            // on crée le fichier s'il n'existe pas
+            if (!this.#files[id]) this.#files[id] = new WazapFile(id);
+
+            return this.#files[id];
+        }
         
         /**
          * Récupère un ensemble de fichier
