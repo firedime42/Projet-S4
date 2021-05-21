@@ -39,10 +39,11 @@ function supprime_file($id) {
 }
 function create_file($group,$folder,$filename,$content_type,$size,$description,$id_creator){
 //créer un fichier 
-
     global $database;
+
 	$id_chat=ajoute_chat();
-    $query = "INSERT INTO file (location, name, extension, creator_id,size,description,chat_id) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description',$id_chat)";
+    $last_update = now();
+    $query = "INSERT INTO file (location, name, extension, creator_id,size,description,chat_id, creation_date, last_update) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description',$id_chat,$last_update,$last_update)";
     mysqli_query($database, $query);
     $id=mysqli_insert_id($database);
     modif_nb_files($group,1);
@@ -51,7 +52,9 @@ function create_file($group,$folder,$filename,$content_type,$size,$description,$
 
 function modifie_file($id,$nom,$description){
     global $database;
-    $query = "UPDATE file SET name=$nom, description='$description' WHERE id=$id";//description";
+
+    $last_update = now();
+    $query = "UPDATE file SET name=$nom, description='$description', last_update=$last_update WHERE id=$id";//description";
     $res=mysqli_query($database, $query);
     
     return $res;
@@ -59,7 +62,9 @@ function modifie_file($id,$nom,$description){
 
 function finish_upload($id){
     global $database;
-    $query = "UPDATE file SET status='online' WHERE id=$id";//description";
+
+    $last_update = now();
+    $query = "UPDATE file SET status='online', last_update=$last_update WHERE id=$id";//description";
     $res=mysqli_query($database, $query);
     
     return $res;
@@ -80,7 +85,9 @@ function search_files($needle,$page,$nb_results){
 
 function modif_nombre_like($id,$edit){
     global $database;
-    $query = "UPDATE file SET nb_likes=nb_likes+$edit WHERE id=$id";
+
+    $last_update = now();
+    $query = "UPDATE file SET nb_likes=nb_likes+$edit, last_update=$last_update WHERE id=$id";
     $res = mysqli_query($database, $query);
     //var_dump($query,$res);
     return $res;

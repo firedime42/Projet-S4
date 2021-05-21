@@ -60,6 +60,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/account.params.compte.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/profil.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/file.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/dashboard.css"></link>
 
 </head>
 <body data-theme="light">

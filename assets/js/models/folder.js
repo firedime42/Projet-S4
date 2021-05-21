@@ -39,6 +39,7 @@
         #files;      // tous les identifiants des fichiers contenu dans le dossier
         #nb_messages;
         #new_messages;
+        #new_files;
 
         #chat;       // identifiant du chat
 
@@ -52,6 +53,7 @@
             this.#path = null;
             this.#nb_messages = 0;
             this.#new_messages = false;
+            this.#new_files = false;
 
             this.#folders = [];
             this.#files = [];
@@ -70,6 +72,7 @@
         get nb_files() { return this.#files.length; }
         get nb_messages() { return this.#nb_messages; }
         get new_messages() { return this.#new_messages; }
+        get new_files() { return this.#new_files; }
 
         get folders() { return this.#folders; }
         get files() { return this.#files; }
@@ -89,6 +92,7 @@
             if (valideID(data.chat)) this.#chat = data.chat;
             if (Number.isInteger(data.nb_messages)) this.#nb_messages = data.nb_messages;
             if (isBoolean(data.notif_new_messages)) this.#new_messages = data.notif_new_messages;
+            if (isBoolean(data.notif_new_files)) this.#new_files = data.notif_new_files;
             if (Array.isArray(data.path)) {
                 let nb_parents = data.path.length;
 

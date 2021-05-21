@@ -162,7 +162,10 @@ function getSubFolders($folder_id, $user_id) {
 	$query_last_visit_chat = "SELECT last_update FROM chatUser WHERE chat_id = f.chat_id AND user_id = $user_id";
 	$query_new_messages = "c.last_update > IFNULL(($query_last_visit_chat), 0)";
 
-	$query = "SELECT f.id, f.name, f.description, f.chat_id, f.last_update, ($query_new_messages) AS notif_messages, ($query_nb_messages) AS nb_messages, ($query_nb_folders) AS folders, ($query_nb_files) AS files FROM folder f JOIN chat c ON c.id=f.chat_id WHERE f.parent_id = $folder_id";
+    $query_last_visit_folder = "SELECT last_update FROM folderUser WHERE folder_id = f.id AND user_id = $user_id";
+    $query_new_files = "SELECT * FROM file fi JOIN folder dir ON fi.location = dir.id WHERE dir.group_id = f.group_id AND f.anchor_left <= dir.anchor_left AND dir.anchor_right <= f.anchor_right AND fi.creation_date > IFNULL(($query_last_visit_folder), 0)";
+
+	$query = "SELECT f.id, f.name, f.description, f.chat_id, f.last_update, EXISTS($query_new_files) AS notif_folder, ($query_new_messages) AS notif_messages, ($query_nb_messages) AS nb_messages, ($query_nb_folders) AS folders, ($query_nb_files) AS files FROM folder f JOIN chat c ON c.id=f.chat_id WHERE f.parent_id = $folder_id";
 
 	$res = mysqli_query($database, $query);
 
@@ -175,7 +178,8 @@ function getSubFolders($folder_id, $user_id) {
             "description" => $row["description"],
             "chat_id" => (int) $row["chat_id"],
             "nb_messages" => (int) $row['nb_messages'],
-            "notif_messages" => (bool) $row['notif_messages'],
+            "notif_new_files" => (bool) $row['notif_folder'],
+            "notif_new_messages" => (bool) $row['notif_messages'],
             "folders" => (int) $row['folders'],
             "files" => (int) $row['files'],
             "last_update" => (int) $row["last_update"]
@@ -197,9 +201,11 @@ function getSubFiles($folder_id, $user_id) {
 	
 	$query_last_visit_chat = "SELECT last_update FROM chatUser WHERE chat_id = f.chat_id AND user_id = $user_id";
 	$query_new_messages = "c.last_update > IFNULL(($query_last_visit_chat), 0)";
-    $query_is_new = "SELECT * FROM folderUser WHERE f.id=folder_id AND user_id = $user_id";
+    
+    $query_last_visit_folder = "SELECT last_update FROM folderUser WHERE folder_id = $folder_id AND user_id = $user_id";
+    $query_is_new = "f.creation_date > IFNULL(($query_last_visit_folder), 0)";
 
-	$query = "SELECT f.id, f.name, f.chat_id, f.description, f.last_update, f.nb_likes, f.creator_id, u.username AS creator_name, ($query_new_messages) AS notif_messages, EXISTS($query_liked) AS liked, ($query_nb_messages) AS nb_comments FROM file f JOIN chat c ON c.id=f.chat_id JOIN user u ON u.id = f.creator_id WHERE f.location = $folder_id ORDER BY f.last_update";
+	$query = "SELECT f.id, f.name, f.chat_id, f.description, f.creation_date, f.last_update, f.nb_likes, f.creator_id, u.username AS creator_name, ($query_is_new) AS notif_is_new, ($query_new_messages) AS notif_messages, EXISTS($query_liked) AS liked, ($query_nb_messages) AS nb_comments FROM file f JOIN chat c ON c.id=f.chat_id JOIN user u ON u.id = f.creator_id WHERE f.location = $folder_id ORDER BY f.last_update";
 
 	$res = mysqli_query($database, $query);
 
@@ -210,9 +216,11 @@ function getSubFiles($folder_id, $user_id) {
             "id" => (int) $row["id"],
             "nom" => $row["name"],
             "description" => $row["description"],
+            "creation_date" => (int) $row["creation_date"],
             "chat_id" => (int) $row["chat_id"],
             "nb_comments" => (int) $row['nb_comments'],
-            "notif_messages" => (bool) $row['notif_messages'],
+            "notif_is_new" => (bool) $row['notif_is_new'],
+            "notif_new_messages" => (bool) $row['notif_messages'],
             "liked" => (bool) $row['liked'],
             "nb_likes" => (int) $row['nb_likes'],
             "auteur" => [

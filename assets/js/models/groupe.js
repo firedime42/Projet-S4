@@ -258,9 +258,9 @@
             if (valideUser(data.creator)) this.#creator = USERS.getWithoutPull(data.creator.id).__parseData(data.creator);
             if (valideID(data.root)) this.#root = data.root;
             if (valideStatus(data.status)) this.#status = data.status;
-            if (Number.isInteger(data.nb_membres)) this.#nb_membres = data.members;
-            if (Number.isInteger(data.nb_messages)) this.#nb_messages = data.messages;
-            if (Number.isInteger(data.nb_files)) this.#nb_files = data.files;
+            if (Number.isInteger(data.nb_membres)) this.#nb_membres = data.nb_membres;
+            if (Number.isInteger(data.nb_messages)) this.#nb_messages = data.nb_messages;
+            if (Number.isInteger(data.nb_files)) this.#nb_files = data.nb_files;
             if (notNullOrUndefined(data.permissions)) this.#permissions = data.permissions;
             if (notNullOrUndefined(data.lastUpdate)) this.#lastUpdate = data.lastUpdate;
 

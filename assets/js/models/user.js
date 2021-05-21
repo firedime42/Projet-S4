@@ -37,7 +37,7 @@
 
         get id() { return this.#id; }
         get name() { return this.#name; }
-        get avatar() { return `/core/controller/avatar.php?id=${this.#id}`; }
+        get avatar() { return `/core/controller/avatar.php?user=${this.#id}`; }
 
         async pull() {
             let r = request("/core/controller/user.php", {

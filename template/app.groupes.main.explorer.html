@@ -86,11 +86,12 @@
      * Affiche le chemin du fichier
      */
     async function setPath(folder) {
+        if (folder == null) return;
+        
         let path = doc.ctx.markedElement['path'];
 
         // on supprime le chemin precedent
         Dom.html(path, "");
-
 
         let _path = folder.path;
         let nb_folders = _path.length;

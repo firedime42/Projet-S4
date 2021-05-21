@@ -34,7 +34,7 @@ function create_group($nom, $description, $id_proprietaire) {
 function recup_group_id($id) {
     // retourne les info du group passé en paramètre sous forme d'un tableau
     global $database;
-    $query = "SELECT * FROM `group` WHERE id = $id";
+    $query = "SELECT *,(SELECT username FROM user WHERE id=id_creator) AS creator_name  FROM `group` WHERE id = $id";
     $res = mysqli_query($database, $query);
 	$group_data=mysqli_fetch_assoc($res);
     return $group_data;
@@ -217,6 +217,13 @@ function recup_dashboard($group){
 	return $res;
 };
 
+function recup_info($group){
+	global $database;
+	$query="SELECT (SELECT COUNT(*) FROM groupUser WHERE group_id=$group) AS nb_members, (SELECT COUNT(*) FROM file f JOIN folder fo ON f.location=fo.id WHERE fo.group_id=$group) AS nb_files FROM `group` WHERE id = $group";
+	$res=mysqli_query($database,$query);
+	return mysqli_fetch_assoc($res);
+};
+
 function modif_nb_members($group_id,$val){
 	global $database;
 	$query = "UPDATE `group` SET nb_membres=nb_membres+$val WHERE id=$group_id";
@@ -246,4 +253,9 @@ function notifs($group,$user){
 	$res["notif_message"]=mysqli_fetch_array($tmp)[0];
 	return $res;
 }
-?>
+function est_dans_groupe($group,$user){
+	global $database;
+	$query="SELECT * FROM groupUser WHERE group_id=$group AND user_id=$user AND status='accepted'";
+	$res=mysqli_query($database,$query);
+	return mysqli_num_rows($res)>0;
+}

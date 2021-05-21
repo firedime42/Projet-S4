@@ -5,7 +5,7 @@ require_once dirname(__FILE__)."/../downloadFunction.php";
 require_once dirname(__FILE__)."/../fileFunction.php";
 require_once dirname(__FILE__) . "/../session.php";
 
-$MAX_AGE = 0;//24 * 3600; // 24h
+$MAX_AGE = 24 * 3600; // 24h
 
 function generateEtag($file) {
     return md5($file['id'].'.'.$file["last_update"].".".time());
@@ -15,7 +15,7 @@ function cacheMatch($etag) {
     return isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']) == "\"$etag\"";
 }
 
-if($_GET['file_id'] != NULL){
+if ($_GET['file_id'] != NULL) {
     $file_bdd = recup_file_id($_GET['file_id']);
     if(!empty($file_bdd)){
         $etag = generateEtag($file_bdd);
