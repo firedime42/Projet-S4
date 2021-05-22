@@ -159,6 +159,7 @@
 
         #nb_likes;          // nombre de "like" du fichier
         #nb_comments;       // nombre de commentaire sur le fichier
+        #publish_date;      // timestamp en millisecond correspondant à la date de publication
 
         #is_new;
         #new_messages;
@@ -318,12 +319,13 @@
         get type() { return this.#type; }
         get etat() { return this.#etat; }
         get chat() { return this.#chat; }
-        get auteur() { return USERS.get(this.#auteur); }
+        get auteur() { return USERS.getWithoutPull(this.#auteur); }
 
         get isLiked () { return this.#liked; }
 
         get nb_likes() { return this.#nb_likes; }
         get nb_comments() { return this.#nb_comments; }
+        get publish_date() { return this.#publish_date; }
 
         get is_new () { return this.#is_new; }
         get new_messages() { return this.#new_messages; }
@@ -373,7 +375,6 @@
         }
 
         __parseData(data) {
-            let exists = (a, b) => (a != null && a != undefined) ? a : b;
             
             if (notEmptyString(data.nom)) this.#nom = data.nom;
             if (isString(data.description)) this.#description = data.description;
@@ -389,9 +390,10 @@
             if (isBoolean(data.notif_is_new)) this.#is_new = data.notif_is_new;
             if (isBoolean(data.notif_new_messages)) this.#new_messages = data.notif_new_messages;
             if (isBoolean(data.liked)) this.#liked = data.liked;
-            if (Number.isInteger(data.chat)) this.#chat = data.chat;
+            if (valideID(data.chat)) this.#chat = data.chat;
+            if (valideID(data.publish_date)) this.#publish_date = data.publish_date;
 
-            this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
+            if (Number.isInteger(data.lastUpdate)) this.#lastUpdate = data.lastUpdate;
             
             this.emit(WazapFile.EVENT_UPDATE);
         }

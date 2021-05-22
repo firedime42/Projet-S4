@@ -12,7 +12,7 @@ function recup_file_id($id){
 }
 function recup_file($id,$user){
     global $database;
-    $user =  "SELECT f.*, COUNT(DISTINCT m.id) AS nb_comments, COUNT(DISTINCT fl.id) AS nb_likes, EXISTS(SElECT * FROM file_liked WHERE file_id=$id AND user_id=$user) AS liked FROM file f JOIN message m ON f.chat_id=m.chat_id JOIN file_liked fl ON fl.file_id=f.id WHERE f.id =$id AND m.deleted=0";
+    $user =  "SELECT f.*, COUNT(DISTINCT m.id) AS nb_comments, COUNT(DISTINCT fl.id) AS nb_likes, EXISTS(SElECT * FROM file_liked WHERE file_id=$id AND user_id=$user) AS liked, u.username AS creator_name FROM file f JOIN message m ON f.chat_id=m.chat_id JOIN file_liked fl ON fl.file_id=f.id JOIN user u ON u.id = f.creator_id WHERE f.id =$id AND m.deleted=0";
 	$result = mysqli_query($database, $user);
 	$file_data=mysqli_fetch_assoc($result);
 	
@@ -54,7 +54,11 @@ function modifie_file($id,$nom,$description){
     global $database;
 
     $last_update = now();
-    $query = "UPDATE file SET name=$nom, description='$description', last_update=$last_update WHERE id=$id";//description";
+
+    $str_nom=mysqli_real_escape_string($database, $nom);
+    $str_description=mysqli_real_escape_string($database, $description);
+    
+    $query = "UPDATE file SET name='$str_nom', description='$str_description', last_update=$last_update WHERE id=$id";//description";
     $res=mysqli_query($database, $query);
     
     return $res;

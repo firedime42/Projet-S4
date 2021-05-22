@@ -31,11 +31,30 @@
 
             .data {
                 display: flex;
+                flex-direction: row;
+                align-items: center;
                 flex: 0 0 auto;
 
                 .user {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
                     padding: 0;
                     font-weight: 600;
+
+                    .avatar {
+                        //background-image: url(https://www.w3schools.com/howto/img_avatar.png);
+                        width: 25px;
+                        height: 25px;
+                        border-radius: 25px;
+                        background-position: center;
+                        background-size: 100%;
+                        background-repeat: no-repeat;
+                        image-rendering: crisp-edges;
+                        image-rendering: -webkit-optimize-contrast;
+                        margin-left: -15px;
+                        margin-right: 5px;
+                    }
                 }
 
                 .time {

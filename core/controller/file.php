@@ -58,17 +58,21 @@ switch ($_post->action) {
                 $res["file"] = array(
                     "nom" => $file["name"],
                     "description" => $file["description"],
-                    "auteur" => $file["creator_id"],
+                    "auteur" => [
+                        "id" => (int) $file["creator_id"],
+                        "name" => $file["creator_name"]
+                    ],
                     "type" => $file["extension"],
-                    "size" => $file["size"],
+                    "size" => (int) $file["size"],
                     
                     "etat" => $file["status"],
                     "nb_comments" => (int)$file["nb_comments"],
                     "nb_likes" => (int)$file["nb_likes"],
 
-                    "chat"=>$file["chat_id"],
+                    "chat"=> (int) $file["chat_id"],
                     "liked" =>(bool) $file["liked"],
-                    "lastUpdate" => $file["last_update"]
+                    "publish_date" => (int) $file["creation_date"],
+                    "lastUpdate" => (int) $file["last_update"]
                 );
                 update_folder($file["location"],$_session["user"]["id"]);
             }
@@ -95,18 +99,18 @@ switch ($_post->action) {
     case "push":
         if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
-        } elseif($_post->nom == NULL){
+        } elseif(!isset($_post->nom) || strlen($_post->nom) < 3) {
             $res["error"] = 3001; //nom vide
-        }elseif(!isset($_post->description)){
+        }elseif(!isset($_post->description)) {
             $res["error"] = 3005; //description vide
-        }elseif (empty(recup_file_id($id))) {
+        }elseif (empty(recup_file_id($_post->id))) {
             $res["error"] = 3006; //Fichier inexistant
         }elseif (!is_allowed($_session["user"]["id"],recup_group_file($_post->id),ROLE_RENAME_FILE)) {
             $res["error"] = 3004;
         } else {
             global $database;
-            $nom=mysqli_real_escape_string($database,$_post->nom);
-            $description=mysqli_real_escape_string($database,$_post->description);
+            $nom = $_post->nom;
+            $description = $_post->description;
             $res["success"] = modifie_file($_post->id,$nom,$description);
         }
         break;

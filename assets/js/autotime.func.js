@@ -14,8 +14,8 @@
         let date = new Date(time);
         let d_hours = date.getHours();
         let d_minutes = `0${date.getMinutes()}`.slice(-2);
-        let d_day = date.getDate();
-        let d_month = date.getMonth();
+        let d_day = `0${date.getDate()}`.slice(-2);
+        let d_month = `0${date.getMonth()}`.slice(-2);
         let d_year = date.getFullYear();
 
         var res;

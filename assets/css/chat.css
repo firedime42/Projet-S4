@@ -42,14 +42,44 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
           flex: 0 0 auto;
 }
 
 .chat .content-chat .message .data .user {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   padding: 0;
   font-weight: 600;
+}
+
+.chat .content-chat .message .data .user .avatar {
+  width: 25px;
+  height: 25px;
+  border-radius: 25px;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  margin-left: -15px;
+  margin-right: 5px;
 }
 
 .chat .content-chat .message .data .time {

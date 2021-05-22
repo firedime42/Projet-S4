@@ -159,10 +159,10 @@ function getSubFolders($folder_id, $user_id) {
 	$query_nb_folders = "SELECT COUNT(*) FROM folder WHERE parent_id = f.id";
 	$query_nb_files = "SELECT COUNT(*) FROM file WHERE location = f.id";
 	
-	$query_last_visit_chat = "SELECT last_update FROM chatUser WHERE chat_id = f.chat_id AND user_id = $user_id";
+	$query_last_visit_chat = "SELECT last_update FROM chatUser WHERE chat_id = f.chat_id AND user_id = $user_id LIMIT 1";
 	$query_new_messages = "c.last_update > IFNULL(($query_last_visit_chat), 0)";
 
-    $query_last_visit_folder = "SELECT last_update FROM folderUser WHERE folder_id = f.id AND user_id = $user_id";
+    $query_last_visit_folder = "SELECT last_update FROM folderUser WHERE folder_id = f.id AND user_id = $user_id LIMIT 1";
     $query_new_files = "SELECT * FROM file fi JOIN folder dir ON fi.location = dir.id WHERE dir.group_id = f.group_id AND f.anchor_left <= dir.anchor_left AND dir.anchor_right <= f.anchor_right AND fi.creation_date > IFNULL(($query_last_visit_folder), 0)";
 
 	$query = "SELECT f.id, f.name, f.description, f.chat_id, f.last_update, EXISTS($query_new_files) AS notif_folder, ($query_new_messages) AS notif_messages, ($query_nb_messages) AS nb_messages, ($query_nb_folders) AS folders, ($query_nb_files) AS files FROM folder f JOIN chat c ON c.id=f.chat_id WHERE f.parent_id = $folder_id";
@@ -199,10 +199,10 @@ function getSubFiles($folder_id, $user_id) {
 	$query_nb_messages = "SELECT COUNT(*) FROM message WHERE chat_id = f.chat_id";
 	$query_liked = "SELECT * FROM file_liked WHERE file_id = f.id AND user_id = $user_id";
 	
-	$query_last_visit_chat = "SELECT last_update FROM chatUser WHERE chat_id = f.chat_id AND user_id = $user_id";
+	$query_last_visit_chat = "SELECT last_update FROM chatUser WHERE chat_id = f.chat_id AND user_id = $user_id LIMIT 1";
 	$query_new_messages = "c.last_update > IFNULL(($query_last_visit_chat), 0)";
     
-    $query_last_visit_folder = "SELECT last_update FROM folderUser WHERE folder_id = $folder_id AND user_id = $user_id";
+    $query_last_visit_folder = "SELECT last_update FROM folderUser WHERE folder_id = $folder_id AND user_id = $user_id LIMIT 1";
     $query_is_new = "f.creation_date > IFNULL(($query_last_visit_folder), 0)";
 
 	$query = "SELECT f.id, f.name, f.chat_id, f.description, f.creation_date, f.last_update, f.nb_likes, f.creator_id, u.username AS creator_name, ($query_is_new) AS notif_is_new, ($query_new_messages) AS notif_messages, EXISTS($query_liked) AS liked, ($query_nb_messages) AS nb_comments FROM file f JOIN chat c ON c.id=f.chat_id JOIN user u ON u.id = f.creator_id WHERE f.location = $folder_id ORDER BY f.last_update";

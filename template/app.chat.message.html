@@ -1,7 +1,7 @@
 <div class="message">
     <div class="data">
         <div class="user">
-            <div class="avatar"></div>
+            <div class="avatar" style="background-image: url({{ element.author.avatar }}&size=s);"></div>
             <div class="name">{{ element.author.name }}</div>
         </div>
         <div class="time">{{ AUTOTIME this element.publish_date "custom" }}</div>

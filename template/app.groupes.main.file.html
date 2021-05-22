@@ -27,8 +27,8 @@
                 <div class="col2">{{ file.description }}</div>
             </div>
             <div class="data">
-                <div class="author"><span class="icon icon-quill"></span>test1</div>
-                <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" UNITS.SECONDE }}</div>
+                <div class="author"><span class="icon icon-quill"></span>{{ file.auteur.name }}</div>
+                <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" }}</div>
                 <div class="size"><span class="icon icon-save-disk"></span>{{ size file.size }}</div>
                 <div class="nb_downloads"><span class="icon icon-download"></span>{{ file.nb_downloads }}</div>
                 <div class="nb_messages"><span class="icon icon-chat"></span>{{ file.nb_comments }}</div>
@@ -55,7 +55,7 @@
             </div>
             <div class="data">
                 <div class="author"><span class="icon icon-quill"></span>test1</div>
-                <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" UNITS.SECONDE }}</div>
+                <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" }}</div>
                 <div class="size"><span class="icon icon-save-disk"></span>{{ size file.size }}</div>
                 <div class="nb_downloads"><span class="icon icon-download"></span>{{ file.nb_downloads }}</div>
                 <div class="nb_messages"><span class="icon icon-chat"></span>{{ file.nb_comments }}</div>

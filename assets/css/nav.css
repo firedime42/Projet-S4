@@ -43,7 +43,11 @@ nav.navbar .profil .avatar {
   width: 30px;
   height: 30px;
   border-radius: 16px;
-  border: 1px solid #fff;
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
   background-color: var(--bs-cyan);
 }
 

@@ -2,6 +2,14 @@
 
 require_once("sql.php");
 
+/**
+ * requetes tous les messages
+ * "SELECT * FROM message m JOIN file f ON f.chat_id = m.chat_id JOIN folder fo.id = f.location WHERE fo.group_id = $group_id
+ * UNION
+ * SELECT * FROM message m JOIN folder f ON f.chat_id = m.chat_id WHERE f.group_id = $group_id
+ */
+
+
 function create_group($nom, $description, $id_proprietaire) {
 	global $database;
 
@@ -215,7 +223,7 @@ function recup_dashboard($group){
 	$resq=mysqli_query($database,$query);
 	$res=mysqli_fetch_assoc($resq);
 	return $res;
-};
+}
 
 function recup_info($group){
 	global $database;

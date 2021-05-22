@@ -132,7 +132,7 @@ switch ($_post->action) {
                     "nom" => $group["name"],
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
-                    "nb_membres"=> (int) $group["nb_members"],//nb_members($group["id"]),//$group["nb_membres"],
+                    "nb_membres"=> (int) $group["nb_membres"],//nb_members($group["id"]),//$group["nb_membres"],
                     "nb_messages" => 0,//$group["nb_messages"]
                 );
             }
