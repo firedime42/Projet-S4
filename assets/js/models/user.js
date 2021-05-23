@@ -1,86 +1,86 @@
 /**
  * Mezzasalma Mattéo
  * 
- * à refaire
  */
-
 (function () {
 
-
-    async function _getUsersById(id, time) {
-        let r = await fetch("/core/controller/profil.php", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({
-                action: 'profil',
-
-                id,
-                time
-            })
-        });
-
-        let rdata = await r.json();
-
-        if (!rdata.success)
-            return _error(rdata.error);
-
-        return rdata;
+    /**
+     * Vérifie si l'objet passé en paramètre est un identifiant valide
+     * @param {*} id 
+     * @returns 
+     */
+    function valideID(id) {
+        return typeof id == "number" && Number.isInteger(id) && id >= 0;
     }
 
-    class User {
+    /**
+     * verifie si l'objet passé en paramètre est un nom valide
+     * @param {*} name 
+     * @returns 
+     */
+    function valideName(name) {
+        return typeof name == "string" && name.length > 3;
+    }
+
+    class User extends Listenable {
+        static EVENT_UPDATE = 'update';
+
         #id;
-        #username;
-        #description;
-        #lastUpdate;
+        #name;
 
         constructor(id) {
+            super();
+            
             this.#id = id;
-            this.#lastUpdate = 0;
+            this.#name = null;
         }
 
-        /**
-         * Récupère les informations depuis le serveur et les actualise si elles ont changées
-         */
-        async pull() {
-            let d = await _getUsersById(id, this.lastUpdate);
-            
-            if (d instanceof Error) return d;
+        get id() { return this.#id; }
+        get name() { return this.#name; }
+        get avatar() { return `/core/controller/avatar.php?user=${this.#id}`; }
 
-            if (d.user == null) return this;
-            
-            this.#username = d.user.username;
-            this.#description = d.user.description;
-            this.#lastUpdate = d.user.lastUpdate;
+        async pull() {
+            let r = request("/core/controller/user.php", {
+                id: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            this.__parseData(r);
+
+            return this;
+        }
+
+        __parseData(data) {
+            if (valideName(data.name)) this.#name = data.name;
+
+            this.emit(User.EVENT_UPDATE);
 
             return this;
         }
     }
 
-
     class UserManager {
         #users;
-        #waiting;
 
         constructor() {
             this.#users = {};
-            this.#waiting = {};
         }
 
-        getById(id) {
-            if (this.#waiting[id]) return this.#waiting[id];
+        async get(id) {
+            if (!valideID(id)) return error(-1);
 
-            let _this = this;
+            if (!this.#users[id]) this.#users[id] = new User(id);
+            
+            return await this.#users[id].pull();
+        }
 
-            // creer ou récuperer le groupe
-            this.#users[id] = this.#users[id] || new User(id);
+        getWithoutPull(id) {
+            if (!valideID(id)) return error(-1);
 
-            this.#waiting[id] = this.#users[id].pull();
-            this.#waiting[id].then(function () { _this.#waiting[id] = null; });
-
-            // verifier/recuperer les infos sur le serveur
-            return this.#waiting[id];
+            if (!this.#users[id]) this.#users[id] = new User(id);
+            
+            return this.#users[id];
         }
     }
 

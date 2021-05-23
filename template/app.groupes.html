@@ -6,6 +6,9 @@
 <div class="groupe-settings scrollable" data-visible="{{ CURRENT_URL_MATCH SETTINGS VARTESTS }}">
     {{ INCLUDE this.currentNode "/template/app.groupes.settings.html" }}
 </div>
+<div class="groupe-settings scrollable" data-visible="{{ CURRENT_URL_MATCH DASHBOARD VARTESTS }}">
+    {{ INCLUDE this.currentNode "/template/app.groupes.dashboard.html" }}
+</div>
 <div class="groupe-join scrollable" data-visible="{{ CURRENT_URL_MATCH JOIN VARTESTS }}">
     {{ INCLUDE this.currentNode "/template/app.groupes.join.html" }}
 </div>
@@ -28,6 +31,7 @@
         CREATE : "/app/groupes/create",
         BROWSEDIR : "/app/groupes/$id/$dir/*",
         SETTINGS :  "/app/groupes/$id/settings",
+        DASHBOARD: "/app/groupes/$id/dashboard",
         JOIN:       "/app/groupes/$id/join",
     });
 

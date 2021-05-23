@@ -2,7 +2,7 @@
     {{ MARK this "scroll" }}
     <div data-visible="{{ isTail }}" class="top">
         <h1>Vous êtes au sommet de ce chat</h1>
-        <p>Tapez un message dans la bar en bas pour commencer à discuter</p>
+        <p>Tapez un message dans la barre en bas pour commencer à discuter</p>
     </div>
     <div data-visible="{{ NOT isTail }}" class="loading-top">
         <h2>Chargement ...</h2>
@@ -24,7 +24,7 @@
     <button class="btn btn-primary">{{ ADDLISTENER this.currentNode 'click' send }}<em class="icon icon-send"></em></button>
 </div>
 <div class="" data-visible="{{ NOT permissions.write_message }}">
-    You are not allowed to send messages.
+    Vous n'etes pas autorisé à envoyer des messages.
 </div>
 
 <script>
@@ -70,6 +70,7 @@
             let msg = new Message({ author: { id: user.id * 1, name: user.username }, content: text });
             let r = await chat.send(msg);
             if (r instanceof Error) console.error(r);
+            console.log(msg);
             onNewMessage(chat, msg);
             await sleep(10);
             scrollToBottom();

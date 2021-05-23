@@ -19,7 +19,7 @@ switch ($_post->action) {
             $res["error"] = 3001; //Nom de fichier vide
         } elseif (!isset($_post->folder)) {
             $res["error"] = 3002; //Dossier vide
-        } elseif (empty(recup_folder_id($_post->folder))) {
+        } elseif (empty(getIdentFolder($_post->folder))) {
             $res["error"]=3003;
         }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->folder),ROLE_CREATE_FILE)) {
             $res["error"] = 3004;
@@ -29,7 +29,7 @@ switch ($_post->action) {
             $description=mysqli_real_escape_string($database,$_post->description);
             $res["success"]=true;
             $res["id"]=create_file(recup_group_folder($_post->folder),$_post->folder,$nom,$_post->type,$_post->size,$description,$_session["user"]["id"]);
-            update_folder_everyone($_post->folder);
+            update_folder($_post->folder);
         }
         break;
     case "end-upload":

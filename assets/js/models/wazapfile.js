@@ -6,6 +6,12 @@
  */
 
 (function() {
+    function valideID(id) { return Number.isInteger(id) && id >= 0; }
+    function notEmptyString(str) { return typeof str == 'string' && str.length > 0; }
+    function notNullOrUndefined(obj) { return obj !== null && obj !== undefined; }
+    function isString(str) { return typeof str == 'string'; }
+    function valideUser(user) { return typeof user == 'object' && valideID(user.id) && notEmptyString(user.name); }
+    function isBoolean(bool) { return typeof bool == 'boolean'; }
 
     class Upload extends Listenable {
         /* Contraintes et paramètre par défaut */
@@ -154,6 +160,9 @@
         #nb_likes;          // nombre de "like" du fichier
         #nb_comments;       // nombre de commentaire sur le fichier
 
+        #is_new;
+        #new_messages;
+
         #chat;              // identifiant du chat
 
         constructor(id = null) {
@@ -194,15 +203,7 @@
             if (this.#etat != 'online') return _error(-1);
 
             let r = ExPromise();
-            fetch("/core/controller/download.php", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: this.#id
-                })
-            })
+            fetch(`/core/controller/download.php?file_id=${this.#id}`)
             .then(res => res.blob())
             .catch(err => r.resolve(err))
             .then(b => r.resolve(b));
@@ -317,14 +318,19 @@
         get type() { return this.#type; }
         get etat() { return this.#etat; }
         get chat() { return this.#chat; }
+        get auteur() { return USERS.get(this.#auteur); }
 
         get isLiked () { return this.#liked; }
 
         get nb_likes() { return this.#nb_likes; }
         get nb_comments() { return this.#nb_comments; }
 
+        get is_new () { return this.#is_new; }
+        get new_messages() { return this.#new_messages; }
+
         set nom(nom) { this.#newNom = nom; }
         set description(descr) { this.#newDescription = descr; }
+
 
         async like() {
             if (this.#liked) return _error(-1);
@@ -368,18 +374,25 @@
 
         __parseData(data) {
             let exists = (a, b) => (a != null && a != undefined) ? a : b;
-            this.#nom = exists(data['nom'], this.#nom);
-            this.#description = exists(data['description'], this.#description);
-            this.#auteur = exists(data['auteur'], this.#auteur);
-            this.#type = exists(data['type'], this.#type);
-            this.#etat = exists(data['etat'], this.#etat);
-            this.#size = exists(data['size'], this.#size);
-            this.#nb_likes = exists(data['nb_likes'], this.#nb_likes);
-            this.#nb_comments = exists(data['nb_comments'], this.#nb_comments);
-            this.#liked = exists(data['liked'], this.#liked);
-            this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
-            this.#chat = exists(data['chat'], this.#chat);
+            
+            if (notEmptyString(data.nom)) this.#nom = data.nom;
+            if (isString(data.description)) this.#description = data.description;
+            if (valideUser(data.auteur)) {
+                USERS.getWithoutPull(data.auteur.id).__parseData(data.auteur);
+                this.#auteur = data.auteur.id;
+            }
+            if (notEmptyString(data.type)) this.#type = data.type;
+            if (notEmptyString(data.etat)) this.#etat = data.etat;
+            if (Number.isInteger(data.size)) this.#size = data.size;
+            if (Number.isInteger(data.nb_likes)) this.#nb_likes = data.nb_likes;
+            if (Number.isInteger(data.nb_comments)) this.#nb_comments = data.nb_comments;
+            if (isBoolean(data.notif_is_new)) this.#is_new = data.notif_is_new;
+            if (isBoolean(data.notif_new_messages)) this.#new_messages = data.notif_new_messages;
+            if (isBoolean(data.liked)) this.#liked = data.liked;
+            if (Number.isInteger(data.chat)) this.#chat = data.chat;
 
+            this.#lastUpdate = exists(data['lastUpdate'], this.#lastUpdate);
+            
             this.emit(WazapFile.EVENT_UPDATE);
         }
     }
@@ -421,6 +434,20 @@
             return true;
         }
         
+        /**
+         * Récupère un fichier sans charger ses données depuis le serveur
+         * @param {Number} id 
+         * @returns 
+         */
+        getWithoutPull(id) {
+            // verification du type de l'id
+            if (!this.__valideID(id)) return null;
+
+            // on crée le fichier s'il n'existe pas
+            if (!this.#files[id]) this.#files[id] = new WazapFile(id);
+
+            return this.#files[id];
+        }
         
         /**
          * Récupère un ensemble de fichier

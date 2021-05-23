@@ -142,16 +142,22 @@ Taille negative ou nulle
 fichier inexistant
 id invalide
 
-FolderUser
 
-Ajout fichier -> modif lastUpadte dossier
-LastUpdate<folder lastUpadte THEN notification
-pull -> mise a jour Folderuser
+graphe avec les activités dans le mois : un peu comme sur git.
+type de fichiers les plus présent (pie chart) (par type : video / audio / image / text / pdf / autres)
+type de fichiers les plus présent (pie chart) (par extension) SELECT extension,COUNT(f.id) FROM file f JOIN folder fo ON fo.id=f.location WHERE fo.group_id=72 GROUP BY f.extension
 
-ChatUser
+nombre de fichier,
+espace total, 
 
-ajout message-> modif lastUpdate chat
-LastUpdate<chat lastUpadte THEN notification
-getMessage -> mise a jour du timestamp
+SELECT COUNT(f.id) AS nb_files,SUM(size) AS espace_total FROM file f JOIN folder fo ON fo.id=f.location WHERE fo.group_id=72
 
-UPDATE chatUSER SET lastUpdate=12 WHERE NOT EXISTS(SELECT * FROM chatUser WHERE id=4 and chat_id=12) AND id=4 and chat_id=12
+taille moyen des fichiers, espace_total/nb_files
+nombre de membres, nombre de membres qui ont rejoins, nombre de membres qui ont quittés,
+! nombre de téléchargement,
+! nombre de fichiers prévisualisés,
+nombre total de message,	COUNT(*) AS nb_messages FROM (SELECT message FROM message WHERE chat_id IN ( SELECT fo.chat_id FROM folder fo LEFT JOIN file f ON f.location=fo.id WHERE fo.group_id=72) UNION SELECT message FROM message WHERE chat_id IN ( SELECT f.chat_id FROM folder fo LEFT JOIN file f ON f.location=fo.id WHERE fo.group_id=$group)) AS test
+
+classements fichiers
+- les plus aimés	SELECT COUNT(fl.user_id) AS nb_likes ,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN file_liked fl ON fl.file_id=f.id WHERE fo.group_id=72 GROUP BY fl.file_id ORDER BY nb_likes
+- les plus commentés,	SELECT COUNT(m.id) AS nb_messages,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN message m ON m.chat_id=f.chat_id WHERE fo.group_id=72 GROUP BY m.chat_id ORDER BY nb_messages

@@ -18,33 +18,37 @@ switch($_post->action){
     case "pull":
         if (!isset($_post->id)) {
             $res["error"] = 0002; //id vide
+        } elseif ($_post->lastUpdate === NULL) {
+            $res["error"] = 0003; //temps invalide
         } else {
-            $folder = recup_folder_id($_post->id);
+            $folder = getFolder($_post->id, $_session["user"]["id"]);
 
-            if (empty($folder)){
+            if ($folder === NULL){
                 $res["error"] = 4002; //dossier inexistant
             }
-            elseif ($_post->lastUpdate === NULL){
-                $res["error"] = 0003; //temps invalide
-            }            
             elseif ($_post->lastUpdate == $folder["last_update"]) {
                 $res["success"] = true;
-            } else {
+                $res["folder"] = null;
+            }
+            else {
+                $path = getFolderPath($_post->id);
+                $folders = getSubFolders($_post->id, $_session["user"]["id"]);
+                $files = getSubFiles($_post->id, $_session["user"]["id"]);
+
                 $res["success"] = true;
-                update_folder($_post->id,$_session["user"]["id"]);
                 $res["folder"] = array(
-                    //"id" => $folder["id"],
                     "nom" => $folder["name"],
                     "description" => $folder["description"],
-                    "groupe" => (int) $folder["group_id"],
-                    "parent" => is_numeric($folder["parent_id"]) ? (int) $folder["parent_id"] : null,
-                    "folders" => recupere_dossiers_dans_dossier($_post->id),
-                    "files" => recupere_fichiers_dans_dossier($_post->id),
-                    "chat"=> (int) $folder["chat_id"],
-                    "nb_messages" => (int) $folder["nb_messages"],
+                    "path" => $path,
+                    "groupe" => $folder["group_id"],
+                    "chat"=> $folder["chat_id"],
+                    "nb_messages" => $folder["nb_messages"],
+                    "notif_messages" => $folder["notif_messages"],
+                    "folders" => $folders,
+                    "files" => $files,
                     "lastUpdate" => $folder["last_update"]
                 );
-                update_folder($folder["id"],$_session["user"]["id"]);
+                visitFolder($_post->id, $_session["user"]["id"]);
             }
         }
         break;
@@ -54,30 +58,30 @@ switch($_post->action){
         } elseif (!isset($_post->parent)) {
             $res["error"] = 4002; //dossier parent vide
         } else {
-            $parents = recup_folder_id($_post->parent);
+            $parent = getIdentFolder($_post->parent);
             
-            if (empty($parents)){
+            if (!$parent){
                 $res["error"] = 4004; //dossier parent inexistant
-            }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->parent),ROLE_CREATE_FOLDER)) {
+            }elseif (!is_allowed($_session["user"]["id"], $parent['group_id'], ROLE_CREATE_FOLDER)) {
                 $res["error"] = 3004;
             }else{
-                global $database;
-                $nom=mysqli_real_escape_string($database,$_post->nom);
-                $description=mysqli_real_escape_string($database,$_post->description);
-                $res["parent"] = $parents;
-                $res["success"]=create_folder($nom,$parents['group_id'],$_post->parent,$description);
-                $res["id"]=mysqli_insert_id($database);
-                update_folder_everyone($folder["id"]);
+                $res["success"]=true;
+                $res["id"]=create_folder($parent['group_id'],$_post->nom,$_post->description,$_post->parent);
             }
         }
         break;
     case "remove":
         if(!isset($_post->id)){
             $res["error"]=4000;
-        }elseif (!is_allowed($_session["user"]["id"],recup_group_folder($_post->id),ROLE_REMOVE_FOLDER)) {
-            $res["error"]=4000;
-        }else{
-            $res["success"]=supprimer_dossier($_post->id);
+        }else {
+            $folder = getIdentFolder($_post->id);
+            if (!$folder) {
+                $res["error"] = 4004; // dossier inexistant
+            } elseif (!is_allowed($_session["user"]["id"],$folder['group_id'],ROLE_REMOVE_FOLDER)) {
+                $res["error"] = 4000;
+            }else{
+                $res["success"] = remove_folder($_post->id);
+            }
         }
         break;
     default:

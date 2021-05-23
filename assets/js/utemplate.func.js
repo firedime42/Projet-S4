@@ -281,7 +281,10 @@
          */
         AUTOTIME: function (_this, time, mode="default", unit=1) {
             let element = AutoTime.createHTML(mode, time * unit);
-            Dom.before(_this.currentNode, element);
+            let e = Dom.find('span.autotime[data-mode]', _this.currentNode.parentElement);
+            if (e.length == 0) 
+                Dom.after(_this.currentNode, element);
+            else Dom.replace(e[0], element);
             return '';
         }
     });

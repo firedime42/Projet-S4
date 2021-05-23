@@ -44,30 +44,34 @@ switch ($_post->action) {
     case "info":
         if(!isset($_post->id)) $res["error"]=2; //id vide
         else{
-            $group=recup_group($_post->id,$_session["user"]["id"]);
-            if (empty($group)) $res["error"]=2002; //groupe inexistant
+            $group=recup_group_id($_post->id);
+            if (!$group) $res["error"]=2002; //groupe inexistant
             elseif (!isset($_post->time)) $res["error"]=0003; //temps invalide
             elseif( $_post->time==$group["last_update"]){
             $res["success"]=true;
             $res["groupe"]=NULL;
             }
-            else {
+            elseif (est_dans_groupe($_post->id,$_session["user"]["id"])) {
+                $dash=recup_info($_post->id);
                 $res["success"]=true;
+                $group=recup_group($_post->id,$_session["user"]["id"]);
                 $notif=notifs($group["id"],$_session["user"]["id"]);
                 $res["groupe"]= array(
-                    "id" => $group["id_group"],
+                    "id" => (int) $group["id_group"],
                     "nom" => $group["group_name"],
                     "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id_group"]),
                     "description" => $group["description"],
-                    "avatar" => $group["avatar"],
-                    "root" => $group["root"], //???
-                    "nb_membres" => $group["root"],//nb_members($group["id"]),
-                    "nb_messages" => 0,//(int) $group["nb_messages"],
-                    "nb_files" => 0,//(int) $group["nb_files"],
-                    "creator_id" => $group["id_creator"],
+                    "root" => (int) $group["root"], //???
+                    "nb_membres" => (int) $dash["nb_members"],//nb_members($group["id"]),
+                    "nb_messages" => (int) $dash["nb_messages"],//(int) $group["nb_messages"],
+                    "nb_files" => (int) $dash["nb_files"],
+                    "creator" => [
+                        "id" => (int) $group["id_creator"],
+                        "name" => $group["creator_name"]
+                    ],
                     "lastUpdate" => $group["last_update"],
-                    "notif_folder" => (int)$notif["notif_folder"]>0,
-                    "notif_message" => (int)$notif["notif_message"]>0,
+                    "notif_folder" => (bool) $notif["notif_folder"]>0,
+                    "notif_message" => (bool) $notif["notif_message"]>0,
                     "permissions" => array(
                         "write_message" => ($group["write_message"]==1),
                         "remove_message" => ($group["remove_message"]==1),
@@ -93,7 +97,25 @@ switch ($_post->action) {
                         "edit_description" => ($group["edit_description"]==1)
                     )
                 );
-                }
+            }else{
+                $dash=recup_info($_post->id);
+                $res["success"]=true;
+                $res["groupe"]= array(
+                    "id" => (int) $group["id"],
+                    "nom" => $group["name"],
+                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
+                    "description" => $group["description"],
+                    "root" => (int) $group["root"], //???
+                    "nb_membres" => (int) $dash["nb_members"],//nb_members($group["id"]),
+                    "nb_messages" => (int) $dash["nb_messages"],//(int) $group["nb_messages"],
+                    "nb_files" => (int) $dash["nb_files"],
+                    "creator" => [
+                        "id" => (int) $group["id_creator"],
+                        "name" => $group["creator_name"]
+                    ],
+                    "lastUpdate" => $group["last_update"]
+                );
+            }
         }
         break;
     case "search":
@@ -106,11 +128,11 @@ switch ($_post->action) {
             $groups=array();
             foreach($group_data as $group){
                 $groups[]=array(
-                    "id" => $group["id"],
+                    "id" => (int) $group["id"],
                     "nom" => $group["name"],
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
-                    "nb_membres"=> $group["nb_members"],//nb_members($group["id"]),//$group["nb_membres"],
+                    "nb_membres"=> (int) $group["nb_members"],//nb_members($group["id"]),//$group["nb_membres"],
                     "nb_messages" => 0,//$group["nb_messages"]
                 );
             }
@@ -316,17 +338,42 @@ switch ($_post->action) {
             $res["error"]=2000;
         break;
     case "dashboard":
-        $dashboard=recup_dashboard($_post->group);
-        $res["dashboard"]=array(
-        "nb_members" => (int)$dashboard["nb_members"], 
-        "nb_messages" => (int)$dashboard["nb_messages_files"]+(int)$dashboard["nb_messages_folder"],
-        "nb_membres_rejoint" => $dashboard["nb_members_overall"],
-        "nb_messages_sent" => (int)$dashboard["nb_messages_overall"],
-        "nb_files_uploaded" => (int)$dashboard["nb_files_overall"],
-        "nb_files" => (int)$dashboard["nb_files"],
-        "nb_folders" => (int)$dashboard["nb_folders"],
-        "nb_folders_created" => (int)$dashboard["nb_folders_overall"]
-        );
+        if(!isset($_post->group)){
+
+        }elseif (empty(recup_group_id($_post->group))) {
+            # code...
+        }else{
+            $res["success"]=true;
+            $dashboard=recup_dashboard($_post->group);
+            $info=recup_info($_post->group);
+            $res["group"]=array(
+            "nb_members" => (int)$info["nb_members"], 
+            "nb_messages" => (int)$info["nb_messages"],
+            "nb_files"=> (int)$info["nb_files"],
+            "dashboard"=>array(
+                "repart_type"=> recup_repart($_post->group),
+                "total_space"=> (int)$info["total_space"], 
+                "avg_space"=> (int)$info["total_space"]/(int)$info["nb_files"],
+                "most_liked"=> recup_most_liked($_post->group),
+                "most_commented"=> recup_most_commented($_post->group)
+            ),
+            "files"=>0,/*array( // liste des fichiers
+                    name: 'pomme.txt',
+                    type: 'text/plain',
+                    creation_date: Date.now(),
+                    size: 36000
+            ),*/
+            "users"=>0,/*array( // liste des utilisateurs
+                    id: 10,
+                    name: 'pierre',
+                    nb_files: 50,
+                    nb_messages: 100,
+                    role: 'admin'
+                ),*/
+            "messages"=>recup_date_messages($_post->group) 
+            );// liste des dates de publications de tous les messages du site
+        }
+        
         break;
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;

@@ -1,4 +1,4 @@
-<div class="file item" data-file-id="{{ element.id }}">
+<div class="file item" data-file-id="{{ element.id }}" data-notif="{{ element.is_new }}">
     {{ ADDLISTENER this.currentNode "dblclick" open }}
     <div>
         <div class="data">
@@ -6,7 +6,7 @@
             <div class="description clip">{{ element.description }}</div>
         </div>
         <div class="optional-data">
-            <div class="nb_likes" data-liked="{{ element.isLiked }}">{{ element.nb_likes }}</div>
+            <div class="nb_likes" data-liked="{{ element.isLiked }}">{{ ADDLISTENER this.currentNode "click" togglelike }}{{ element.nb_likes }}</div>
             <div class="nb_messages" data-new-messages="{{ element.new_messages }}">{{ element.nb_comments }}</div>
         </div>
         <div class="action dropstart dropdown">

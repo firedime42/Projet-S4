@@ -20,6 +20,7 @@
     <script src="/assets/lib/Dom.js"></script>
     <link rel="stylesheet" type="text/css" href="/assets/lib/prism.css"></link>
     <script src="/assets/lib/prism.min.js"></script>
+    <script src="/assets/lib/wavesurfer.min.js"></script>
     <script src="/assets/lib/sha256.min.js"></script>
     <script src="/assets/lib/pattern.js"></script>
     <script src="/assets/lib/uTemplate.js"></script>
@@ -35,6 +36,7 @@
 
     <!-- models -->
     <script src="/assets/js/models/mainuser.js"></script>
+    <script src="/assets/js/models/user.js"></script>
     <script src="/assets/js/models/listgroupe.js"></script>
     <script src="/assets/js/models/folder.js"></script>
     <script src="/assets/js/models/wazapfile.js"></script>
@@ -48,6 +50,7 @@
 
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/nav.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/home.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/account.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/app.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/groupe.css"></link>
@@ -57,6 +60,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/account.params.compte.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/profil.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/file.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/dashboard.css"></link>
 
 </head>
 <body data-theme="light">
