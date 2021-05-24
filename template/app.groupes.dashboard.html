@@ -1,31 +1,54 @@
 <div class="container">
 	<div class="element">
 		<h3>Répartitions des fichiers</h3><br>
-		<!--<div class="split">
-			<div class="piechart"></div>
-			<div class="desc">
-				<ul>
-					<li>Pouet</li>
-					<li>Truc</li>
-					<li>Machin</li>
-				</ul>
-			</div>
-		</div>-->
+		<div>
+			<canvas style="width: 100%"></canvas>
+			{{ MARK this "repart_type" }}
+		</div>
 	</div>
 	<div class="element">
 		<h3>Espace de stockage :</h3>
-		<p>Taille moyenne des fichiers : 420 Mio</p>
+		<p>Taille total utilisé : {{ SIZE group.dashboard.avg_space }}</p>
+		<p>Taille moyenne des fichiers : {{ SIZE group.dashboard.avg_space }}</p>
 		<p>Nombre de fichiers : {{ group.nb_files }}</p>
 	</div>
 	<div class="element">
-		<h3>Classement des fichier</h3>
+		<h3>Palmares des 5 fichiers les plus populaire</h3>
+		<div class="palmares">
+			<div class="p-head">
+				<div class=""></div>
+				<div class="">Nom</div>
+				<div class="">Nb. Likes</div>
+			</div>
+			<div class="p-body row-container">
+				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->
+				{{ MARK this "palmares-files-likes" }}
+			</div>
+		</div>
 	</div>
 	<div class="element">
-		<h3>Score d'activité</h3>
+		<h3>Palmares des 5 fichiers les plus commentés</h3>
+		<div class="palmares">
+			<div class="p-head">
+				<div></div>
+				<div>Nom</div>
+				<div>Nb. Likes</div>
+			</div>
+			<div class="p-body row-container">
+				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->
+				{{ MARK this "palmares-files-comments" }}
+			</div>
+		</div>
 	</div>
-	<!--<div class="element">
-		<h3>Score de régularité</h3>
-	</div>-->
+	<div class="element">
+		<h3>Palmares utilisateur</h3>
+	</div>
+	<div class="element">
+		<h3>Activité du groupe</h3>
+		<div class="">
+			{{ MARK this "messages" }}
+		</div>
+	</div>
 	<div class="element">
 		<h3>Stats du groupe :</h3>
 		<p>Nombre de membres : {{ group.nb_membres }}</p>
@@ -35,31 +58,167 @@
 	</div>
 </div>
 <script>
-	doc.update({
-		group: {
-			nb_membres: 5,
-			nb_messages: 100,
-			nb_files: 2,
-			stats: {
-				files: [ // liste des fichiers
-					{
-						name: 'pomme.txt',
-						type: 'text/plain',
-						creation_date: Date.now(),
-						size: 36000
-					}
-				],
-				users: [ // liste des utilisateurs
-					{
-						id: 10,
-						name: 'pierre',
-						nb_files: 50,
-						nb_messages: 100,
-						role: 'admin'
-					}
-				],
-				messages: [Date.now() / 1000] // liste des dates de publications des messages
+	var group, dashboard;
+	var repart_chart;
+	var messages_chart;
+	var palmares_files_likes;
+	var palmares_files_comments;
+
+	doc.update({});
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * Some color function because they don't have those ! bouh any chart !
+	 * --------------------------------------------------------------------------
+	 */
+	function rgbaToHex(rgba) {
+        let r = ('0' + Math.round(rgba.r).toString(16)).slice(-2);
+        let g = ('0' + Math.round(rgba.g).toString(16)).slice(-2);
+        let b = ('0' + Math.round(rgba.b).toString(16)).slice(-2);
+        let a = ('0' + Math.round(rgba.a).toString(16)).slice(-2);
+        return `#${r}${g}${b}${a}`;
+    }
+
+    function rgbFromHCL({ H, C, L }) {
+        let X = C * (1 - Math.abs(H % 2 - 1));
+        let m = L - C / 2;
+        let color = null;
+
+        if (C == 0) color = { r: 0, g: 0, b: 0 };
+        else if (0 <= H && H < 1) color = { r: C, g: X, b: 0 };
+        else if (1 <= H && H < 2) color = { r: X, g: C, b: 0 };
+        else if (2 <= H && H < 3) color = { r: 0, g: C, b: X };
+        else if (3 <= H && H < 4) color = { r: 0, g: X, b: C };
+        else if (4 <= H && H < 5) color = { r: X, g: 0, b: C };
+        else if (5 <= H && H < 6) color = { r: C, g: 0, b: X };
+
+        color.r += m;
+        color.g += m;
+        color.b += m;
+
+        return color;
+    }
+	
+	
+	/**
+	 * --------------------------------------------------------------------------
+	 * code normal 
+	 * --------------------------------------------------------------------------
+	 */
+
+
+	async function changeGroup({ group_id }) {
+		if (!group || group.id != group_id) {
+			group = await GROUPES.get(group_id);
+			if (group instanceof Error) return;
+		}
+
+		dashboard = await group.loadDashboard();
+		
+		if (dashboard instanceof Error) return;
+
+		doc.update({ group });
+
+		setRepartChartData(group.dashboard.repart_type);
+		setMessagesChartData(group.dashboard.messages);
+		setPalmaresData(palmares_files_likes, group.dashboard.most_liked);
+		setPalmaresData(palmares_files_comments, group.dashboard.most_commented);
+	}
+
+	function setRepartChartData(repart) {
+		let nb_types = repart.length;
+		var types = new Array(nb_types);
+		var nb_files_per_type = new Array(nb_types);
+		var colors = new Array(nb_types);
+		
+		for (let i = 0; i < nb_types; i++) {
+			types[i] = repart[i].type;
+			nb_files_per_type[i] = repart[i].nb_files;
+
+			// Hue in [0, 6[, Chroma in [0, 255], Luminosity in [0, 255]
+			colors[i] = rgbaToHex({...rgbFromHCL({ H: i * 6 / nb_types, C: 135, L: 186.5 }), a: 255 });
+		}
+
+		console.log(types, nb_files_per_type);
+
+		repart_chart.data.labels = types;
+		repart_chart.data.datasets = [{
+			data: nb_files_per_type,
+			backgroundColor: colors
+		}];
+		repart_chart.update();
+	}
+
+	function setMessagesChartData(messages) {
+		var data = [];
+		const hour = 60 * 60 * 1000;
+		messages.sort((a, b) => a - b);
+		let nb_messages = messages.length;
+		let ld = 0;
+		let lts = 0;
+
+		for (let i = 0, j = 0; i < nb_messages; i++) {
+			let date = new Date(messages[i]);
+			if (messages[i] - lts > 25 * hour || date.getDate() != ld) {
+				ld = date.getDate();
+				lts = messages[i];
+				data[j++] = [date, 1];
+			} else data[j][1]++;
+		}
+
+		console.log(messages, data);
+
+		messages_chart.setData(data);
+	}
+
+	function setPalmaresData(palmares, list) {
+		palmares.clear();
+		
+		let nb_files = list.length;
+		for (let i = 0; i < nb_files; i++)
+			palmares.add(i, list[i], { index: i + 1 });
+	}
+
+	repart_chart = new Chart(doc.ctx.markedElement['repart_type'].children[0].getContext('2d'), {
+		type: 'pie',
+		options: {
+			aspectRatio: 2,
+    		responsive: true,
+			plugins: {
+				legend: {
+					position: 'right'
+				}
 			}
 		}
 	});
+	messages_chart = new CalendarChart(doc.ctx.markedElement['messages'], {
+		legendTitle: 'Legende : nombre de messages',
+		dataColors: {
+			negative: '#00000000',
+			neutral: '#0dcaf000',//'#ffffff00'
+			positive: '#0dcaf0ff'
+		}
+	});
+	let palmares_fl_html = `
+	<div class="palm-row">
+		<div>{{ index }}</div>
+		<div>{{ element.name }}</div>
+		<div>{{ element.nb_likes }}</div>
+	</div>
+	`;
+	let palmares_fc_html = `
+	<div class="palm-row">
+		<div>{{ index }}</div>
+		<div>{{ element.name }}</div>
+		<div>{{ element.nb_messages }}</div>
+	</div>
+	`;
+
+	palmares_files_likes = new HTMLList(doc.ctx.markedElement['palmares-files-likes'], new uTemplate.parser(palmares_fl_html));
+	palmares_files_comments = new HTMLList(doc.ctx.markedElement['palmares-files-comments'], new uTemplate.parser(palmares_fc_html))
+
+
+	window.repart_chart = repart_chart;
+
+	URLrooter.addListener('/app/groupes/$group_id/dashboard', changeGroup, null, { group_id : /[0-9]+/ });
 </script>

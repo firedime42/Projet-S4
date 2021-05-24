@@ -27,6 +27,7 @@
         #nb_membres;
         #nb_messages;
         #nb_files;
+        #dashboard;
 
         #permissions;
 
@@ -217,6 +218,19 @@
             return r.members;
         }
 
+        async loadDashboard() {
+            let r = await request('/core/controller/groupe.php', {
+                action: 'getDashboard',
+                group: this.#id
+            });
+
+            if (r instanceof Error) return r;
+
+            this.__parseData(r.group);
+
+            return this.#dashboard;
+        }
+
         /**
          * Eject un utilisateur du serveur.
          * @param {Number} user_id l'identifiant de l'utilisateur
@@ -263,6 +277,7 @@
             if (Number.isInteger(data.nb_files)) this.#nb_files = data.nb_files;
             if (notNullOrUndefined(data.permissions)) this.#permissions = data.permissions;
             if (notNullOrUndefined(data.lastUpdate)) this.#lastUpdate = data.lastUpdate;
+            if (typeof data.dashboard == 'object') this.#dashboard = data.dashboard;
 
             this.emit(Groupe.EVENT_UPDATE);
         }
@@ -277,6 +292,7 @@
         get nb_membres() { return this.#nb_membres; }
         get nb_messages() { return this.#nb_messages; }
         get permissions() { return this.#permissions; }
+        get dashboard() { return this.#dashboard; }
 
         get lastPullRequest() { return this.#lastCheck; }
 
