@@ -286,6 +286,17 @@
                 Dom.after(_this.currentNode, element);
             else Dom.replace(e[0], element);
             return '';
+        },
+
+        SIZE: function (size) {
+            let units = ['o', 'Ko', 'Mo', 'Go'];
+            let unit = 0;
+            let final_size = size;
+            while (unit < 3 && 1000 < final_size) {
+                final_size /= 1000;
+                unit++;
+            }
+            return `${(''+final_size).substr(0, 5)} ${units[unit]}`;
         }
     });
 })(uTemplate);
