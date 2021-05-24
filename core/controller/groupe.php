@@ -62,8 +62,8 @@ switch ($_post->action) {
                     "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id_group"]),
                     "description" => $group["description"],
                     "root" => (int) $group["root"], //???
-                    "nb_membres" => (int) $dash["nb_members"],//nb_members($group["id"]),
-                    "nb_messages" => 0,//(int) $group["nb_messages"],
+                    "nb_members" => (int) $dash["nb_members"],//nb_members($group["id"]),
+                    "nb_messages" => (int) $dash["nb_messages"],//(int) $group["nb_messages"],
                     "nb_files" => (int) $dash["nb_files"],
                     "creator" => [
                         "id" => (int) $group["id_creator"],
@@ -106,8 +106,8 @@ switch ($_post->action) {
                     "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
                     "description" => $group["description"],
                     "root" => (int) $group["root"], //???
-                    "nb_membres" => (int) $dash["nb_members"],//nb_members($group["id"]),
-                    "nb_messages" => 0,//(int) $group["nb_messages"],
+                    "nb_members" => (int) $dash["nb_members"],//nb_members($group["id"]),
+                    "nb_messages" => (int) $dash["nb_messages"],//(int) $group["nb_messages"],
                     "nb_files" => (int) $dash["nb_files"],
                     "creator" => [
                         "id" => (int) $group["id_creator"],
@@ -132,7 +132,7 @@ switch ($_post->action) {
                     "nom" => $group["name"],
                     "description" => $group["description"],
                     "avatar" => $group["avatar"],
-                    "nb_membres"=> (int) $group["nb_membres"],//nb_members($group["id"]),//$group["nb_membres"],
+                    "nb_members"=> (int) $group["nb_members"],//nb_members($group["id"]),//$group["nb_members"],
                     "nb_messages" => 0,//$group["nb_messages"]
                 );
             }
@@ -338,17 +338,42 @@ switch ($_post->action) {
             $res["error"]=2000;
         break;
     case "dashboard":
-        $dashboard=recup_dashboard($_post->group);
-        $res["dashboard"]=array(
-        "nb_members" => (int)$dashboard["nb_members"], 
-        "nb_messages" => (int)$dashboard["nb_messages_files"]+(int)$dashboard["nb_messages_folder"],
-        "nb_membres_rejoint" => $dashboard["nb_members_overall"],
-        "nb_messages_sent" => (int)$dashboard["nb_messages_overall"],
-        "nb_files_uploaded" => (int)$dashboard["nb_files_overall"],
-        "nb_files" => (int)$dashboard["nb_files"],
-        "nb_folders" => (int)$dashboard["nb_folders"],
-        "nb_folders_created" => (int)$dashboard["nb_folders_overall"]
-        );
+        if(!isset($_post->group)){
+
+        }elseif (empty(recup_group_id($_post->group))) {
+            # code...
+        }else{
+            $res["success"]=true;
+            $dashboard=recup_dashboard($_post->group);
+            $info=recup_info($_post->group);
+            $res["group"]=array(
+            "nb_members" => (int)$info["nb_members"], 
+            "nb_messages" => (int)$info["nb_messages"],
+            "nb_files"=> (int)$info["nb_files"],
+            "dashboard"=>array(
+                "repart_type"=> recup_repart($_post->group),
+                "total_space"=> (int)$info["total_space"], 
+                "avg_space"=> (int)$info["total_space"]/(int)$info["nb_files"],
+                "most_liked"=> recup_most_liked($_post->group),
+                "most_commented"=> recup_most_commented($_post->group)
+            ),
+            "files"=>0,/*array( // liste des fichiers
+                    name: 'pomme.txt',
+                    type: 'text/plain',
+                    creation_date: Date.now(),
+                    size: 36000
+            ),*/
+            "users"=>0,/*array( // liste des utilisateurs
+                    id: 10,
+                    name: 'pierre',
+                    nb_files: 50,
+                    nb_messages: 100,
+                    role: 'admin'
+                ),*/
+            "messages"=>recup_date_messages($_post->group) 
+            );// liste des dates de publications de tous les messages du site
+        }
+        
         break;
     default: $res["error"] = 2000; //Erreur inconnu généré par groupe
     break;

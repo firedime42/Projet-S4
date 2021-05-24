@@ -2,14 +2,6 @@
 
 require_once("sql.php");
 
-/**
- * requetes tous les messages
- * "SELECT * FROM message m JOIN file f ON f.chat_id = m.chat_id JOIN folder fo.id = f.location WHERE fo.group_id = $group_id
- * UNION
- * SELECT * FROM message m JOIN folder f ON f.chat_id = m.chat_id WHERE f.group_id = $group_id
- */
-
-
 function create_group($nom, $description, $id_proprietaire) {
 	global $database;
 
@@ -219,22 +211,63 @@ function recup_applications($group){
 }
 function recup_dashboard($group){
 	global $database;
-	$query="SELECT g.nb_messages AS nb_messages_overall,g.nb_membres AS nb_members_overall, g.nb_folders AS nb_folders_overall ,g.nb_files AS nb_files_overall, COUNT(DISTINCT m.id) AS nb_messages_folder, COUNT(DISTINCT mi.id) AS nb_messages_file, COUNT(DISTINCT fi.name) AS nb_files, COUNT(DISTINCT f.id) AS nb_folders, COUNT(DISTINCT gu.id) AS nb_members FROM `group`g JOIN groupUser gu ON g.id=gu.group_id JOIN folder f ON f.group_id=g.id LEFT JOIN file fi ON fi.location=f.id LEFT JOIN message m ON m.chat_id=f.chat_id LEFT JOIN message mi ON mi.chat_id=fi.chat_id WHERE g.id=45 AND (mi.deleted!=1 OR mi.deleted IS NULL) AND (m.deleted!=1 OR mi.deleted IS NULL)";
+
+	$query="SELECT g.nb_messages AS nb_messages_overall,g.nb_members AS nb_members_overall, g.nb_folders AS nb_folders_overall ,g.nb_files AS nb_files_overall, COUNT(DISTINCT m.id) AS nb_messages_folder, COUNT(DISTINCT mi.id) AS nb_messages_file, COUNT(DISTINCT fi.name) AS nb_files, COUNT(DISTINCT f.id) AS nb_folders, COUNT(DISTINCT gu.id) AS nb_members FROM `group`g JOIN groupUser gu ON g.id=gu.group_id JOIN folder f ON f.group_id=g.id LEFT JOIN file fi ON fi.location=f.id LEFT JOIN message m ON m.chat_id=f.chat_id LEFT JOIN message mi ON mi.chat_id=fi.chat_id WHERE g.id=45 AND (mi.deleted!=1 OR mi.deleted IS NULL) AND (m.deleted!=1 OR mi.deleted IS NULL)";
 	$resq=mysqli_query($database,$query);
 	$res=mysqli_fetch_assoc($resq);
 	return $res;
-}
+};
 
 function recup_info($group){
 	global $database;
-	$query="SELECT (SELECT COUNT(*) FROM groupUser WHERE group_id=$group) AS nb_members, (SELECT COUNT(*) FROM file f JOIN folder fo ON f.location=fo.id WHERE fo.group_id=$group) AS nb_files FROM `group` WHERE id = $group";
+	$query="SELECT (SELECT COUNT(*) FROM groupUser WHERE group_id=$group) AS nb_members, 
+	(SELECT SUM(f.size) FROM file f JOIN folder fo ON f.location=fo.id WHERE fo.group_id=$group) AS total_space,
+	(SELECT COUNT(f.size) FROM file f JOIN folder fo ON f.location=fo.id WHERE fo.group_id=$group) AS nb_files, 
+	COUNT(*) AS nb_messages FROM (SELECT message FROM message WHERE chat_id IN 
+	( SELECT fo.chat_id FROM folder fo LEFT JOIN file f ON f.location=fo.id WHERE fo.group_id=$group) 
+	UNION 
+	SELECT message FROM message WHERE chat_id IN 
+	(SELECT f.chat_id FROM folder fo LEFT JOIN file f ON f.location=fo.id WHERE fo.group_id=$group)) AS test";
 	$res=mysqli_query($database,$query);
-	return mysqli_fetch_assoc($res);
+	return mysqli_fetch_array($res);
 };
+
+function recup_repart($group){
+	global $database;
+	$query="";
+	$files=array();
+	$res=mysqli_query($database,$query);
+	while($row=mysqli_fetch_assoc($res)){
+		$files[]=$row;
+	}
+	return $files;
+}
+
+function recup_most_liked($group){
+	global $database;
+	$query="SELECT COUNT(fl.user_id) AS nb_likes ,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN file_liked fl ON fl.file_id=f.id WHERE fo.group_id=$group GROUP BY fl.file_id ORDER BY nb_likes";
+	$files=array();
+	$res=mysqli_query($database,$query);
+	while($row=mysqli_fetch_assoc($res)){
+		$files[]=$row;
+	}
+	return $files;
+}
+
+function recup_most_commented($group){
+	global $database;
+	$query="SELECT COUNT(m.id) AS nb_messages,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN message m ON m.chat_id=f.chat_id WHERE fo.group_id=$group GROUP BY m.chat_id ORDER BY nb_messages";
+	$files=array();
+	$res=mysqli_query($database,$query);
+	while($row=mysqli_fetch_assoc($res)){
+		$files[]=$row;
+	}
+	return $files;
+}
 
 function modif_nb_members($group_id,$val){
 	global $database;
-	$query = "UPDATE `group` SET nb_membres=nb_membres+$val WHERE id=$group_id";
+	$query = "UPDATE `group` SET nb_members=nb_members+$val WHERE id=$group_id";
 	$res = mysqli_query($database,$query);
 	$res=mysqli_num_rows($res);
 	return $res;
@@ -266,4 +299,19 @@ function est_dans_groupe($group,$user){
 	$query="SELECT * FROM groupUser WHERE group_id=$group AND user_id=$user AND status='accepted'";
 	$res=mysqli_query($database,$query);
 	return mysqli_num_rows($res)>0;
+}
+
+function recup_date_messages($group){
+	global $database;
+	$query="SELECT m.last_update FROM message m JOIN file f ON f.chat_id = m.chat_id JOIN folder fo ON fo.id = f.location WHERE fo.group_id = $group UNION SELECT m.last_update FROM message m JOIN folder f ON f.chat_id = m.chat_id WHERE f.group_id = $group";
+	$res=mysqli_query($database,$query);
+	return mysqli_fetch_array($res);
+}
+
+function recup_membres_dashboard($group){
+
+}
+
+function recup_file_dashboard($group){
+	
 }
