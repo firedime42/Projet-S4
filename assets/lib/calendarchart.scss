@@ -1,0 +1,91 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600);
+
+.calendar-chart {
+    --case-size: 36px;
+    font-family: Source Sans Pro, sans-serif;
+    width: calc(7 * var(--case-size));
+    padding: 10px;
+    
+
+    .cc-day {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: calc(var(--case-size) / 3);
+        width: var(--case-size);
+        height: var(--case-size);
+    }
+
+    .cc-header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .cc-day {
+            z-index: 1;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    }
+
+    .cc-content {
+        width: calc(7 * var(--case-size));
+
+        .cc-month {
+            counter-reset: month;
+            --cc-day-color: transparent;
+            margin-bottom: 15px;
+
+            .cc-month-header {
+                text-align: center;
+            }
+
+            .cc-month-days {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+
+                .cc-day {
+                    counter-increment: month;
+                    background-color: var(--cc-day-color);
+                }
+                .cc-day:before {
+                    content: counter(month);
+                }
+
+                .cc-day[data-value]:hover:after {
+                    content: attr(data-value);
+                    position: absolute;
+                    padding: 5px 20px;
+                    background: #333;
+                    border: 1px solid #444;
+                    color: #fff;
+                    border-radius: 3px;
+                    margin-top: calc(1.5 * var(--case-size));
+                }
+            }
+        }
+
+        .cc-start-mon .cc-day:first-child { margin-left: calc(0 * var(--case-size)); }
+        .cc-start-tue .cc-day:first-child { margin-left: calc(1 * var(--case-size)); }
+        .cc-start-wed .cc-day:first-child { margin-left: calc(2 * var(--case-size)); }
+        .cc-start-thu .cc-day:first-child { margin-left: calc(3 * var(--case-size)); }
+        .cc-start-fri .cc-day:first-child { margin-left: calc(4 * var(--case-size)); }
+        .cc-start-sat .cc-day:first-child { margin-left: calc(5 * var(--case-size)); }
+        .cc-start-sun .cc-day:first-child { margin-left: calc(6 * var(--case-size)); }
+    }
+
+    .cc-legend {
+        .cc-gradient {
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            overflow: hidden;
+            
+            div {
+                width: 20%;
+                text-align: center;
+            }
+        }
+    }
+}

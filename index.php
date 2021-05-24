@@ -18,10 +18,15 @@
     
     <!-- librairies -->
     <script src="/assets/lib/Dom.js"></script>
-    <link rel="stylesheet" type="text/css" href="/assets/lib/prism.css"></link>
     <script src="/assets/lib/prism.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/lib/prism.css"></link>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
     <script src="/assets/lib/wavesurfer.min.js"></script>
     <script src="/assets/lib/sha256.min.js"></script>
+
+    <!-- librairies matteo -->
+    <script src="/assets/lib/calendarchart.js"></script>
+    <link rel="stylesheet" type="text/css" href="/assets/lib/calendarchart.css"></link>
     <script src="/assets/lib/pattern.js"></script>
     <script src="/assets/lib/uTemplate.js"></script>
     <script src="/assets/lib/urlmanager.js"></script>
