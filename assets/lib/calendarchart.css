@@ -1,8 +1,9 @@
 @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600);
 .calendar-chart {
+  position: relative;
   --case-size: 36px;
   font-family: Source Sans Pro, sans-serif;
-  width: calc(7 * var(--case-size));
+  width: calc(7 * var(--case-size) + 20px);
   padding: 10px;
 }
 
