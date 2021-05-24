@@ -46,7 +46,7 @@ function create_file($group,$folder,$filename,$content_type,$size,$description,$
     $query = "INSERT INTO file (location, name, extension, creator_id,size,description,chat_id, creation_date, last_update) VALUES ($folder, '$filename', '$content_type', $id_creator,$size,'$description',$id_chat,$last_update,$last_update)";
     mysqli_query($database, $query);
     $id=mysqli_insert_id($database);
-    modif_nb_files($group,1);
+    modif_nb_files($group, 1);
     return $id;
 }
 

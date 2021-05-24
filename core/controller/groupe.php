@@ -337,7 +337,7 @@ switch ($_post->action) {
         }else
             $res["error"]=2000;
         break;
-    case "dashboard":
+    case "getDashboard":
         if(!isset($_post->group)){
 
         }elseif (empty(recup_group_id($_post->group))) {
@@ -347,30 +347,19 @@ switch ($_post->action) {
             $dashboard=recup_dashboard($_post->group);
             $info=recup_info($_post->group);
             $res["group"]=array(
-            "nb_members" => (int)$info["nb_members"], 
-            "nb_messages" => (int)$info["nb_messages"],
-            "nb_files"=> (int)$info["nb_files"],
-            "dashboard"=>array(
-                "repart_type"=> recup_repart($_post->group),
-                "total_space"=> (int)$info["total_space"], 
-                "avg_space"=> (int)$info["total_space"]/(int)$info["nb_files"],
-                "most_liked"=> recup_most_liked($_post->group),
-                "most_commented"=> recup_most_commented($_post->group)
-            ),
-            "files"=>0,/*array( // liste des fichiers
-                    name: 'pomme.txt',
-                    type: 'text/plain',
-                    creation_date: Date.now(),
-                    size: 36000
-            ),*/
-            "users"=>0,/*array( // liste des utilisateurs
-                    id: 10,
-                    name: 'pierre',
-                    nb_files: 50,
-                    nb_messages: 100,
-                    role: 'admin'
-                ),*/
-            "messages"=>recup_date_messages($_post->group) 
+                "nb_members" => (int)$info["nb_members"], 
+                "nb_messages" => (int)$info["nb_messages"],
+                "nb_files"=> (int)$info["nb_files"],
+                "dashboard"=>array(
+                    "repart_type"=> recup_repart($_post->group),
+                    "total_space"=> (int)$info["total_space"], 
+                    "avg_space"=> (int)$info["total_space"]/(int)$info["nb_files"],
+                    "most_liked"=> recup_most_liked($_post->group),
+                    "most_commented"=> recup_most_commented($_post->group),
+                    "files"=>recup_file_dashboard($_post->group),
+                    "users"=>recup_membres_dashboard($_post->group),
+                    "messages"=>recup_date_messages($_post->group) 
+                )
             );// liste des dates de publications de tous les messages du site
         }
         

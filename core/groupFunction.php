@@ -234,33 +234,42 @@ function recup_info($group){
 
 function recup_repart($group){
 	global $database;
-	$query="";
+	$query="SELECT extension AS type,COUNT(f.id) AS nb_files FROM file f JOIN folder fo ON fo.id=f.location WHERE fo.group_id=$group GROUP BY f.extension ORDER BY nb_files DESC";
 	$files=array();
 	$res=mysqli_query($database,$query);
 	while($row=mysqli_fetch_assoc($res)){
-		$files[]=$row;
+		$files[]=array(
+			"type" => $row["type"],
+			"nb_files" => (int)$row["nb_files"]
+		);
 	}
 	return $files;
 }
 
 function recup_most_liked($group){
 	global $database;
-	$query="SELECT COUNT(fl.user_id) AS nb_likes ,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN file_liked fl ON fl.file_id=f.id WHERE fo.group_id=$group GROUP BY fl.file_id ORDER BY nb_likes";
+	$query="SELECT COUNT(fl.user_id) AS nb_likes ,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN file_liked fl ON fl.file_id=f.id WHERE fo.group_id=72 GROUP BY f.id ORDER BY nb_likes DESC LIMIT 5";
 	$files=array();
 	$res=mysqli_query($database,$query);
 	while($row=mysqli_fetch_assoc($res)){
-		$files[]=$row;
+		$files[]=array(
+			"nb_likes" => (int) $row["nb_likes"],
+			"name" => $row["name"]
+		);
 	}
 	return $files;
 }
 
 function recup_most_commented($group){
 	global $database;
-	$query="SELECT COUNT(m.id) AS nb_messages,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN message m ON m.chat_id=f.chat_id WHERE fo.group_id=$group GROUP BY m.chat_id ORDER BY nb_messages";
+	$query="SELECT COUNT(m.id) AS nb_messages,f.name FROM file f JOIN folder fo ON fo.id=f.location LEFT JOIN message m ON m.chat_id=f.chat_id WHERE fo.group_id=72 GROUP BY f.id ORDER BY nb_messages DESC LIMIT 5";
 	$files=array();
 	$res=mysqli_query($database,$query);
 	while($row=mysqli_fetch_assoc($res)){
-		$files[]=$row;
+		$files[]=array(
+			"nb_messages" => (int) $row["nb_messages"],
+			"name" => $row["name"]
+		);
 	}
 	return $files;
 }
@@ -305,13 +314,39 @@ function recup_date_messages($group){
 	global $database;
 	$query="SELECT m.last_update FROM message m JOIN file f ON f.chat_id = m.chat_id JOIN folder fo ON fo.id = f.location WHERE fo.group_id = $group UNION SELECT m.last_update FROM message m JOIN folder f ON f.chat_id = m.chat_id WHERE f.group_id = $group";
 	$res=mysqli_query($database,$query);
-	return mysqli_fetch_array($res);
+	while($row=mysqli_fetch_assoc($res)){
+		$messages[]=(int)$row["last_update"];
+	}
+	return $messages;
 }
 
 function recup_membres_dashboard($group){
-
+	global $database;
+	$query = "SELECT u.id,u.username,r.name AS role, (SELECT COUNT(f.id) FROM file f JOIN folder fo ON fo.id=f.location WHERE creator_id=u.id AND fo.group_id=gu.group_id) AS nb_files, ( SELECT COUNT(id) FROM (SELECT m.* FROM message m JOIN file f ON f.chat_id = m.chat_id JOIN folder fo ON fo.id = f.location WHERE fo.group_id = $group UNION SELECT m.* FROM message m JOIN folder f ON f.chat_id = m.chat_id WHERE f.group_id = $group)AS test WHERE author=u.id GROUP BY author) AS nb_messages FROM groupUser gu JOIN user u ON u.id=gu.user_id JOIN role r ON r.id=gu.role_id WHERE gu.group_id=$group";
+	$res=mysqli_query($database,$query);
+	while($row=mysqli_fetch_assoc($res)){
+		$list_membres[]=array(
+			"id" => (int)$row["id"],
+			"name" => $row["username"],
+			"role" => $row["role"],
+			"nb_files" => (int) $row["nb_files"],
+			"nb_messages" => (int) $row["nb_messages"]
+		);
+	}
+	return $list_membres;
 }
 
 function recup_file_dashboard($group){
-	
+	global $database;
+	$query = "SELECT f.name,f.extension,f.creation_date,f.size FROM file f JOIN folder fo ON fo.id=f.location WHERE fo.group_id=$group";
+	$res=mysqli_query($database,$query);
+	while($row=mysqli_fetch_assoc($res)){
+		$files[]=array(
+			"creation_date" => (int)$row["creation_date"],
+			"name" => $row["name"],
+			"extension" => $row["extension"],
+			"size" => (int) $row["size"]
+		);
+	}
+	return $files;
 }
