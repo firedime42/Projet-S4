@@ -1,23 +1,47 @@
-.profil h2 {
-  border-color: black;
-  border-radius: 1px;
+.profil {
+  padding-top: 50px;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
 }
 
-.profil img {
-  margin-left: 40%;
+.profil .element {
+  width: 30%;
 }
 
-.profil table {
-  position: absolute;
-  margin-left: 45%;
-  text-align: center;
+.profil .element .centre {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
-.profil tr {
-  text-align: center;
+.profil .element .image {
+  width: 250px;
+  height: 250px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 50%;
+  border: solid var(--nav-background-color) 2px;
 }
 
-.profil .biography {
-  margin-left: 45%;
+.profil .element .biography {
+  width: 100%;
+  height: 150px;
 }
 /*# sourceMappingURL=profil.css.map */

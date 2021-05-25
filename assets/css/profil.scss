@@ -1,23 +1,35 @@
-.profil {
-    h2 {
-        border-color: black;
-        border-radius: 1px;
-    }
-    img {
-        
-        margin-left: 40%;
-    }
-    table {
-        position : absolute;
-        margin-left:45%;
-        text-align: center;
-    }
+.profil{
+    padding-top: 50px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    
+    .element{
+        width: 30%;
 
-    tr {
-       text-align: center;
-    }
-    .biography {
-        margin-left: 45%;
+        .centre{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+
+        .image{
+            width: 250px;
+            height: 250px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-radius: 50%;
+            border: solid var(--nav-background-color) 2px;
+        }
+
+        .biography{
+            width: 100%;
+            height: 150px;
+        }
+
+
     }
 }
-  

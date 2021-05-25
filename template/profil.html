@@ -1,30 +1,28 @@
 <div class="profil">
 
-	<img src="{{ user.picture }}">
-	<h2> {{ user.nom }} </h2> 
 
-	<label for="biography">Modifier votre Biographie</label>
-
-	<textarea class="biography" rows="5" cols="33"> {{ user.biography }} </textarea>  <!-- Fonction modif bio -->
-
-	<div>	
-		<p>Derniers Messages </p><!-- Oscours, je sais pas quoi mettre --> 
+	<div class="element">
+		<div class="centre">
+			<div class="image" style="background-image: url({{ user.picture }})"></div>
+		</div>
 	</div>
 
-	<table class="statsProfil">
-		<tr>
-			<td> Temps passé sur le site : </td>
-			<td> {{ user.time }} secondes</td> <!-- Fonction secondes -> heures, minutes, secondes -->
-		</tr>
-		<tr>
-			<td>Nombre de messages postés : </td>
-			<td>{{ user.nbMessages }}</td>
-		</tr>
-		<tr>
-			<td>Nombre de Groupes rejoint : </td>
-			<td>{{ user.nbGroupe }}</td>
-		</tr>
-	</table>
+	<div class="element">
+		<h2> {{ user.nom }} :</h2>
+		<br>
+		<label for="biography">Modifier votre Biographie</label>
+		<br>
+		<textarea class="biography">{{ user.biography }}</textarea>
+	</div>
+
+	<div class="element">
+		<h2>Statistiques :</h2>
+		<br>
+		<p><strong>Temps passé sur le site : </strong>{{ user.time }} secondes</p>
+		<p><strong>Nombre de messages postés : </strong>{{ user.nbMessages }}</p>
+		<p><strong>Nombre de Groupes rejoint : </strong>{{ user.nbGroupe }}</p>
+
+	</div>
 </div>
 
 

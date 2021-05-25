@@ -1,0 +1,170 @@
+.profile {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px 20px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.profile .name {
+  padding: 10px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.profile .name:after {
+  display: block;
+  margin-top: 5px;
+  content: '';
+  width: 100%;
+  height: 1px;
+  background: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(50%, rgba(0, 0, 0, 0.2)), to(transparent));
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
+}
+
+.profile .parts {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.profile .parts > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 10px;
+  width: 50%;
+}
+
+.profile .avatar {
+  width: 150px;
+  height: 150px;
+  image-rendering: crisp-edges;
+  background-position: center;
+  background-size: cover;
+  border-radius: calc( 150px / 2);
+}
+
+.profile .avatar[data-editable="true"] {
+  cursor: pointer;
+}
+
+.profile .avatar[data-editable="true"]:hover:before {
+  content: '\e918';
+  font-weight: bold;
+  font-size: 2em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.profile .biography {
+  width: 100%;
+  min-height: 5em;
+  margin-top: 20px;
+  padding: 5px 40px;
+  border-radius: 5px;
+  -webkit-transition: .5s;
+  transition: .5s;
+}
+
+.profile .biography:hover {
+  background-color: #eee;
+}
+
+.profile .biography:empty:after {
+  content: attr(placeholder);
+}
+
+.profile .stats .stat {
+  position: relative;
+  overflow: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  padding: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.profile .stats .stat .value {
+  font-weight: bold;
+}
+
+.profile .stats .stat .unit {
+  font-size: .8em;
+}
+
+.profile .stats .stat .icon {
+  -webkit-filter: opacity(0.3);
+          filter: opacity(0.3);
+  font-size: 4.5em;
+  position: absolute;
+  left: .2em;
+  bottom: -.2em;
+  -webkit-transform: rotate(-5deg);
+          transform: rotate(-5deg);
+}
+
+.profile .stats .stat:first-child {
+  border-top: 0;
+}
+
+.flex-center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 10px;
+}
+/*# sourceMappingURL=profile.css.map */

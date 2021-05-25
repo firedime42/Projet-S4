@@ -64,6 +64,7 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/group.settings.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/account.params.compte.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/profil.css"></link>
+    <link rel="stylesheet" type="text/css" href="/assets/css/profile.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/file.css"></link>
     <link rel="stylesheet" type="text/css" href="/assets/css/dashboard.css"></link>
 
@@ -119,6 +120,11 @@
         <!-- profil -->
         <div class="page scrollable" data-visible="{{ URLLIKE url '/profil/*' }}">
             {{ INCLUDE this.currentNode "/template/profil.html" }}
+        </div>
+        
+        <!-- profile -->
+        <div class="page scrollable" data-visible="{{ URLLIKE url '/profile/*' }}">
+            {{ INCLUDE this.currentNode "/template/profile.html" }}
         </div>
 
         <!-- 404 page -->

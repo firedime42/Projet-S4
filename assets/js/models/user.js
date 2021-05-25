@@ -27,6 +27,11 @@
 
         #id;
         #name;
+        #biography;
+        #nb_messages;
+        #nb_files;
+        #nb_groups;
+        #creation_date;
 
         constructor(id) {
             super();
@@ -38,21 +43,32 @@
         get id() { return this.#id; }
         get name() { return this.#name; }
         get avatar() { return `/core/controller/avatar.php?user=${this.#id}`; }
+        get biography() { return this.#biography; }
+        get nb_messages() { return this.#nb_messages; }
+        get nb_files() { return this.#nb_files; }
+        get nb_groups() { return this.#nb_groups; }
+        get creation_date() { return this.#creation_date; }
 
         async pull() {
-            let r = request("/core/controller/user.php", {
+            let r = await request("/core/controller/user.php", {
+                action: 'pull',
                 id: this.#id
             });
 
             if (r instanceof Error) return r;
 
-            this.__parseData(r);
+            this.__parseData(r.user);
 
             return this;
         }
 
         __parseData(data) {
             if (valideName(data.name)) this.#name = data.name;
+            if (typeof data.biography == 'string') this.#biography = data.biography;
+            if (Number.isInteger(data.nb_messages)) this.#nb_messages = data.nb_messages;
+            if (Number.isInteger(data.nb_files)) this.#nb_files = data.nb_files;
+            if (Number.isInteger(data.nb_groups)) this.#nb_groups = data.nb_groups;
+            if (Number.isInteger(data.creation_date)) this.#creation_date = data.creation_date;
 
             this.emit(User.EVENT_UPDATE);
 
@@ -68,7 +84,7 @@
         }
 
         async get(id) {
-            if (!valideID(id)) return error(-1);
+            if (!valideID(id)) return _error(-1);
 
             if (!this.#users[id]) this.#users[id] = new User(id);
             
@@ -76,7 +92,7 @@
         }
 
         getWithoutPull(id) {
-            if (!valideID(id)) return error(-1);
+            if (!valideID(id)) return _error(-1);
 
             if (!this.#users[id]) this.#users[id] = new User(id);
             

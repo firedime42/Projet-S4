@@ -1,0 +1,92 @@
+<div class="flex-center">
+    <div class="loading" data-visible="{{ EQUALS state 'loading' }}"></div>
+    <div class="profile" data-visible="{{ EQUALS state 'profile' }}">
+        <div class="name">{{ profile.name }}</div>
+        <div class="parts">
+            <div>
+                <div class="avatar" data-editable="{{ NOT isntMainUser }}" style="background-image: url({{ profile.avatar }}&size=l&no-cache={{ now }});">{{ ADDLISTENER this.currentNode.parentElement "click" changeAvatar }}</div>
+                <textarea class="biography" maxlength="5000" placeholder="Aucune description">{{ DISABLE this isntMainUser }}{{ profile.biography }}</textarea>
+            </div>
+            <div class="stats">
+                <div class="stat"><div class="icon icon-chat"></div><div class="value">{{ profile.nb_messages }}</div><div class="unit">messages</div></div>
+                <div class="stat"><div class="icon icon-file-o"></div><div class="value">{{ profile.nb_files }}</div><div class="unit">fichiers</div></div>
+                <div class="stat"><div class="icon icon-supervised_user_circle"></div><div class="value">{{ profile.nb_groups }}</div><div class="unit">groupes</div></div>
+                <div class="stat"><div class="icon icon-birthday"></div><div class="value">{{ AUTOTIME this profile.creation_date "custom" }}</div><div class="unit">inscription</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="errors" data-visible="{{ EQUALS state 'error' }}">
+        <div data-visible="{{ EQUALS errcode undefined }}">Problème de connection</div>
+        <div data-visible="{{ EQUALS errcode -1 }}">
+            Utilisateur innexistant
+        </div>
+    </div>
+</div>
+<script>
+    function valideID(id) { return Number.isInteger(id) && id >= 0; }
+
+    
+    async function setProfile({ user_id }) {
+        user_id = user_id == "" ? -1 : user_id * 1;
+        
+        doc.update({ state: 'loading' });
+
+        if (!valideID(user_id)) {
+            await user.retrieveSession();
+            user_id = user.isLoggedIn ? user.id * 1 : null;
+        }
+
+        let u = await USERS.get(user_id);
+
+        if (u instanceof Error) showError(u);
+        else doc.update({ state: 'profile', profile: u, isntMainUser: user.id != user_id });
+    }
+
+    function showError(err) {
+        console.log(err.code);
+        doc.update({ state: 'error', errcode: err.code });
+    }
+
+    async function changeAvatar() {
+        if (doc.ctx.isntMainUser) return;
+        
+        // creation d'une input pour recuperer les fichiers que l'utilisateur veut selectionner
+        let input = Dom.create('<input type="file" accept="image/png, image/jpeg, image/bmp" style="position: absolute; width: 0; height: 0; top: -100%;">').children[0];
+
+        // promesse pour attendre le choix de l'utilisateur
+        let onchange = ExPromise();
+        input.onchange = onchange.resolve;
+
+        // attente du choix de l'utilisateur
+        input.click();
+        await onchange;
+
+        // recuperation des données
+        let file = input.files[0];
+
+        // suppresion de l'input
+        input.onchange = null;
+        Dom.remove(input);
+
+        if (!(file instanceof File)) console.error("Pas un fichier image");
+        else if (file.type == "image/png" || file.type == "image/jpeg" || file.type == "image/bmp") {
+            let r = await user.setAvatar(file);
+            setProfile({ user_id: user.id });
+        }
+    }
+
+    doc.update({
+        state: 'loading',
+        DISABLE: function (_this, bool) {
+            let element = _this.currentNode.parentElement;
+            window.textarea_ok = element;
+            element.disabled = bool;
+            return '';
+        },
+        changeAvatar,
+        now: Date.now
+    });
+
+
+    URLrooter.addListener('/profile/$user_id', setProfile, null, { user_id: /^(?:[0-9]+|)$/ });
+</script>

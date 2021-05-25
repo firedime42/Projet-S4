@@ -38,7 +38,7 @@
          * Tente de récupérer l'utilisateur
          */
         async retrieveSession() {
-            if (this.#state == MainUser.STATE_PROCESSING) return false;
+            if (this.#state == MainUser.STATE_PROCESSING) return await this.until(MainUser.EVENT_STATE_CHANGE);
 
             this.__setState(MainUser.STATE_PROCESSING);
 
@@ -241,8 +241,31 @@
             }
         }
 
-        setAvatar(file) {
+        async setAvatar(file) {
+            if (!this.isLoggedIn) return _error(-1);
             
+            let p = new ExPromise();
+            let fd = new FormData();
+            fd.append('avatar', file);
+            
+            fetch('/core/controller/avatar_upload.php', {
+                method: 'POST',
+                body: fd
+            }).catch(function (e) {
+                console.log(e);
+                p.resolve(e);
+            }).then(function (r) {
+                console.log(r);
+                p.resolve(r);
+            });
+
+            return await p;
+        }
+
+        async setBiography(bio) {
+            if (!this.isLoggedIn) return _error(-1);
+
+
         }
 
         __parseUser(user) {

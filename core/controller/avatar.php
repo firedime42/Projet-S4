@@ -2,14 +2,14 @@
 /**
  * 
  */
-$MAX_AGE = 3600;// 1h
+$MAX_AGE = 60;// 1min
 $path_base = dirname(__FILE__).'/../../avatar';
 $user_id = 'default';
 $size = 's';
 
 // test de la valeur d'identifiant
-if (isset($_GET['id']) && isNumeric($_GET['id'])) {
-    $user_id = $_GET['id'];
+if (isset($_GET['user']) && is_numeric($_GET['user'])) {
+    $user_id = $_GET['user'];
 }
 
 // taille
