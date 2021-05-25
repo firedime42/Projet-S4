@@ -105,6 +105,56 @@ switch ($_post->action) {
         //unset($_session);
         break;
     break;
+    case "editLogin":
+        if(!isset($_post->id)){
+            $res["error"]=1000;
+        }elseif (!isset($_post->login)){
+            $res["error"]=1000;
+        }else {
+            $login=mysqli_real_escape_string($database,$_post->login);
+            $user = recup_user_id($_post->id);
+            if(empty($user)){
+                $res["error"]=1103; //Erreur l'identifiant ne correspond à aucun utilisateur
+            }elseif (!format_username($login)) {
+                $res["error"]=1102; 
+            }else {
+                $res["success"]=true;
+                edit_login($_post->id,$login);
+            }
+        }
+        break;
+        case "editPassword":
+            if(!isset($_post->id)){
+                $res["error"]=1000;
+            }elseif (!isset($_post->password)){
+                $res["error"]=1000;
+            }else {
+                $password=mysqli_real_escape_string($database,$_post->password);
+                $user = recup_user_id($_post->id);
+                if(empty($user)){
+                    $res["error"]=1103; //Erreur l'identifiant ne correspond à aucun utilisateur
+                }else {
+                    $res["success"]=true;
+                    edit_password($_post->id,$password);
+                }
+            }
+            break;
+            case "editbiography":
+                if(!isset($_post->id)){
+                    $res["error"]=1000;
+                }elseif (!isset($_post->biography)){
+                    $res["error"]=1000;
+                }else {
+                    $biography=mysqli_real_escape_string($database,$_post->biography);
+                    $user = recup_user_id($_post->id);
+                    if(empty($user)){
+                        $res["error"]=1103; //Erreur l'identifiant ne correspond à aucun utilisateur
+                    }else {
+                        $res["success"]=true;
+                        edit_biography($_post->id,$biography);
+                    }
+                }
+                break;
     default:
         $res["error"] = 1000; //Erreur inconnu généré par account
         break; 

@@ -80,4 +80,22 @@ function recup_user_id($id){
 	$user_data=mysqli_fetch_assoc($result);
 	return $user_data;
 }
+
+function edit_login($id,$login){
+	global $database;
+	$query="UPDATE user SET username='$login' WHERE id=$id";
+	mysqli_query($database,$query);
+}
+
+function edit_password($id,$password){
+	global $database;
+	$query="UPDATE user SET password='$password' WHERE id=$id";
+	mysqli_query($database,$query);
+}
+
+function edit_biography($id,$biography){
+	global $database;
+	$query="UPDATE user SET biography='$biography' WHERE id=$id";
+	mysqli_query($database,$query);
+}
 ?>
