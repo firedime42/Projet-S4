@@ -122,10 +122,10 @@
         if (groupe instanceof Error) { // TODO : affichage erreur / redirection sur groupe 404
             console.error(groupe);
             groupe = null;
-            setURL(`/app/groupes/error/404`);
+            setURL(`/app/group/error/404`);
         } else if (groupe.status != 'accepted') { // TODO : redirection accès refusé
             console.log("accès refusé : ne fait pas parti du groupe");
-            setURL(`/app/groupes/${groupe.id}/join`);
+            setURL(`/app/group/${groupe.id}/join`);
         } else {
             doc.update({ groupe });
 
@@ -151,7 +151,7 @@
                 ListGroupe.update();
 
                 if (r instanceof Error) console.error(r);
-                else setURL(`/app/groupes/${groupe.id}/`);
+                else setURL(`/app/group/${groupe.id}/`);
             }
         }
     });
@@ -379,9 +379,9 @@
 
     /* reste */
 
-    let rolesHTML = fetch("/template/app.groupes.settings.roleitem.html");
-    let candidatHTML = fetch("/template/app.groupes.settings.candidatitem.html");
-    let membreHTML = fetch("/template/app.groupes.settings.membreitem.html");
+    let rolesHTML = fetch("/template/app.group.settings.roleitem.html");
+    let candidatHTML = fetch("/template/app.group.settings.candidatitem.html");
+    let membreHTML = fetch("/template/app.group.settings.membreitem.html");
 
     rolesHTML = await rolesHTML;
     candidatHTML = await candidatHTML;
@@ -395,5 +395,5 @@
     listCandidates = new HTMLList(doc.ctx.markedElement['candidates'], new uTemplate.parser(candidatHTML));
     listMembres = new HTMLList(doc.ctx.markedElement['membres'], new uTemplate.parser(membreHTML));
 
-    URLrooter.addListener("/app/groupes/$id/settings", onOpenSettings, null, { id: /^[0-9]+$/})
+    URLrooter.addListener("/app/group/$id/settings", onOpenSettings, null, { id: /^[0-9]+$/})
 </script>

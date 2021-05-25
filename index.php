@@ -90,7 +90,7 @@
                         <div class="nav-item dropdown">
                             <div class="profil"><div class="avatar" style="background-image:url(/core/controller/avatar.php?user={{ user.id }}&size=s);"></div><span class="px-2">{{ user.username }}</span></div>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="/profil/">Mon Profil</a>
+                                <a class="dropdown-item" href="/profile/">Mon Profil</a>
                                 <a class="dropdown-item" href="/account/params/">Paramètres</a>
                                 <a class="dropdown-item" href="/account/logout">Déconnexion</a>
                             </div>
@@ -121,7 +121,7 @@
         <div class="page scrollable" data-visible="{{ URLLIKE url '/profil/*' }}">
             {{ INCLUDE this.currentNode "/template/profil.html" }}
         </div>
-        
+
         <!-- profile -->
         <div class="page scrollable" data-visible="{{ URLLIKE url '/profile/*' }}">
             {{ INCLUDE this.currentNode "/template/profile.html" }}

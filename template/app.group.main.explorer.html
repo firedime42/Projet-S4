@@ -100,13 +100,13 @@
             let dir = FOLDERS.getWithoutPull(_path[i]);
             Dom.append(
                 path,
-                `<div class="path-item"><a href="/app/groupes/${groupe.id}/${dir.id}">${dir.nom}</a></div>`
+                `<div class="path-item"><a href="/app/group/${groupe.id}/${dir.id}">${dir.nom}</a></div>`
             );
         }
 
         Dom.append(
             path,
-            `<div class="path-item"><a href="/app/groupes/${groupe.id}/${folder.id}">${folder.nom}</a></div>`
+            `<div class="path-item"><a href="/app/group/${groupe.id}/${folder.id}">${folder.nom}</a></div>`
         );
     }
 
@@ -325,11 +325,11 @@
                 },
                 open: async function () {
                     let f = await file;
-                    setURL(`/app/groupes/${groupe.id}/${parent.id}/${f.id}`, `Prévisualisation : ${f.nom}`);
+                    setURL(`/app/group/${groupe.id}/${parent.id}/${f.id}`, `Prévisualisation : ${f.nom}`);
                 },
                 preview: async function () {
                     let f = await file;
-                    setURL(`/app/groupes/${groupe.id}/${parent.id}/${f.id}/preview`, `Prévisualisation : ${f.nom}`);
+                    setURL(`/app/group/${groupe.id}/${parent.id}/${f.id}/preview`, `Prévisualisation : ${f.nom}`);
                 },
                 delete: async function () {
                     let f = await file;
@@ -374,7 +374,7 @@
         let folder = FOLDERS.getWithoutPull(folder_id);
         listFolders.add(folder_id, folder, {
             permissions: groupe.permissions,
-            open: function () { setURL(`/app/groupes/${groupe.id}/${folder_id}`); },
+            open: function () { setURL(`/app/group/${groupe.id}/${folder_id}`); },
             remove: async function () {
                 let r = await folder.remove();
 
@@ -444,5 +444,5 @@
     var listFolders = new HTMLList(doc.ctx.markedElement['folders'], folderParser);
     var listFiles = new HTMLList(doc.ctx.markedElement['files'], fileParser);
 
-    URLrooter.addListener("/app/groupes/$groupe_id/$folder_id/*", setDir, null, { groupe_id: /^[0-9]+$/, $folder_id: /^[0-9]+$/ });
+    URLrooter.addListener("/app/group/$groupe_id/$folder_id/*", setDir, null, { groupe_id: /^[0-9]+$/, $folder_id: /^[0-9]+$/ });
 </script>

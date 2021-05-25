@@ -22,7 +22,7 @@
     function goBack() {
         input_nom.value = "";
         input_descr.innerText = "";
-        setURL('/app/groupes/add');
+        setURL('/app/group/add');
     }
 
     async function valide() {
@@ -35,7 +35,7 @@
             console.error(groupe_id.code);
         } else {
             ListGroupe.update();
-            setURL(`/app/groupes/${groupe_id}`);
+            setURL(`/app/group/${groupe_id}`);
         }
     }
 

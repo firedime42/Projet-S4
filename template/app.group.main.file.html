@@ -1,10 +1,10 @@
 
 <div class="header">
-    <a class="back-link" href="/app/groupes/{{ group.id }}/{{ folder_id }}"><span class="icon icon-arrow-left"></span></a>
+    <a class="back-link" href="/app/group/{{ group.id }}/{{ folder_id }}"><span class="icon icon-arrow-left"></span></a>
     <div class="title">{{ file.nom }}</div>
     <div class="buttons">
-        <a class="preview-link" href="/app/groupes/{{ group.id }}/{{ folder_id }}/{{ file.id }}/preview" data-visible="{{ EQUALS option 'info' }}"><span class="icon icon-eye"></span></a>
-        <a class="info-link" href="/app/groupes/{{ group.id }}/{{ folder_id }}/{{ file.id }}/info" data-visible="{{ EQUALS option 'preview' }}"><span class="icon icon-information-outline"></span></a>
+        <a class="preview-link" href="/app/group/{{ group.id }}/{{ folder_id }}/{{ file.id }}/preview" data-visible="{{ EQUALS option 'info' }}"><span class="icon icon-eye"></span></a>
+        <a class="info-link" href="/app/group/{{ group.id }}/{{ folder_id }}/{{ file.id }}/info" data-visible="{{ EQUALS option 'preview' }}"><span class="icon icon-information-outline"></span></a>
     </div>
     <div class="spaceforchatbtn"></div>
 </div>
@@ -383,5 +383,5 @@
     audio_preview.on('audioprocess', time_display);
     audio_preview.on('ready', time_display);    
     let number = /^[0-9]+$/;
-    URLrooter.addListener("/app/groupes/$group_id/$folder_id/$file_id/$option", fileChange, closePreview, { group_id : number, folder_id: number, file_id: number, option: /^(?:info|preview|edit-info|)$/ });
+    URLrooter.addListener("/app/group/$group_id/$folder_id/$file_id/$option", fileChange, closePreview, { group_id : number, folder_id: number, file_id: number, option: /^(?:info|preview|edit-info|)$/ });
 </script>

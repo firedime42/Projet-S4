@@ -1,6 +1,6 @@
 <nav class="sidebar">
     <div class="scrollable">
-        <a href="/app/groupes/add" class="btn btn-primary">Ajouter un groupe</a>
+        <a href="/app/group/add" class="btn btn-primary">Ajouter un groupe</a>
         <!--
         <h6 class="sidebar-header mt-4 mb-1 px-3">
             <span>Invitations</span>
@@ -92,10 +92,10 @@
     });
 
     listGroup.addListener("update", function () {
-        let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
+        let r = URLrooter.parseURL('/app/group/$id/*', { id : /[0-9]+/ });
         if (r) _toggleSelected(r);
         else {
-            r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
+            r = URLrooter.parseURL('/app/group/$id', { id : /[0-9]+/ });
             if (r) _toggleSelected(r);
         }
     });
@@ -109,17 +109,17 @@
             await listGroup.update();
 
 
-            let r = URLrooter.parseURL('/app/groupes/$id/*', { id : /[0-9]+/ });
+            let r = URLrooter.parseURL('/app/group/$id/*', { id : /[0-9]+/ });
 
             if (r) _toggleSelected(r);
             else {
-                r = URLrooter.parseURL('/app/groupes/$id', { id : /[0-9]+/ });
+                r = URLrooter.parseURL('/app/group/$id', { id : /[0-9]+/ });
                 if (r) _toggleSelected(r);
             }
         }
     });
 
     window.LG = listGroup;
-    URLrooter.addListener('/app/groupes/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
+    URLrooter.addListener('/app/group/$id/*', _toggleSelected, _removeAllSelected, { id : /[0-9]+/ });
 
 </script>

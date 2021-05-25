@@ -7,7 +7,7 @@
             <input type="text" value="{{ search }}" placeholder="Explorer les groupes">
         </div>
         <div>
-            <a class="btn btn-primary" href="/app/groupes/create">Creer un groupe</a>
+            <a class="btn btn-primary" href="/app/group/create">Creer un groupe</a>
             <button class="btn btn-primary">{{ MARK this "search_button" }} Rechercher</button>
         </div>
     </div>
@@ -17,7 +17,7 @@
 </div>
 <script>
     doc.update({ 
-        search: decodeURI((URLrooter.parseURL('/app/groupes/search/$value') || { value: '' }).value)
+        search: decodeURI((URLrooter.parseURL('/app/group/search/$value') || { value: '' }).value)
     });
 
     let search_input = Dom.find("input", doc.ctx.markedElement.search_box)[0];
@@ -25,7 +25,7 @@
     let groups_container = doc.ctx.markedElement.groups_container;
 
     
-    let r = await fetch("/template/app.groupes.items.html");
+    let r = await fetch("/template/app.group.items.html");
     let html = await r.text();
 
     let groupeItem = new uTemplate.parser(html);
@@ -41,11 +41,11 @@
 
 
     Dom.addListener(search_button, 'click', function () {
-        setURL('/app/groupes/search/'+encodeURI(search_input.value));
+        setURL('/app/group/search/'+encodeURI(search_input.value));
         search.search(search_input.value);
     });
 
-    URLrooter.addListener('/app/groupes/search/$query', function ({ query }) {
+    URLrooter.addListener('/app/group/search/$query', function ({ query }) {
         search.search(decodeURI(query));
         doc.update({ search : decodeURI(query) });
     });
