@@ -280,6 +280,7 @@
          * @param {Object} data les données
          */
         update(data) {
+            if (typeof this.ctx != 'object') console.log('debug : ', this, this.ctx);
             if (data && typeof data == 'object') this.ctx = Object.assign(this.ctx, data);
             
             let nb_nodes = this.#impNodes.length;

@@ -45,17 +45,19 @@
         setTimeout(() => doc.update(), 100);
     };
 
+    let group_update = (group) => doc.update({ group });
+
     URLrooter.addListener("/app/group/$id/*",
         async function ({ id }) {
 
             if (groupe == null || groupe.id != id) {
             
-                if (groupe != null) groupe.removeListener(Groupe.EVENT_UPDATE, doc.update);
+                if (groupe != null) groupe.removeListener(Groupe.EVENT_UPDATE, group_update);
             
                 groupe = await GROUPES.get(id);
 
                 if (groupe instanceof Groupe) {
-                    groupe.addListener(Groupe.EVENT_UPDATE, doc.update);
+                    groupe.addListener(Groupe.EVENT_UPDATE, group_update);
                 } else if (groupe instanceof Error) {
                     let error = groupe;
 
