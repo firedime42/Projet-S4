@@ -166,6 +166,12 @@
   top: 10px;
 }
 
+.groupe .groupe-browse .groupe-header .dashboard-btn {
+  position: absolute;
+  right: 35px;
+  top: 10px;
+}
+
 .groupe .groupe-browse .chat-btn {
   position: absolute;
   z-index: 1000;

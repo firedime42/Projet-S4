@@ -1,4 +1,10 @@
-<div class="container">
+<div class="dashboard-header">
+	<a class="icon icon-arrow-left"></a>
+	<div class="header">
+		<h1>Le teste</h1>
+	</div>
+</div>
+<div class="dashboard-container">
 	<div class="element">
 		<h3>Répartitions des fichiers</h3><br>
 		<div>
@@ -13,12 +19,23 @@
 		<p>Nombre de fichiers : {{ group.nb_files }}</p>
 	</div>
 	<div class="element">
-		<h3>Palmares des 5 fichiers les plus populaire</h3>
+		<h3>Stats du groupe :</h3>
+		<p>Nombre de membres : {{ group.nb_membres }}</p>
+		<p>Nombre de messages envoyé : {{ group.nb_messages }}</p>
+		<!--<p>Nombre de membre ayant rejoint : </p>-->
+		<!--<p>Nombre de membre ayant quitté : 29</p>-->
+		<div>
+			<canvas style="width: 100%"></canvas>
+			{{ MARK this "repart_role" }}
+		</div>
+	</div>
+	<div class="element">
+		<h3>Palmares des 5 fichiers les plus populaires</h3>
 		<div class="palmares">
 			<div class="p-head">
-				<div class=""></div>
-				<div class="">Nom</div>
-				<div class="">Nb. Likes</div>
+				<div class="rank"></div>
+				<div class="name-1">Nom</div>
+				<div class="data">Nb. Likes</div>
 			</div>
 			<div class="p-body row-container">
 				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->
@@ -30,9 +47,9 @@
 		<h3>Palmares des 5 fichiers les plus commentés</h3>
 		<div class="palmares">
 			<div class="p-head">
-				<div></div>
-				<div>Nom</div>
-				<div>Nb. Likes</div>
+				<div class="rank"></div>
+				<div class="name-1">Nom</div>
+				<div class="data">Nb. Comments</div>
 			</div>
 			<div class="p-body row-container">
 				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->
@@ -41,7 +58,20 @@
 		</div>
 	</div>
 	<div class="element">
-		<h3>Palmares utilisateur</h3>
+		<h3>Classement des utilisateurs</h3>
+		<div class="palmares">
+			<div class="p-head">
+				<div class="rank"></div>
+				<div class="name-3">Nom</div>
+				<div class="data">Nb. Messages</div>
+				<div class="data">Nb. Fichiers</div>
+				<div class="data">Score</div>
+			</div>
+			<div class="p-body scrollable row-container" style="max-height: 300px;">
+				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->
+				{{ MARK this "palmares-users" }}
+			</div>
+		</div>
 	</div>
 	<div class="element">
 		<h3>Activité du groupe</h3>
@@ -49,17 +79,11 @@
 			{{ MARK this "messages" }}
 		</div>
 	</div>
-	<div class="element">
-		<h3>Stats du groupe :</h3>
-		<p>Nombre de membres : {{ group.nb_membres }}</p>
-		<p>Nombre de messages envoyé : {{ group.nb_messages }}</p>
-		<!--<p>Nombre de membre ayant rejoint : </p>-->
-		<!--<p>Nombre de membre ayant quitté : 29</p>-->
-	</div>
 </div>
 <script>
 	var group, dashboard;
-	var repart_chart;
+	var repart_type_chart;
+	var repart_role_chart;
 	var messages_chart;
 	var palmares_files_likes;
 	var palmares_files_comments;
@@ -119,34 +143,74 @@
 
 		doc.update({ group });
 
-		setRepartChartData(group.dashboard.repart_type);
+		let members_data = extractMembersData(group.dashboard.users);
+		
+		setRepartRoleChartData(members_data.roles_parts);
+		setRepartTypeChartData(group.dashboard.repart_type);
 		setMessagesChartData(group.dashboard.messages);
+		setPalmaresUsers(group.dashboard.users);
 		setPalmaresData(palmares_files_likes, group.dashboard.most_liked);
 		setPalmaresData(palmares_files_comments, group.dashboard.most_commented);
+
 	}
 
-	function setRepartChartData(repart) {
+	function extractMembersData(members) {
+		var roles_parts = {};
+		let nb_members = members.length;
+
+		for (let i = 0; i < nb_members; i++) {
+			let user = members[i];
+			if (!roles_parts[user.role]) roles_parts[user.role] = 1;
+			else roles_parts[user.role]++;
+		}
+
+		return { roles_parts };
+	}
+
+	function setPalmaresUsers(members) {
+		let nb_members = members.length;
+		for (let i = 0; i < nb_members; i++) members[i].score = 20 * members[i].nb_files + members[i].nb_messages;
+		
+		members.sort((a, b) => b.score - a.score);
+
+		setPalmaresData(palmares_users, members);
+	}
+
+	function setRepartTypeChartData(repart) {
 		let nb_types = repart.length;
 		var types = new Array(nb_types);
 		var nb_files_per_type = new Array(nb_types);
-		var colors = new Array(nb_types);
 		
 		for (let i = 0; i < nb_types; i++) {
 			types[i] = repart[i].type;
 			nb_files_per_type[i] = repart[i].nb_files;
-
-			// Hue in [0, 6[, Chroma in [0, 255], Luminosity in [0, 255]
-			colors[i] = rgbaToHex({...rgbFromHCL({ H: i * 6 / nb_types, C: 135, L: 186.5 }), a: 255 });
 		}
 
-		console.log(types, nb_files_per_type);
+		setChartData(repart_type_chart, types, nb_files_per_type);
+	}
 
-		repart_chart.data.labels = types;
-		repart_chart.data.datasets = [{
-			data: nb_files_per_type,
+	function setRepartRoleChartData(repart) {
+		var roles = Object.keys(repart);
+		var nb_members_per_role = Object.values(repart);
+
+		setChartData(repart_role_chart, roles, nb_members_per_role);
+	}
+
+	function setChartData(chart, labels, data) {
+		let nb_labels = labels.length;
+		var colors = new Array(nb_labels);
+
+		for (let i = 0; i < nb_labels; i++)
+			// Hue in [0, 6[, Chroma in [0, 255], Luminosity in [0, 255]
+			colors[i] = rgbaToHex({...rgbFromHCL({ H: i * 6 / nb_labels, C: 135, L: 186.5 }), a: 255 });
+
+		chart.data.labels = labels;
+		chart.data.datasets = [{
+			data: data,
 			backgroundColor: colors
 		}];
-		repart_chart.update();
+		chart.update();
+
 	}
 
 	function setMessagesChartData(messages) {
@@ -163,7 +227,7 @@
 				ld = date.getDate();
 				lts = messages[i];
 				data[j++] = [date, 1];
-			} else data[j][1]++;
+			} else data[j - 1][1]++;
 		}
 
 		console.log(messages, data);
@@ -179,7 +243,7 @@
 			palmares.add(i, list[i], { index: i + 1 });
 	}
 
-	repart_chart = new Chart(doc.ctx.markedElement['repart_type'].children[0].getContext('2d'), {
+	repart_type_chart = new Chart(doc.ctx.markedElement['repart_type'].children[0].getContext('2d'), {
 		type: 'pie',
 		options: {
 			aspectRatio: 2,
@@ -191,6 +255,19 @@
 			}
 		}
 	});
+	repart_role_chart = new Chart(doc.ctx.markedElement['repart_role'].children[0].getContext('2d'), {
+		type: 'pie',
+		options: {
+			aspectRatio: 2,
+			responsive: true,
+			plugins: {
+				legend: {
+					position: 'right'
+				}
+			}
+		}
+	});
+	
 	messages_chart = new CalendarChart(doc.ctx.markedElement['messages'], {
 		legendTitle: 'Legende : nombre de messages',
 		dataColors: {
@@ -201,24 +278,33 @@
 	});
 	let palmares_fl_html = `
 	<div class="palm-row">
-		<div>{{ index }}</div>
-		<div>{{ element.name }}</div>
-		<div>{{ element.nb_likes }}</div>
+		<div class="rank">{{ index }}</div>
+		<div class="name-1">{{ element.name }}</div>
+		<div class="data">{{ element.nb_likes }}</div>
 	</div>
 	`;
 	let palmares_fc_html = `
 	<div class="palm-row">
-		<div>{{ index }}</div>
-		<div>{{ element.name }}</div>
-		<div>{{ element.nb_messages }}</div>
+		<div class="rank">{{ index }}</div>
+		<div class="name-1">{{ element.name }}</div>
+		<div class="data">{{ element.nb_messages }}</div>
+	</div>
+	`;
+	let palmares_u_html = `
+	<div class="palm-row">
+		<div class="rank">{{ index }}</div>
+		<div class="name-3">{{ element.name }}</div>
+		<div class="data">{{ element.nb_messages }}</div>
+		<div class="data">{{ element.nb_files }}</div>
+		<div class="data">{{ element.score }}</div>
 	</div>
 	`;
 
 	palmares_files_likes = new HTMLList(doc.ctx.markedElement['palmares-files-likes'], new uTemplate.parser(palmares_fl_html));
-	palmares_files_comments = new HTMLList(doc.ctx.markedElement['palmares-files-comments'], new uTemplate.parser(palmares_fc_html))
+	palmares_files_comments = new HTMLList(doc.ctx.markedElement['palmares-files-comments'], new uTemplate.parser(palmares_fc_html));
+	palmares_users = new HTMLList(doc.ctx.markedElement['palmares-users'], new uTemplate.parser(palmares_u_html));
 
-
-	window.repart_chart = repart_chart;
+	window.repart_type_chart = repart_type_chart;
 
 	URLrooter.addListener('/app/group/$group_id/dashboard', changeGroup, null, { group_id : /[0-9]+/ });
 </script>

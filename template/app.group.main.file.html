@@ -113,7 +113,7 @@
         image: { types: ['image/bmp', 'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'image/tiff', 'image/webp'], max_size: 30 * Mo },
         text: {
             types: [/^text\/.*/],
-            max_size: 10 * Ko,
+            max_size: 4 * Mo,
             language: {}
         },
         video: { types: ['video/mp4', 'video/ogg', 'video/webm'], max_size: 1000 * Mo },
@@ -182,7 +182,6 @@
 
         console.log('debug', file, file.size * 1, PREVIEW_TYPE.image.max_size);
         if (file.size * 1 < PREVIEW_TYPE.image.max_size) {
-            console.log('debug', file, file.size, PREVIEW_TYPE.image.max_size);
             let f = await file.download();
             let blob_url = window.URL.createObjectURL(f);
             Dom.css(image_preview, {
@@ -203,9 +202,10 @@
             let language = file.nom.split('.').pop();
             let f = await file.download();
             let f_text = await f.text();
-            console.log(f);
-            console.log(f_text);
-            Dom.html(text_preview, f_text.replace(/\n/gi, '<br/>'));
+
+            console.log('debug', file, f_text);
+            
+            Dom.text(text_preview, f_text.replaceAll(/\r\n/gi, '\n'));
             text_preview.className = `language-${language}`;
             Prism.highlightAll();
         }
@@ -262,7 +262,8 @@
 
         let preview = whichPreview(file.type);
 
-        // il va avoir beaucoup à faire ici
+        if (preview != 'no' && file.size > PREVIEW_TYPE[preview].max_size) preview = 'too-heavy';
+        
         if (preview == 'image') previewImage(file);
         else if (preview == 'text') previewText(file);
         else if (preview == 'video') previewVideo(file);

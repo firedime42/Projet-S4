@@ -35,7 +35,6 @@
          */
         async add(id, element, data, prepend = false) {
             if (this.#elements[id]) return await this.update(element);
-            console.log("htmllist ajout element ["+id+"]")
 
             let dom_element = Dom.create(`<div></div>`).children[0];
             
@@ -93,7 +92,6 @@
          */
         update(element) {
             if (!this.#elements[element.id]) return;
-            console.log("htmllist : update element["+element.id+"]");
 
             let dom_element = this.#elements[element.id].dom_element;
             let data = this.#elements[element.id].data;

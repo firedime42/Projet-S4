@@ -1,33 +1,98 @@
 
-.container{
+.dashboard-header {
+	
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	
+	.header {
+		width: 80%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background: url(/assets/img/eezy_18.svg);
+		background-size: cover;
+		height: 200px;
+		background-position: center;
+		border-radius: 20px;
+		margin: 10px;
+	}
+
+}
+
+.dashboard-container {
 	width: 100%;
 	height: 100%;
+	max-width: 100% !important;
+
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: space-evenly;
-	.element{
+	justify-content: center;
+	align-items: center;
 
-		margin: 20px;
+	padding: 10px 20px;
+	margin: 0;
+
+	> div {
 		width: 450px;
-		height: 275px;
-		border: solid black 2px;
-		border-radius: 5px;
-		align-content: center;
+		margin: 20px;
+	}
+
+	.element{
+		//min-height: 275px;
+		
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		
 		padding: 10px;
-		// padding: 20px;
+		
+		background-color: #fff;
+		border: solid #ddd 1px;
+		border-radius: 5px;
+		box-shadow: 0px 4px 10px 0 rgba(0, 0, 0, .2);
+	}
 
-		.split{
+	.palmares {
+		width: 100%;
+		--cell-rank-size: 50px;
+		--cell-data-size: 100px;
 
-			flex-wrap: wrap;
-			flex-direction: row;
+		.p-head {
+			width: 100%;
 			display: flex;
-			justify-content: space-evenly;
-			.piechart{
-				width: 200px;
-				height: 200px;
-				border-radius: 50%;
-				border: solid black 1px;
+			align-items: center;
+			background-color: var(--site-text-color);
+			color: #fff;
+
+			> div {
+				width: var(--cell-width);
 			}
+		}
+		.p-body {
+			width: 100%;
+
+			.palm-row {
+				width: 100%;
+				display: flex;
+				border-top: 1px solid #ddd;
+				padding: 5px 0;
+
+				> div {
+					width: var(--cell-width);
+				}
+			}
+		}
+
+		.rank { --cell-width: var(--cell-rank-size); }
+		.name-1 { --cell-width: calc(100% - var(--cell-rank-size) - 1 * var(--cell-data-size)); }
+		.name-2 { --cell-width: calc(100% - var(--cell-rank-size) - 2 * var(--cell-data-size)); }
+		.name-3 { --cell-width: calc(100% - var(--cell-rank-size) - 3 * var(--cell-data-size)); }
+		.data { --cell-width: var(--cell-data-size); }
+
+		.rank, .data {
+			text-align: center;
 		}
 	}
 }
