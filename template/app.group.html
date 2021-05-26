@@ -20,7 +20,7 @@
 </div>
 
 <script>
-    let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete à changer lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages, on commence à charger une page mais on change d'avis entre temp.
+    let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete a changé lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages (on commence à charger une page mais on change d'avis entre temps).
 
     doc.update({
         VARTESTS: {
@@ -43,7 +43,7 @@
 
         let groupe = await GROUPES.get(id);
 
-        // gestion de l'abandon de requete
+        // gestion de l'abandon de requete     
         if (req_id != current_request_num) return;
 
         let { dir } = URLrooter.parseURL("/app/group/$id/$dir/*");

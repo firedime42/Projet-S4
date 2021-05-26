@@ -42,7 +42,7 @@
     </div>
 </div>
 <script>
-    let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete à changer lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages, on commence à charger une page mais on change d'avis entre temp.
+    let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete a changé lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages (on commence à charger une page mais on change d'avis entre temps).
 
     var groupe = -1;
     var folder = null;
@@ -157,7 +157,7 @@
     doc.ctx.markedElement['dropzone'].addEventListener('dragleave', function (e) { e.preventDefault(); e.stopPropagation(); });
     doc.ctx.markedElement['dropzone'].addEventListener('dragover',  function (e) { e.preventDefault(); e.stopPropagation(); });
     doc.ctx.markedElement['dropzone'].addEventListener('drop',      function (e) {
-        // on empeche le navigateur de le gerer par defaut : tanter d'ouvrir le fichier dans le navigateur
+        // on empeche le navigateur de le gerer par defaut : tentative d'ouvrir le fichier dans le navigateur
         e.preventDefault(); e.stopPropagation();
         
         if (groupe.permissions.create_file) upload_files(e.dataTransfer.files);
@@ -308,7 +308,7 @@
                     // on telecharge les données du fichier
                     let blob = await file.download();
 
-                    // on créer une url associé aux données
+                    // on crée une url associé aux données
                     let blob_url = window.URL.createObjectURL(blob);
 
                     // on telecharge le fichier
@@ -351,7 +351,7 @@
                     let f = await file;
                     let result = await f.unlike();
                     if (result instanceof Error) {
-                        console.log('ah ah heu...');
+                        console.log('le fichier ne peut pas être désapprécié');
                     }
                 },
                 togglelike: async function () {
@@ -385,7 +385,7 @@
     }
 
     /**
-     * ajoute les fichiers present par defaut dans le dossier
+     * ajoute les fichiers presents par defaut dans le dossier
      */
     function addAllFiles() {
         if (folder == null) return;
@@ -395,7 +395,7 @@
     }
 
     /**
-     * ajoute les dossiers present par défaut dans le dossier
+     * ajoute les dossiers presents par défaut dans le dossier
      */
     function addAllFolders() {
         if (folder == null) return;

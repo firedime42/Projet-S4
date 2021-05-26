@@ -15,7 +15,7 @@
                 <a class="dropdown-item like" data-visible="{{ NOT element.isLiked }}">{{ ADDLISTENER this.currentNode "click" like }}Aimer</a>
                 <a class="dropdown-item unlike" data-visible="{{ element.isLiked }}">{{ ADDLISTENER this.currentNode "click" unlike }}Ne plus aimer</a>
                 <a class="dropdown-item preview-btn">{{ ADDLISTENER this.currentNode "click" preview }}Prévisualiser</a>
-                <a class="dropdown-item download" data-visible="{{ permissions.download_file }}">{{ ADDLISTENER this.currentNode "click" download }}telecharger</a>
+                <a class="dropdown-item download" data-visible="{{ permissions.download_file }}">{{ ADDLISTENER this.currentNode "click" download }}Télécharger</a>
                 <a class="dropdown-item rename" data-visible="{{ permissions.rename_file }}">{{ ADDLISTENER this.currentNode "click" rename }}Renommer</a>
                 <a class="dropdown-item delete" data-visible="{{ OR permissions.remove_file permissions.remove_any_file }}">{{ ADDLISTENER this.currentNode "click" delete }}Supprimer</a>
             </div>
