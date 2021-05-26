@@ -1,5 +1,4 @@
 .dashboard-header {
-  height: 300px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -13,6 +12,9 @@
 
 .dashboard-header .header {
   width: 80%;
+  min-height: 200px;
+  padding: 20px;
+  margin: 50px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -23,12 +25,35 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  background: url(/assets/img/eezy_18.svg);
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  color: #fff;
+  background: url(/assets/img/eezy_79.svg);
   background-size: cover;
-  height: 200px;
   background-position: center;
   border-radius: 20px;
-  margin: 10px;
+}
+
+.dashboard-header .header .sep {
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(40deg, transparent, white, transparent);
+}
+
+.dashboard-header .back {
+  font-size: 1.5em;
+  margin-left: -1em;
+  cursor: pointer;
+  color: var(--site-text-color);
+  text-decoration: none;
+  -webkit-transition: 0.2s cubic-bezier(0.42, 0, 0.28, 1);
+  transition: 0.2s cubic-bezier(0.42, 0, 0.28, 1);
+}
+
+.dashboard-header .back:hover {
+  -webkit-transform: scale(1.25);
+          transform: scale(1.25);
 }
 
 .dashboard-container {

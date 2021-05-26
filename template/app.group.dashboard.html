@@ -1,7 +1,9 @@
 <div class="dashboard-header">
-	<a href="/app/group/{{ group.id }}" class="icon icon-arrow-left"></a>
+	<a href="/app/group/{{ group.id }}" class="back icon icon-arrow-left"></a>
 	<div class="header">
-		<h1>Le teste</h1>
+		<h1>{{ group.nom }}</h1>
+		<div class="sep"></div>
+		<h3>Dashboard du groupe</h3>
 	</div>
 </div>
 <div class="dashboard-container">
@@ -13,15 +15,15 @@
 		</div>
 	</div>
 	<div class="element">
-		<h3>Espace de stockage :</h3>
-		<p>Taille total utilisé : {{ SIZE group.dashboard.avg_space }}</p>
+		<h3>Espace de stockage</h3>
+		<p>Taille totale utilisée : {{ SIZE group.dashboard.avg_space }}</p>
 		<p>Taille moyenne des fichiers : {{ SIZE group.dashboard.avg_space }}</p>
 		<p>Nombre de fichiers : {{ group.nb_files }}</p>
 	</div>
 	<div class="element">
-		<h3>Stats du groupe :</h3>
+		<h3>Statistiques du groupe</h3>
 		<p>Nombre de membres : {{ group.nb_membres }}</p>
-		<p>Nombre de messages envoyé : {{ group.nb_messages }}</p>
+		<p>Nombre de messages envoyés : {{ group.nb_messages }}</p>
 		<!--<p>Nombre de membre ayant rejoint : </p>-->
 		<!--<p>Nombre de membre ayant quitté : 29</p>-->
 		<div>
@@ -92,7 +94,7 @@
 
 	/**
 	 * --------------------------------------------------------------------------
-	 * Some color function because they don't have those ! bouh any chart !
+	 * Some color function because they don't have those
 	 * --------------------------------------------------------------------------
 	 */
 	function rgbaToHex(rgba) {
