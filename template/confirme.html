@@ -1,5 +1,5 @@
-<div data-visible="{{ confirme }}" style="position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 5000; background-color: rgba(0,0,0,.4);">
-    <div style=" background-color: #fff; margin-top: 20%; margin-left: auto; margin-right: auto; border-radius: 5px; padding: 20px; width: 50%;" class="text-center">
+<div data-visible="{{ confirme }}" style="position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 5000; display: flex; align-items: center; justify-content: center; background-color: rgba(0,0,0,.4);">
+    <div style=" background-color: #fff; border-radius: 5px; padding: 20px; width: 50%;" class="text-center">
         <h1>{{ title }}</h1>
         <p>{{ content }}</p>
         <div class="actions">
@@ -10,7 +10,8 @@
 </div>
 <script>
     await doc.update({ confirme: false, title: "", content: "" });
-    let wait = ExPromise();
+    var form = doc.ctx.markedElement['form'];
+    var wait = ExPromise();
     wait.resolve();
     
     console.log(doc.ctx.markedElement['giveup']);
@@ -22,11 +23,12 @@
      * Demande la confirmation à l'utilisateur
      * @param {String} title : le titre du message
      * @param {String} content : le contenu du message
-     * @return {Promise} : une promesse resolu à vrai lorsque l'utilisateur choisi true et false sinon.
+     * @return {Promise} : une promesse résolue à vrai lorsque l'utilisateur choisi true, et false sinon.
      */
     async function confirmeAction(title = 'Êtes-vous sûr ?', content = '') {
         await wait;
         wait = ExPromise();
+        Dom.html(form, '');
         doc.update({ title, content, confirme: true });
         return await wait;
     }

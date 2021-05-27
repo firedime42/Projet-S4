@@ -65,7 +65,7 @@ function getFolderData($id) {
 }
 
 /**
- * Récupère les données associés aux dossiers enfant d'un dossier
+ * Récupère les données associées aux dossiers enfant d'un dossier
  */
 function getSubFolders($parent_id) {
 	global $database;
@@ -91,7 +91,7 @@ function getSubFolders($parent_id) {
 }
 
 /**
- * Récupère les données associés aux fichiers enfant d'un dossier
+ * Récupère les données associées aux fichiers enfant d'un dossier
  */
 function getSubFiles($parent_id, $user_id, $last_visit) {
 	global $database;

@@ -13,7 +13,7 @@
             <em class="icon icon-menu"></em>
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item like" data-visible="{{ NOT element.isLiked }}">{{ ADDLISTENER this.currentNode "click" like }}Aimer</a>
-                <a class="dropdown-item unlike" data-visible="{{ element.isLiked }}">{{ ADDLISTENER this.currentNode "click" unlike }}Ne plus aimer</a>
+                <a class="dropdown-item unlike" data-visible="{{ element.isLiked }}">{{ ADDLISTENER this.currentNode "click" unlike }}Ne pas aimer</a>
                 <a class="dropdown-item preview-btn">{{ ADDLISTENER this.currentNode "click" preview }}Prévisualiser</a>
                 <a class="dropdown-item download" data-visible="{{ permissions.download_file }}">{{ ADDLISTENER this.currentNode "click" download }}Télécharger</a>
                 <a class="dropdown-item rename" data-visible="{{ permissions.rename_file }}">{{ ADDLISTENER this.currentNode "click" rename }}Renommer</a>

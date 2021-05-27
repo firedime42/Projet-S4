@@ -4,7 +4,7 @@ require dirname(__FILE__) . "/../session.php";
 
 $path_base = dirname(__FILE__) . "/../../avatar";
 
-$max_width = 500;
+$max_width = 1000;
 
 $res = array( "success" => false );
 

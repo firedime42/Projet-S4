@@ -6,7 +6,8 @@ function creation_utilisateur($login, $email, $password) {
 
 	//créer un utilisateur 
 	global $database;
-	$querry = "INSERT INTO user (username, password, email) VALUES ('$login', '$password', '$email')";
+	$now = now();
+	$querry = "INSERT INTO user (username, password, email, creation_date) VALUES ('$login', '$password', '$email', $now)";
 	$res = mysqli_query($database, $querry);
 	return $res;
 }
@@ -79,5 +80,25 @@ function recup_user_id($id){
 	$result = mysqli_query($database, $user);
 	$user_data=mysqli_fetch_assoc($result);
 	return $user_data;
+}
+
+
+function edit_login($id, $login){
+	global $database;
+	$query="UPDATE user SET username='$login' WHERE id=$id";
+	$res = mysqli_query($database, $query);
+	return true;
+}
+
+function edit_password($id,$password){
+	global $database;
+	$query="UPDATE user SET password='$password' WHERE id=$id";
+	mysqli_query($database, $query);
+}
+
+function edit_biography($id,$biography){
+	global $database;
+	$query="UPDATE user SET biography='$biography' WHERE id=$id";
+	mysqli_query($database, $query);
 }
 ?>

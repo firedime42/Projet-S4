@@ -37,7 +37,7 @@ if ($_GET['file_id'] != NULL) {
                 $range_field = explode('=', $_SERVER['HTTP_RANGE']);
 
                 if ($range_field[0] != 'bytes') {
-                    // on ne peut gérer que les interval de type bytes.
+                    // on ne peut gérer que les intervales de type bytes.
                     header('HTTP/1.1 400 Bad Request');
                     exit();
                 }

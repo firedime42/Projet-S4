@@ -265,7 +265,52 @@
         async setBiography(bio) {
             if (!this.isLoggedIn) return _error(-1);
 
+            let r = await request('/core/controller/account.php', {
+                action: 'editBiography',
+                biography: bio
+            });
 
+            if (r instanceof Error) return r;
+
+            USERS.getWithoutPull(this.#id).__parseData({ biography: bio });
+
+            return this;
+        }
+
+        async setUsername(username) {
+            if (!this.isLoggedIn) return _error(-1);
+            if (!this.checkUsernameFormat(username)) return _error(-1);
+
+            let r = await request('/core/controller/account.php', {
+                action: 'editLogin',
+                login: username
+            });
+
+            if (r instanceof Error) return r;
+
+            USERS.getWithoutPull(this.#id).__parseData({ name:username });
+            this.#username = username;
+
+            return this;
+        }
+
+        async changePassword(password, new_password) {
+            if (!this.isLoggedIn) return _error(-1);
+            if (!this.checkPasswordStrength(new_password)) return _error(-1);
+
+            
+            let time = Math.round(new Date().getTime() / 1000);
+
+            let r = await request('/core/controller/account.php', {
+                action: 'editPassword',
+                password: sha256(time + "" + sha256(password)),
+                new_password: sha256(new_password),
+                time
+            });
+
+            if (r instanceof Error) return r;
+
+            return this;
         }
 
         __parseUser(user) {

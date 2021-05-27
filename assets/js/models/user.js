@@ -19,7 +19,7 @@
      * @returns 
      */
     function valideName(name) {
-        return typeof name == "string" && name.length > 3;
+        return typeof name == "string" && name.length >= 3;
     }
 
     class User extends Listenable {

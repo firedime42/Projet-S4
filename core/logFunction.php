@@ -15,9 +15,9 @@ function log($group_id, $actor_id, $action, $descr) {
 }
 
 /**
- * Supprime les logs trops agées
- * @param group_id : identifiant du group ou '*' pour tous les groupes
- * @param age : age maximum des logs au dela duquel elles doivent être supprimées
+ * Supprime les logs trops agés
+ * @param group_id : identifiant du groupe ou '*' pour tous les groupes
+ * @param age : age maximum des logs au dela duquel ils doivent être supprimés
  */
 function removeOldLogs($group_id = '*', $age = 2678400000) {
     global $database;
@@ -30,8 +30,8 @@ function removeOldLogs($group_id = '*', $age = 2678400000) {
 /**
  * récupère les logs dans la base de donnée
  * @param group_id : identifiant du groupe
- * @param from : date superieur (non défini = le plus recent)
- * @param to : nombre de log à charger (non défini = tous)
+ * @param from : date superieure (non défini = le plus recent)
+ * @param to : nombre de logs à charger (non défini = tous)
  */
 function getLogs($group_id, $from = null, $to = null) {
     global $database;

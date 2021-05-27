@@ -71,7 +71,7 @@
          * @param {Node} node l'endroit où inserer le code
          * @param {String} url le chemin du fichier à inclure
          */
-        INCLUDE: async function (node, url, ctx={}) {
+        INCLUDE: async function (node, url, ctx={}, force_load=false) {
             await null;
             if (node == null ||  node.parentElement == null ) {
                 //console.log("error parrentNull", node, url);
@@ -81,12 +81,12 @@
             if ( !Dom.isReady() ) {
                 //console.log("error isnt ready", node, url);
                 Dom.ready(function () {
-                    uTemplate.BASIC_DATA.INCLUDE(node, url);
+                    uTemplate.BASIC_DATA.INCLUDE(node, url, ctx, force_load);
                 });
                 return;
             }
 
-            if ( !Dom.isVisible(node) ) {
+            if ( !force_load && !Dom.isVisible(node) ) {
                 //console.log("error isnt visible", node.parentElement, url);
                 return;
             }

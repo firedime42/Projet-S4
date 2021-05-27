@@ -1,0 +1,53 @@
+<div class="form-card">
+    <h1>Dossier</h1>
+    <div class="error" data-visible="{{ error }}">
+        <span class="err-code">{{ error_code }}</span>
+        <span class="err-msg">{{ error_msg }}</span>
+    </div>
+    <div class="fields">
+        {{ MARK this "fields" }}
+        <div class="field-folder-name">
+            <h3>Nom du dossier</h3>
+            <p>Le nom du dossier doit être compris entre 3 et 50 caractères.</p>
+            <input type="text" placeholder="Nom du dossier" value="{{ nom }}">
+        </div>
+        <div class="field-folder-description">
+            <h3>Description du dossier</h3>
+            <p>Champ optionnel. Description du contenu du dossier</p>
+            <textarea placeholder="Description du dossier" maxlength="500" value="{{ description }}"></textarea>
+        </div>
+    </div>
+    <div class="form-buttons">
+        <button class="btn btn-danger">{{ ADDLISTENER this.currentNode.parentElement "click" oncancel }}Annuler</button>
+        <button class="btn btn-primary">{{ ADDLISTENER this.currentNode.parentElement "click" onpursuie }}{{ valider }}</button>
+    </div>
+</div>
+<script>
+    var fields;
+
+    folderForm.setData = function (nom, description, valider ) {
+        doc.update({ nom, description, valider, error: false });
+
+    };
+    folderForm.action = new SuperPromise();
+    folderForm.error = function (code) {
+        let msg = "Erreur inconnue.";
+        switch (code) {
+            case "4001" : msg = "format du nom incorrect."; break;
+            case "4003" : msg = "format de la description incorrecte."; break;
+            case "3004" : msg = "Vous n'avez pas les permissions requises."; break;
+        }
+        doc.update({ error: true, err_code: code, err_msg: msg });
+    };
+
+    doc.update({
+        oncancel: () => folderForm.action.resolve(false).renew(),
+        onpursuie: function () {
+            let nom = fields.children[0].children[2].value;
+            let description = fields.children[1].children[2].value;
+            folderForm.action.resolve({ nom, description }).renew();
+        }
+    });
+
+    fields = doc.ctx.markedElement['fields'];
+</script>

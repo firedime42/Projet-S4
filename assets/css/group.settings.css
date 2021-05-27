@@ -41,6 +41,14 @@
   width: calc(100% - 20em);
 }
 
+.groupe-settings .candidatures .t-row .reject button {
+  border-radius: 2px 0px 0px 2px;
+}
+
+.groupe-settings .candidatures .t-row .accept button {
+  border-radius: 0px 2px 2px 0px;
+}
+
 .groupe-settings .roles {
   width: 100%;
 }
@@ -124,5 +132,111 @@
 
 .groupe-settings .membres .t-row .nom, .groupe-settings .membres .t-row .role {
   width: calc(50% - 5em);
+}
+
+.groupe-settings .content {
+  width: 85%;
+  margin: 0 auto;
+}
+
+.groupe-settings .content .box-group {
+  background-color: white;
+  -webkit-box-shadow: 0px 0px 5px #999;
+          box-shadow: 0px 0px 5px #999;
+  margin: 20px 0;
+}
+
+.groupe-settings .content .box-group h2 {
+  background-color: #1c2833;
+  color: white;
+  padding: 15px;
+}
+
+.groupe-settings .content .box-group .bbox-group {
+  padding: 15px;
+}
+
+.groupe-settings .content .box-group .bbox-group button {
+  margin-top: 10px;
+}
+
+.groupe-settings .append {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 10px;
+  border-top: 2px;
+  height: 50px;
+}
+
+.groupe-settings .append input {
+  outline: none;
+  font-size: 15px;
+  height: 100%;
+  width: calc(100% - 200px);
+  background-color: #AFCFFE;
+  border: none;
+  vertical-align: top;
+  padding: 5px;
+}
+
+.groupe-settings .append button {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  border: none;
+  border-radius: 0px;
+  width: 200px;
+}
+
+.groupe-settings .panel {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  padding: 10px;
+}
+
+.groupe-settings .panel .btn {
+  margin-right: 10px;
+}
+
+.groupe-settings label {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+.groupe-settings .text-zone {
+  display: block;
+  resize: vertical;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+}
+
+.groupe-settings *[data-empty]:empty {
+  text-align: center;
+  padding: 10px;
+}
+
+.groupe-settings *[data-empty]:empty:before {
+  content: attr(data-empty);
 }
 /*# sourceMappingURL=group.settings.css.map */

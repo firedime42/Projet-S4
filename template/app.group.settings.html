@@ -1,82 +1,90 @@
+<div class="dashboard-header">
+    <a href="/app/group/72" class="back icon icon-arrow-left"></a>
+    <div class="header">
+        <h1>{{ groupe.nom }}</h1>
+        <div class="sep"></div>
+        <h3>Paramètres</h3>
+    </div>
+</div>
 <div class="content">
-    <h1>{{ groupe.nom }} — Paramètres</h1>
-    <div>
-        <h2>Appartenance au groupe</h2>
-        <div>
-            <button class="btn btn-warning">{{ MARK this "leave" }}Quitter le groupe</button>
-        </div>
-
+    <div class="btn-overflow">
+        <button class="btn btn-danger">{{ MARK this "leave" }}Quitter le groupe</button>
+    </div>
+    <div class="box-group">
         <h2>Information sur le groupe</h2>
-        <div><!-- Debug : {{ groupe.creator_id }} {{ user.id }} -->
-            <div data-visible="{{ EQUALS groupe.creator_id user.id }}">
-                <div>Nom du groupe : <input type="text" placeholder="{{ groupe.nom }}" value="{{ groupe.nom }}">{{ MARK this 'group_name' }}</div>
-                <div>Description du groupe : <div class="text-zone" contentEditable="true">{{ MARK this "group_description" }}{{ groupe.description }}</div></div>
-                <button data-visible="{{ EQUALS groupe.creator_id user.id }}" class="btn btn-primary">{{ MARK this "valid-modif" }} Valider les modifications</button>
+        <div class="bbox-group">
+            <div>
+                <div>Nom du groupe : </div>
+                <div>
+                    <input type="text" class="text-zone" placeholder="{{ groupe.nom }}" value="{{ groupe.nom }}">
+                    {{ MARK this 'group_name' }}
+                </div>
             </div>
-            <div data-visible="{{ NOT EQUALS groupe.creator_id user.id }}">
-                <div>Nom du groupe :{{ groupe.nom }}
-                <div>Description du groupe : <div class="text-zone">{{ groupe.description }}</div></div>
+            <div>
+                <div>Description du groupe : </div>
+                <div>
+                    <textarea class="text-zone">{{ MARK this "group_description" }}{{ groupe.description }}</textarea>
+                </div>
             </div>
+            <button data-visible="{{ OR groupe.permissions.edit_name groupe.permissions.edit_description }}" class="btn btn-success">{{ MARK this "valid-modif" }} Valider les modifications</button>
         </div>
-
-        <h2>Candidature</h2>
+    </div>
+    <div class="box-group">
+        <h2>Candidatures</h2>
         <div>
-            <div class="row-container scrollable candidatures">
-                {{ MARK this "candidates" }}
-            </div>
+            <div class="row-container scrollable candidatures" data-empty="Aucune candidature">{{ MARK this "candidates" }}</div>
         </div>
-
+    </div>
+    <div class="box-group">
         <h2>Rôles</h2>
         <div>
             <div class="roles scrollable">
                 <div class="header">
                     <div class="nom">Nom</div>
                     <div>
-                        <div class="categ">Messages</div>
+                        <div class="categ">Message</div>
                         <div class="spec">
-                            <div>Ecrire</div>
+                            <div>Écrire</div>
                             <div>Supprimer</div>
-                            <div>Gerer</div>
+                            <div>Gérer</div>
                         </div>
                     </div>
                     <div>
-                        <div class="categ">fichier</div>
+                        <div class="categ">Fichier</div>
                         <div class="spec">
-                            <div>Telecharger</div>
-                            <div>Creer</div>
+                            <div>Créer</div>
                             <div>Renommer</div>
                             <div>Supprimer</div>
-                            <div>Gerer</div>
+                            <div>Gérer</div>
                         </div>
                     </div>
                     <div>
-                        <div class="categ">dossier</div>
+                        <div class="categ">Dossier</div>
                         <div class="spec">
-                            <div>Creer</div>
-                            <div>Renommer</div>
+                            <div>Créer</div>
                             <div>Supprimer</div>
-                            <div>Gerer</div>
+                            <div>Gérer</div>
                         </div>
                     </div>
                     <div>
-                        <div class="categ">Membres</div>
+                        <div class="categ">Membre</div>
                         <div class="spec">
-                            <div>accepter</div>
-                            <div>kick</div>
-                            <div>role</div>
+                            <div>Accepter</div>
+                            <div>Ejecter</div>
+                            <div>Rôle</div>
                         </div>
                     </div>
                     <div>
-                        <div class="categ">Role</div>
+                        <div class="categ">Rôle</div>
                         <div class="spec">
-                            <div>gerer</div>
+                            <div>Gérer</div>
                         </div>
                     </div>
                     <div>
                         <div class="categ">Groupe</div>
                         <div class="spec">
-                            <div>renommer</div>
-                            <div>decrire</div>
+                            <div>Renommer</div>
+                            <div>Décrire</div> 
                         </div>
                     </div>
                     <div class="remove">Supprimer</div>
@@ -84,21 +92,24 @@
                 <div class="row-container scrollable">
                     {{ MARK this "roles" }}
                 </div>
-                <div class="append">
-                    {{ MARK this "roles_new" }}
-                    <input type="text" placeholder="Nom du role"> <button class="btn btn-primary">Ajouter</button>
-                </div>
             </div>
 
+            <!-- ajouter un rôle -->
+            <div class="append">
+                {{ MARK this "roles_new" }}
+                <input type="text" placeholder="Nom du role"> <button class="btn btn-primary">Ajouter</button>
+            </div>
+
+            <!-- boutons sauvegarde -->
             <div class="panel">
                 <button class="btn btn-default">{{ MARK this "roles_cancel" }}Annuler</button>
                 <button class="btn btn-primary">{{ MARK this "roles_save" }}Sauvegarder</button>
             </div>
         </div>
-
-        <h2>Membres</h2>
+    </div>
+    <div class="box-group">
+        <h2>Attribuer les rôles aux membres</h2>
         <div>
-            <input type="text" placeholder="filtrer par nom">
             <div class="row-container scrollable membres">
                 {{ MARK this "membres" }}
             </div>
@@ -166,7 +177,7 @@
             groupe.nom = new_name;
             groupe.description = new_description;
 
-            // puuuUUUUSHHHHHH !!!!!!!!!!!!!!!!
+            // push
             let success = await groupe.push();
             if (success instanceof Error) {
                 console.log("Oh non !! le groupe n'a pas été rename ");

@@ -5,9 +5,9 @@ require_once("fileFunction.php");
 require_once("messageFunction.php");
 
 /**
- * créé un dossier et l'attache à son parent s'il est definie
- * @param {int} $group_id : l'identifiant du groupe auquel appartient le dossier (son existance à été vérifié au préalable)
- * @param {string} $name : nom du dossiers
+ * créé un dossier et l'attache à son parent s'il est defini
+ * @param {int} $group_id : l'identifiant du groupe auquel appartient le dossier (son existance a été vérifiée au préalable)
+ * @param {string} $name : nom du dossier
  * @param {string} $description : description du dossier
  * @param {int|null} $parent_id : identifiant du parent
  * 
@@ -55,17 +55,17 @@ function attach_folder($folder_id, $parent_id) {
     $time = now();
 
     # on recupère l'ancre à gauche du parent
-    $query_parent_anchor = "SELECT anchor_left, group_id FROM folder WHERE id = $parent_id"; // on peut peut-être modifier cette requete pour s'assurer que les deux dossier cohexiste au seins du même groupe
+    $query_parent_anchor = "SELECT anchor_left, group_id FROM folder WHERE id = $parent_id"; // on peut peut-être modifier cette requete pour s'assurer que les deux dossiers cohexistent au sein du même groupe
 	$res = mysqli_query($database, $query_parent_anchor);
     $parent = mysqli_fetch_assoc($res);
     $parent_anchor_left = $parent['anchor_left'];
     $parent_group_id = $parent['group_id'];
     
-    # mise à jour des valeur d'ancrage des parents et des voisins du dossier
+    # mise à jour des valeurs d'ancrage des parents et des voisins du dossier
     $update_others = "UPDATE folder f SET f.anchor_left = f.anchor_left + 2 * (f.anchor_left > $parent_anchor_left), f.anchor_right = f.anchor_right + 2 WHERE f.anchor_right > $parent_anchor_left AND f.group_id = $parent_group_id";
     mysqli_query($database, $update_others);
 
-    # mise à jour des valeur d'ancrage du dossier
+    # mise à jour des valeurs d'ancrage du dossier
     $update_folder = "UPDATE folder f SET f.anchor_left = $parent_anchor_left + 1, f.anchor_right = $parent_anchor_left + 2 WHERE f.id = $folder_id";
     mysqli_query($database, $update_folder);
 }
@@ -235,7 +235,7 @@ function getSubFiles($folder_id, $user_id) {
 }
 
 /**
- * renvoi la liste de tous les fichiers associés aux dossiers et aux sous dossiers
+ * renvoie la liste de tous les fichiers associés aux dossiers et aux sous dossiers
  */
 function _getAllFiles($group_id, $anchor_left, $anchor_right) {
     global $database;
@@ -250,7 +250,7 @@ function _getAllFiles($group_id, $anchor_left, $anchor_right) {
 }
 
 /**
- * renvoi la liste de tous les chats associés aux dossiers et aux sous dossiers
+ * renvoie la liste de tous les chats associés aux dossiers et aux sous dossiers
  */
 function _getAllChats($group_id, $anchor_left, $anchor_right) {
     global $database;

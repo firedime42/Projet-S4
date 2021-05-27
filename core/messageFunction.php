@@ -127,7 +127,7 @@ function recherche_messages($id,$lastUpdate,$resp_max,$newest_message,$oldest_me
 */
 
 /**
- * Converti une ligne retourné par la base de donnée en un message dans le format attendu par le protocol.
+ * Converti une ligne retournée par la base de donnée en un message dans le format attendu par le protocole.
  */
 function parseMessage($msg_row) {
     return array(
@@ -164,7 +164,7 @@ function loadMore($chat_id, $resp_max, $newest_message, $oldest_message, $direct
 }
 
 /**
- * Récupère les information necessaire pour detecter les messages supprimés, modifiés et 
+ * Récupère les informations necessaires pour detecter les messages supprimés et modifiés edepuis la dernière requête de mise à jour
  */
 function getHeadEditedRemovedMessage($chat_id, $lastUpdate, $resp_max, $newest_message, $oldest_message) {
     global $database;
@@ -181,7 +181,7 @@ function getHeadEditedRemovedMessage($chat_id, $lastUpdate, $resp_max, $newest_m
     
     $edited = array(); // contenant les messages qui ont été édités
     $removed = array(); // contenant les messages qui ont été supprimés
-    $head = array(); // contenant les messages qui ont été ajouté à la tête de chat
+    $head = array(); // contenant les messages qui ont été ajoutés à la tête de chat
 
     // recuperation des elements modifiés et supprimés
     $req_between = mysqli_query($database, $query_between);

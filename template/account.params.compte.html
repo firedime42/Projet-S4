@@ -1,36 +1,101 @@
 <div>
 	<div class="gauche">
-		<div class = "image">
+		<!--<div class = "image">
 			<input type="file" name="Image">
 			/ Choisir une image de profil
 		</div>
-		<hr>
-		<div class = "mail">
-			<input type="email" name="mail" placeholder="Adresse Mail">
-			<a href="#" class="btn">Modifier le mail</a>
+		<hr>-->
+		<!--<div class = "mail">
+			{{ MARK this "email" }}
+			<input type="email" name="mail" value="{{ user.email }}" placeholder="Adresse Mail">
+			<button class="btn">{{ ADDLISTENER this.currentNode "click" changeEmail }}Modifier l'adresse mail</button>
 		</div>
-		<hr>
+		<hr>-->
 		<div class = "mdp">
+			{{ MARK this "password" }}
 			<input type="password" name="mdp" placeholder="Mot de passe Actuel">
 			<input type="password" name="mdp" placeholder="Nouveau Mot de passe">
-			<input type="password" name="mdp" placeholder="Confirmer le Mot de passe">
-			<a href="#" class="btn">Modifier le mot de passe</a>
+			<input type="password" name="mdp" placeholder="Confirmer le nouveau mot de passe">
+			<button class="btn">{{ ADDLISTENER this.currentNode "click" changePassword }}Changer le mot de passe</button>
 		</div>
 		<hr>
 
 		<div class = "pseudo">
-			<p> Votre pseudo actuel est : </p>
-			<input type="text" name="pseudo" placeholder="Nouveau pseudonyme">
-			<a href="#" class="btn">Changer le pseudonyme</a>
+			{{ MARK this "username" }}
+			<input type="text" name="pseudo" placeholder="Nouveau pseudonyme" value="{{ user.username }}">
+			<button class="btn">{{ ADDLISTENER this.currentNode "click" changeUsername }}Changer le pseudonyme</button>
 		</div> 
-		<hr>
+
+		<!--<hr>
 
 		<div class = "suppr">
 			<a href="#" class="btn btn-danger">Supprimer le compte</a>
 
 			<a href="/account/logout" class="btn btn-danger">Déconnexion</a>
 		</div>
-		<hr>
+		<hr>-->
 		<em class="icon icon-cog"></em>
 	</div>
 </div>
+<script>
+
+	var email_input;
+	var psw_input;
+	var new_psw_1_input;
+	var new_psw_2_input;
+	var username_input;
+
+	function refresh() {
+		console.log(user);
+		doc.update({ user });
+	}
+
+	async function changeEmail() {
+		console.log('click');
+		let email = email_input.value;
+
+		let r = await user.changeEmail(email);
+
+		if (r instanceof Error) console.log("erreur account params:", r);
+
+		email_input.value = user.email;
+	}
+
+	async function changeUsername() {
+		let username = username_input.value;
+
+		let r = await user.setUsername(username);
+
+		if (r instanceof Error) console.log("erreur account params:", r);
+
+		username_input.value = user.username;
+	}
+
+	async function changePassword() {
+		let psw = psw_input.value;
+		let new_psw_1 = new_psw_1_input.value;
+		let new_psw_2 = new_psw_2_input.value;
+
+		psw_input.value = "";
+		new_psw_1_input.value = "";
+		new_psw_2_input.value = "";
+
+		if (new_psw_1 != new_psw_2) {}
+		else {
+			let r = await user.changePassword(psw, new_psw_1);
+			if (r instanceof Error) {
+				console.log("erreur account params:", r);
+			}
+		}
+	}
+
+	doc.update({ changeEmail, changeUsername, changePassword });
+
+	//email_input = doc.ctx.markedElement['email'].children[0];
+	psw_input = doc.ctx.markedElement['password'].children[0];
+	new_psw_1_input = doc.ctx.markedElement['password'].children[1];
+	new_psw_2_input = doc.ctx.markedElement['password'].children[2];
+	username_input = doc.ctx.markedElement['username'].children[0];
+
+	URLrooter.addListener("/account/params/compte", refresh, null);
+</script>

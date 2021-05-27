@@ -284,4 +284,54 @@
 .explorer .browse-main .folders .item {
   --opt-data-nbcol: 2;
 }
+
+.explorer .create-folder-form-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100%;
+  z-index: 1001;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.explorer .create-folder-form-container .form-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  -webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.explorer .create-folder-form-container .form-card h1 {
+  text-align: center;
+}
+
+.explorer .create-folder-form-container .form-card input, .explorer .create-folder-form-container .form-card textarea {
+  width: 100%;
+}
+
+.explorer .create-folder-form-container .form-card .form-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.explorer .create-folder-form-container .form-card .form-buttons .btn {
+  width: 50%;
+  margin: 5px;
+}
 /*# sourceMappingURL=explorer.css.map */

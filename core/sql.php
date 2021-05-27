@@ -14,7 +14,7 @@
 	// fonction pour le temps
 	
 	/**
-	 * retourne le timestamp actuel en milliseconds.
+	 * retourne le timestamp actuel en millisecondes.
 	 */
 	function now() { return (int) (microtime(true) * 1000); }
  ?>

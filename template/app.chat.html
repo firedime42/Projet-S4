@@ -2,7 +2,7 @@
     {{ MARK this "scroll" }}
     <div data-visible="{{ isTail }}" class="top">
         <h1>Vous êtes au sommet de ce chat</h1>
-        <p>Tapez un message dans la barre en bas pour commencer à discuter</p>
+        <p>Saissisez un message dans la barre en bas pour commencer à discuter</p>
     </div>
     <div data-visible="{{ NOT isTail }}" class="loading-top">
         <h2>Chargement ...</h2>
@@ -17,14 +17,14 @@
     </div>
 </div>
 <div data-visible="{{ NOT isHead }}" class="">
-    {{ ADDLISTENER this.currentNode 'click' jumpToPresent }}Retourner tout en bas.
+    {{ ADDLISTENER this.currentNode 'click' jumpToPresent }}Afficher les derniers messages.
 </div>
 <div class="controles" data-visible="{{ permissions.write_message }}">
     <div contentEditable="true" class="text-input form-control">{{ MARK this 'text-input' }}</div>
     <button class="btn btn-primary">{{ ADDLISTENER this.currentNode 'click' send }}<em class="icon icon-send"></em></button>
 </div>
 <div class="" data-visible="{{ NOT permissions.write_message }}">
-    Vous n'êtes pas autorisé à envoyer des messages.
+    Vous n'êtes pas autorisé à envoyer un message ici.
 </div>
 
 <script>

@@ -35,7 +35,7 @@ switch ($_post->action) {
 		break;*/
 	case "update":
 		if((int)$_post->resp_max <= 0){
-			$res["error"]=5000; //Nombre de resulats invalide
+			$res["error"]=5000; //Nombre de resulats invalides
 		}elseif (!isset($_post->id)) {
 			$res["error"]=5000;
 		}elseif (empty(recup_chat($_post->id))) {
@@ -58,7 +58,7 @@ switch ($_post->action) {
 		break;
 	case "loadMore":
 		if((int)$_post->resp_max <= 0){
-			$res["error"]=5000; //Nombre de resulats invalide
+			$res["error"]=5000; //Nombre de resulats invalides
 		}elseif (!isset($_post->id)) {
 			$res["error"]=5000;
 		}elseif (empty(recup_chat($_post->id))) {

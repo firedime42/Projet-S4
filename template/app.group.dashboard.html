@@ -3,7 +3,7 @@
 	<div class="header">
 		<h1>{{ group.nom }}</h1>
 		<div class="sep"></div>
-		<h3>Dashboard du groupe</h3>
+		<h3>Tableau de Bord</h3>
 	</div>
 </div>
 <div class="dashboard-container">
@@ -17,11 +17,11 @@
 	<div class="element">
 		<h3>Espace de stockage</h3>
 		<p>Taille totale utilisée : {{ SIZE group.dashboard.avg_space }}</p>
-		<p>Taille moyenne des fichiers : {{ SIZE group.dashboard.avg_space }}</p>
-		<p>Nombre de fichiers : {{ group.nb_files }}</p>
+		<p>Taille moyenne d'un fichier : {{ SIZE group.dashboard.avg_space }}</p>
+		<p>Nombre de fichiers present sur le groupe : {{ group.nb_files }}</p>
 	</div>
 	<div class="element">
-		<h3>Statistiques du groupe</h3>
+		<h3>Statistiques (Presence sur le groupe)</h3>
 		<p>Nombre de membres : {{ group.nb_membres }}</p>
 		<p>Nombre de messages envoyés : {{ group.nb_messages }}</p>
 		<!--<p>Nombre de membre ayant rejoint : </p>-->
@@ -32,12 +32,12 @@
 		</div>
 	</div>
 	<div class="element">
-		<h3>Palmares des 5 fichiers les plus populaires</h3>
+		<h3>Fichiers les plus populaires</h3>
 		<div class="palmares">
 			<div class="p-head">
 				<div class="rank"></div>
 				<div class="name-1">Nom</div>
-				<div class="data">Nb. Likes</div>
+				<div class="data">Nombre de Likes</div>
 			</div>
 			<div class="p-body row-container">
 				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->
@@ -46,12 +46,12 @@
 		</div>
 	</div>
 	<div class="element">
-		<h3>Palmares des 5 fichiers les plus commentés</h3>
+		<h3>Fichiers les plus commentés</h3>
 		<div class="palmares">
 			<div class="p-head">
 				<div class="rank"></div>
 				<div class="name-1">Nom</div>
-				<div class="data">Nb. Comments</div>
+				<div class="data">Nombre de messages</div>
 			</div>
 			<div class="p-body row-container">
 				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->
@@ -60,14 +60,16 @@
 		</div>
 	</div>
 	<div class="element">
-		<h3>Classement des utilisateurs</h3>
+		<h3>Utilisateurs les plus actifs</h3>
+		<p>Le score est calculé pour chaque utilisateur en fonction du nombre de messages et de fichiers postés dans le groupe.<br/>
+		Chaque message correspond à un point, chaque fichier correspond à vingt points</p>
 		<div class="palmares">
 			<div class="p-head">
 				<div class="rank"></div>
 				<div class="name-3">Nom</div>
-				<div class="data">Nb. Messages</div>
-				<div class="data">Nb. Fichiers</div>
-				<div class="data">Score</div>
+				<div class="data">Nombre de Messages</div>
+				<div class="data">Nombre de Fichiers</div>
+				<div class="data">Score de Présence</div>
 			</div>
 			<div class="p-body scrollable row-container" style="max-height: 300px;">
 				<!-- plus bas dans le code il y a le html associé aux lignes du tableau -->

@@ -85,7 +85,7 @@ switch($_post->action){
         }
         break;
     default:
-        $res["error"]=4000; //Erreur inconnu généré par folder
+        $res["error"]=4000; //Erreur inconnue générée par folder
     break;
 }
 

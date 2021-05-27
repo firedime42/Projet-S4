@@ -12,7 +12,7 @@ function openSession( $user_id ) {
     $session->open = true;
     $session->user = $user_id;
     $session_secret_key = bin2hex(random_bytes(16));              # génère une clé aléatoire de 16 octets
-    $session->key = hash('sha256', hex2bin($session_secret_key)); # stoque le hash de la clé sur la base de données
+    $session->key = hash('sha256', hex2bin($session_secret_key)); # stocke le hash de la clé sur la base de données
 
     # update session
     $req = $_DB->prepare("INSERT INTO `session` (`user`, `key`) VALUES (:user, UNHEX(:session_key))");
@@ -66,7 +66,7 @@ function retrieveSession( ) {
         $req = $_DB->prepare("UPDATE `session` SET `opening_date` = CURRENT_TIMESTAMP() WHERE `user` = :id AND `sess_key` = UNHEX(:sess_key)");
         $req->execute(array('id' => $session_id, 'sess_key' => $session_key_hash));
 
-        $session_open = $req->rowCount() > 0; # vérifier que la requête s'est correctement effectué = la session existe
+        $session_open = $req->rowCount() > 0; # vérifier que la requête s'est correctement effectuée = la session existe
 
         if ($session_open) {
             # on actualise les cookies

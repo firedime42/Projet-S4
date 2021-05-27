@@ -10,7 +10,7 @@ class Session {
     public $key;          # la forme haché de la clé de la session
     public $opening_date; # date d'ouverture de la session
 
-    # données additionnels
+    # données additionnelles
 
 }
 

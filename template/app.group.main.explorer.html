@@ -15,8 +15,8 @@
 <div class="content dropzone">
     {{ MARK this "dropzone" }}
     <div class="browse-main" data-visible="true">
-        <em data-visible="{{ permissions.create_file }}"><center>Glisser/deposer des fichiers sur cette section pour les ajouter dans ce dossier.</center></em>
-        <em data-visible="{{ NOT permissions.create_file }}"><center>Denied</center></em>
+        <em data-visible="{{ permissions.create_file }}"><center>Glisser/Déposer des fichiers sur cette section pour les ajouter dans le dossier.</center></em>
+        <em data-visible="{{ NOT permissions.create_file }}"><center>Vous n'avez pas le droit de poster des fichiers ici</center></em>
         <h3>Dossiers</h3>
         <div class="folders row-container">
             {{ MARK this "folders" }}
@@ -34,12 +34,9 @@
             <span class="icon icon-add"></span>
         </div>
     </div>
-    <div class="flux" data-visible="false">
-
-    </div>
-    <div class="membres" data-visible="false">
-        
-    </div>
+</div>
+<div class="create-folder-form-container" data-visible="{{ createFolder }}">
+    {{ INCLUDE this.currentNode "/template/app.group.explorer.createfolder.html" ctxform true }}
 </div>
 <script>
     let current_request_num = 0; // ceci est un numero qui permet de savoir si la requete a changé lorsqu'on charge un fichier : c'est pour eviter les collisions d'affichages (on commence à charger une page mais on change d'avis entre temps).
@@ -47,6 +44,11 @@
     var groupe = -1;
     var folder = null;
     var uploads = {}; // id => Upload
+    var folderForm = {
+        setData: () => null,
+        action : null
+    };
+    var path_element = null;
 
     /**
      * Set the correct dir to the windows
@@ -87,11 +89,9 @@
      */
     async function setPath(folder) {
         if (folder == null) return;
-        
-        let path = doc.ctx.markedElement['path'];
 
         // on supprime le chemin precedent
-        Dom.html(path, "");
+        Dom.html(path_element, "");
 
         let _path = folder.path;
         let nb_folders = _path.length;
@@ -99,13 +99,13 @@
         for (let i = 0; i < nb_folders; i++) {
             let dir = FOLDERS.getWithoutPull(_path[i]);
             Dom.append(
-                path,
+                path_element,
                 `<div class="path-item"><a href="/app/group/${groupe.id}/${dir.id}">${dir.nom}</a></div>`
             );
         }
 
         Dom.append(
-            path,
+            path_element,
             `<div class="path-item"><a href="/app/group/${groupe.id}/${folder.id}">${folder.nom}</a></div>`
         );
     }
@@ -117,12 +117,25 @@
          * creer un dossier dans le dossier courant
          */
         create_folder: async function () {
-            let nom = prompt('nom du dossier'); // a ameliorer
-            let descr = prompt('description');
-            if (folder != null && typeof nom == 'string' && nom.length > 3 && descr != null) {
-                let res = await folder.createFolder(nom, descr);
-                if (res instanceof Error) console.error(res);
+            doc.update({ createFolder: true });
+            folderForm.setData('', '', 'Creer');
+            let notEnded = true;;
+            while (notEnded) {
+                let result = await folderForm.action.promise; // result vaut false lorsque l'utilisateur souhaite annuler
+                if (result) {
+                    let nom = result.nom;
+                    let description = result.description;
+
+                    if (nom.length < 3) folderForm.error(4001);
+                    else if (description.length > 500) folderForm.error(4003);
+                    else {
+                        let r = await folder.createFolder(nom, description);
+                        if (r instanceof Error) folderForm.error(r.code);
+                        else notEnded = false;
+                    }
+                } else notEnded = false;
             }
+            doc.update({ createFolder: false });
         },
 
         /**
@@ -149,8 +162,13 @@
 
             // ajout des Fichiers
             upload_files(files);
-        }
+        },
+
+        createFolder: false,
+        ctxform: { folderForm }
     });
+
+    path_element = doc.ctx.markedElement['path'];
 
     /* gestion du drop de fichier */
     doc.ctx.markedElement['dropzone'].addEventListener('dragenter', function (e) { e.preventDefault(); e.stopPropagation(); });

@@ -4,7 +4,7 @@
 function getUploadRequestData() {
     $r = new class { public $id; public $bsize; public $s_octet; public $bdata; };
 
-    # on récupère les données envoyés par l'utilisateur
+    # on récupère les données envoyées par l'utilisateur
     $input_data = file_get_contents('php://input');
 
     # on sépare les données

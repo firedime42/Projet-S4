@@ -55,6 +55,11 @@
                         margin-left: -15px;
                         margin-right: 5px;
                     }
+
+                    .name a {
+                        text-decoration: none;
+                        color: var(--site-text-color);
+                    }
                 }
 
                 .time {

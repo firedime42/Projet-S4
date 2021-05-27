@@ -82,6 +82,11 @@
   margin-right: 5px;
 }
 
+.chat .content-chat .message .data .user .name a {
+  text-decoration: none;
+  color: var(--site-text-color);
+}
+
 .chat .content-chat .message .data .time {
   color: #a8aab1;
   padding-left: 6px;

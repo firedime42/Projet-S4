@@ -152,7 +152,7 @@ switch ($_post->action) {
         }
         break;
     default:
-        $res["error"] = 3000; //Erreur inconnu généré par file
+        $res["error"] = 3000; //Erreur inconnue générée par file
         break;
 }
 

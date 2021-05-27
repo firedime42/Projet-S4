@@ -33,7 +33,7 @@ class MainUser {
     ## FONCTIONS DE SESSION
 
 
-    ## FONCTIONS DE CONNECTION ET DIDENTIFICATION
+    ## FONCTIONS DE CONNECTION ET D'IDENTIFICATION
 
     public static function password_strength($password) {
         global $_CONFIG;

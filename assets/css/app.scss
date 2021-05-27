@@ -45,9 +45,14 @@
                     border-radius: 5px;
                     padding: 10px;
                     transition: .2s; // animation 
-
-                    .avatar {
-
+                    display: flex;
+                    align-items: center;
+                    
+                    .info {
+                        svg {
+                            width: 1em;
+                            height: 1em;
+                        }
                     }
 
                     .name {

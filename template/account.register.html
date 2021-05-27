@@ -1,15 +1,15 @@
 <div class="form-signin text-center">
     <h1 class="h3 mb-3 font-weight-normal">Veuillez vous inscrire :</h1>
     
-    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_EXIST_EMAIL }}">Un compte possède déjà cet email.</p>
-    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_EXIST_USERNAME }}">Un compte possède déjà ce nom d'utilisateur.</p>
-    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_USERNAME }}">Nom d'utilisateur incorrect : caractères alphanumériques, "_" et ".".</p>
-    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_EMAIL }}">Email incorrecte.</p>
+    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_EXIST_EMAIL }}">Cette adresse mail est déjà utilisée.</p>
+    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_EXIST_USERNAME }}">Ce nom d'utilisateur est déjà utilisé.</p>
+    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_USERNAME }}">Nom d'utilisateur incorrect : utilisez uniquement des caractères alphanumériques, "_" et ".".</p>
+    <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_EMAIL }}">Adresse mail incorrecte.</p>
     <p class="error" data-visible="{{ EQUALS error ERRCODES.REGISTER_FORMAT_PASSWORD }}">
         <b>Mot de passe trop faible.</b>
         Veillez à utiliser des majuscules, des chiffres et des caractères spéciaux (8 charactères minimum).
     </p>
-    <p class="error" data-visible="{{ error_psws_diff }}">Les deux mots de passes sont différents.</p>
+    <p class="error" data-visible="{{ error_psws_diff }}">Les mots de passes saisis sont différents.</p>
     
 
     <input name="username" type="text" class="form-control" placeholder="Username" required="" autofocus="">

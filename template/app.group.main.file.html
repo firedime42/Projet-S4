@@ -27,7 +27,7 @@
                 <div class="col2">{{ file.description }}</div>
             </div>
             <div class="data">
-                <div class="author"><span class="icon icon-quill"></span>{{ file.auteur.name }}</div>
+                <div class="author"><span class="icon icon-quill"></span><a href="/profile/{{ file.auteur.id }}">{{ file.auteur.name }}</a></div>
                 <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" }}</div>
                 <div class="size"><span class="icon icon-save-disk"></span>{{ SIZE file.size }}</div>
                 <div class="nb_downloads"><span class="icon icon-download"></span>{{ file.nb_downloads }}</div>
@@ -54,7 +54,7 @@
                 <div class="col2" data-erreur="{{ false }}" contenteditable>{{ MARK this "description" }}<!---->{{ file.description }}</div>
             </div>
             <div class="data">
-                <div class="author"><span class="icon icon-quill"></span>test1</div>
+                <div class="author"><span class="icon icon-quill"></span><a href="/profile/{{ file.auteur.id }}">{{ file.auteur.name }}</a></div>
                 <div class="publish_date"><span class="icon icon-clock1"></span>le {{ AUTOTIME this file.publish_date "default" }}</div>
                 <div class="size"><span class="icon icon-save-disk"></span>{{ SIZE file.size }}</div>
                 <div class="nb_downloads"><span class="icon icon-download"></span>{{ file.nb_downloads }}</div>
@@ -99,10 +99,10 @@
             <iframe src=""></iframe>
         </div>
         <div class="no-preview" data-visible="{{ EQUALS preview 'no' }}">
-            <div>Aucune previsualisation possible : format non supporté</div>
+            <div>Aucune prévisualisation possible : format non supporté</div>
         </div>
         <div class="too-heavy" data-visible="{{ EQUALS preview 'too-heavy' }}">
-            <div>Aucune previsualisation possible : fichier trop lourd</div>
+            <div>Aucune prévisualisation possible : le fichier est trop lourd</div>
         </div>
     </div>
 </div>

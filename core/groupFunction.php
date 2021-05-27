@@ -32,7 +32,7 @@ function create_group($nom, $description, $id_proprietaire) {
 }
 
 function recup_group_id($id) {
-    // retourne les info du group passé en paramètre sous forme d'un tableau
+    // retourne les info du groupe passé en paramètre sous forme d'un tableau
     global $database;
     $query = "SELECT *,(SELECT username FROM user WHERE id=id_creator) AS creator_name  FROM `group` WHERE id = $id";
     $res = mysqli_query($database, $query);
@@ -41,7 +41,7 @@ function recup_group_id($id) {
 }
 
 function recup_group($id, $user) {
-    // retourne les info du group passé en paramètre sous forme d'un tableau
+    // retourne les info du groupe passé en paramètre sous forme d'un tableau
     global $database;
     $query = "SELECT g.*, r.*, g.id AS id_group, g.name AS group_name, u.username AS creator_name FROM `group` g JOIN groupUser gu ON gu.group_id = g.id JOIN role r ON r.id = gu.role_id JOIN user u ON u.id = g.id_creator WHERE g.id = $id AND gu.user_id = $user";
 	$res = mysqli_query($database, $query);
@@ -124,14 +124,17 @@ function recup_status_by_user_and_group($id_user, $id_group){
 
 function recup_groups_since ($id_user,$time){
 	global $database;
-		$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator FROM `group` g JOIN groupUser gu 
-		ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
-		$resq = mysqli_query($database, $query);
-		$grouplist=array();
-		while($row = mysqli_fetch_assoc($resq)) {
-			$grouplist[] = $row;
-		}
-		return $grouplist;
+
+	$query_last_visit_folder = "SELECT last_update FROM folderUser WHERE folder_id = g.root AND user_id = $id_user LIMIT 1";
+    $query_new_files = "SELECT * FROM file fi JOIN folder dir ON fi.location = dir.id WHERE dir.group_id = g.id AND fi.creation_date > IFNULL(($query_last_visit_folder), 0)";
+
+	$query = "SELECT g.id,g.name,g.last_update,g.description,g.id_creator, EXISTS($query_new_files) AS notif_folder, gu.status AS user_status FROM `group` g JOIN groupUser gu ON g.id=gu.group_id WHERE gu.user_id=$id_user AND g.last_update>$time";
+	$resq = mysqli_query($database, $query);
+	$grouplist=array();
+	while($row = mysqli_fetch_assoc($resq)) {
+		$grouplist[] = $row;
+	}
+	return $grouplist;
 }
 
 function apply_group($id_group,$id_user){
@@ -164,7 +167,6 @@ function modif_groupe($id,$nom,$description){
 
 function modif_nom_group($id,$nom){
 	global $database;
-	$query=
 	$query="UPDATE `group` SET name = '$nom' WHERE id=$id";
 	$res=mysqli_query($database,$query);
 	$query="UPDATE folder SET name='$nom' WHERE group_id=$id AND parent_id IS NULL";

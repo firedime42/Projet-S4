@@ -5,20 +5,20 @@
         <div class="parts">
             <div>
                 <div class="avatar" data-editable="{{ NOT isntMainUser }}" style="background-image: url({{ profile.avatar }}&size=l&no-cache={{ now }});">{{ ADDLISTENER this.currentNode.parentElement "click" changeAvatar }}</div>
-                <textarea class="biography" maxlength="5000" placeholder="Aucune description">{{ DISABLE this isntMainUser }}{{ profile.biography }}</textarea>
+                <textarea class="biography" maxlength="5000" placeholder="Aucune description" value="{{ profile.biography }}">{{ ADDLISTENER this.currentNode "change" editBio }}{{ DISABLE this isntMainUser }}</textarea>
             </div>
             <div class="stats">
                 <div class="stat"><div class="icon icon-chat"></div><div class="value">{{ profile.nb_messages }}</div><div class="unit">messages</div></div>
                 <div class="stat"><div class="icon icon-file-o"></div><div class="value">{{ profile.nb_files }}</div><div class="unit">fichiers</div></div>
                 <div class="stat"><div class="icon icon-supervised_user_circle"></div><div class="value">{{ profile.nb_groups }}</div><div class="unit">groupes</div></div>
-                <div class="stat"><div class="icon icon-birthday-cake"></div><div class="value">{{ AUTOTIME this profile.creation_date "custom" }}</div><div class="unit">inscription</div></div>
+                <div class="stat"><div class="icon icon-birthday-cake"></div><div class="value">{{ AUTOTIME this profile.creation_date "since" }}</div><div class="unit">membre depuis</div></div>
             </div>
         </div>
     </div>
     <div class="errors" data-visible="{{ EQUALS state 'error' }}">
         <div data-visible="{{ EQUALS errcode undefined }}">Problème de connection</div>
         <div data-visible="{{ EQUALS errcode -1 }}">
-            Utilisateur innexistant
+            Utilisateur inexistant
         </div>
     </div>
 </div>
@@ -75,6 +75,15 @@
         }
     }
 
+    async function editBio(event) {
+        let biography = event.target.value;
+        if (doc.ctx.profile.id == user.id * 1) {
+            doc.update({ state: 'loading' });
+            let r = await user.setBiography(biography);
+            setProfile({});
+        } 
+    }
+
     doc.update({
         state: 'loading',
         DISABLE: function (_this, bool) {
@@ -84,6 +93,7 @@
             return '';
         },
         changeAvatar,
+        editBio,
         now: Date.now
     });
 

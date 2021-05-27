@@ -22,20 +22,17 @@ switch ($_post->action) {
             $res["success"]=true;
             $group_data=recup_groups_since($_session["user"]["id"],$_post->time);
             $groups=array();
-            foreach($group_data as $group){
-                $notif=notifs($group["id"],$_session["user"]["id"]);
+            $nb_groups = count($group_data);
+            for ($i = 0; $i < $nb_groups; $i++) {
+                $group = $group_data[$i];
                 $groups[]=array(
                     "id" => $group["id"],
                     "nom" => $group["name"],
-                    "status" => recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
-                    /*"new_docs" => 0,
-                    "unread_docs" => 0,
-                    "new_messages" => 0,*/
+                    "status" => $group["user_status"],//recup_status_by_user_and_group($_session["user"]["id"],$group["id"]),
                     "description" => $group["description"],
                     "creator_id" => $group["id_creator"],
                     "lastUpdate" => $group["last_update"],
-                    "notif_folder" => (int)$notif["notif_folder"]>0,
-                    "notif_message" => (int)$notif["notif_message"]>0
+                    "notif_folder" => (bool) $group["notif_folder"]
                 );
             }
             $res["groups"] = $groups; 
@@ -183,7 +180,7 @@ switch ($_post->action) {
         }elseif (empty(recup_group_id($_post->group))) {
             $res["error"]=2003;
         }elseif(is_owner($_post->id,$_post->group)){ //Si la personne est proprietaire du groupe
-            $res["error"]=0001; //Il faut transferer la possesion du groupe avant de le retirer du groupe
+            $res["error"]=0001; //Il faut transferer la possession du groupe avant de le retirer du groupe
         }else{
             if ($_session["user"]["id"]==$_post->id) {
                 $res["success"]=leave_group($_post->group,$_post->id);
@@ -364,9 +361,10 @@ switch ($_post->action) {
         }
         
         break;
-    default: $res["error"] = 2000; //Erreur inconnu généré par groupe
+    default: $res["error"] = 2000; //Erreur inconnue générée par groupe
     break;
 }
 
 echo json_encode($res);
+
 ?>

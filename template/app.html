@@ -3,7 +3,7 @@
     {{ INCLUDE this.currentNode "/template/app.sidebar.html" }}
 
     <div class="main subpage">
-        <div class="app-home text-center subpage" data-visible="{{ URLLIKE '/app/' }}">
+        <div class="app-home text-center subpage scrollable" data-visible="{{ URLLIKE '/app/' }}">
             {{ INCLUDE this.currentNode "/template/app.home.html" }}
         </div>
         <div class="groupe subpage" data-visible="{{ URLLIKE '/app/group/*' }}">
@@ -12,9 +12,12 @@
     </div>
 </div>
 <div class="content text-center" data-visible="{{ NOT user.isLoggedIn }}">
-    <h2>Attendez !!!</h2>
-    <p>Vous devez être connecté afin d'utiliser nos services.</p>
+    <h2>Collaborez avec le monde entier en utilisant <b>Shared</b></h2>
+    <p>Vous aussi, utilisez Shared pour partager des fichiers et réagir en postant des messages et en aimant des fichiers.
+        <br>Pour utiliser nos services, vous devez d'abord vous identifier.</p>
+    <p>J'ai deja un compte :<p>
     <a class="btn btn-primary" href="/account/login">Se connecter</a>
+    <p>Je suis nouveau :<p>
     <a class="btn btn-primary" href="/account/register">S'inscrire</a>
 </div>
 

@@ -1,4 +1,4 @@
-!(function (window) {
+(function (window) {
 
     function _ExternPrivatePromise() {
         var rs, rj;
